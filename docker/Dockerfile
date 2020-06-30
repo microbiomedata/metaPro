@@ -1,3 +1,5 @@
+#------------------MePro Processing------------------#
+
 # .NET 4+ on Wine 64-bit with base image Ubuntu-16.04
 FROM chambm/wine-dotnet:4.7-x64
 
@@ -40,7 +42,7 @@ RUN groupadd -r galaxy -g 1450 && \
     useradd -u 2000 -r -g galaxy -d /home/galaxy -c "Galaxy Travis user" galaxy_travis && \
     useradd -u 999 -r -g galaxy -d /home/galaxy -c "usegalaxy.eu user" galaxy_eu
 
-# Set up working directory and permissions to let user xclient save data
+## Set up working directory and permissions to let user xclient save data
 RUN mkdir /data
 WORKDIR /data
 
@@ -63,6 +65,7 @@ RUN apt-get update \
     && sudo apt-get update \
     && apt-get -y install mono-vbnc \
     && apt-get -y install mono-complete \
+    && apt-get -y install unixodbc unixodbc-dev freetds-dev freetds-bin tdsodbc \
     && apt-get clean
 
 # MASIC layer
@@ -103,3 +106,42 @@ RUN wget -P /app/phrp/ https://github.com/PNNL-Comp-Mass-Spec/PHRP/releases/down
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
 ENV MONO_HOME=/usr/bin/mono
 ENV WINE_HOME=/usr/bin/wine
+
+#------------------mePro Analysis------------------#
+
+# to access DMS
+COPY freetds.conf /etc/freetds/freetds.conf
+COPY odbc.ini /etc/odbc.ini
+COPY odbcinst.ini /etc/odbcinst.ini
+
+# copy entire analysis into the image.
+#RUN wget -P /app/ https://stash.pnnl.gov/scm/omcs/nmdc-proteomics-workflow.git \
+COPY ./nmdc-proteomics-workflow /app/nmdc-proteomics-workflow
+
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV PATH /opt/conda/bin:$PATH
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
+    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh && \
+    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda activate base" >> ~/.bashrc
+
+RUN apt-get install -y curl grep sed dpkg && \
+    TINI_VERSION=`curl https://github.com/krallin/tini/releases/latest | grep -o "/v.*\"" | sed 's:^..\(.*\).$:\1:'` && \
+    curl -L "https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini_${TINI_VERSION}.deb" > tini.deb && \
+    dpkg -i tini.deb && \
+    rm tini.deb && \
+    apt-get clean
+
+ENTRYPOINT [ "/usr/bin/tini", "--" ]
+
+
+RUN conda create --name proteomics_env python=3.7
+SHELL ["conda", "run", "-n", "proteomics_env", "/bin/bash", "-c"]
+RUN pip install pymssql pandas requests bs4 seaborn openpyxl
+RUN echo "conda activate proteomics_env" >> ~/.bashrc
+RUN cd /app/nmdc-proteomics-workflow/ \
+    && pip install -e .
+
+WORKDIR /app
