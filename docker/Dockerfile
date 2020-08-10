@@ -1,23 +1,80 @@
-#------------------MePro Processing------------------#
+# -----------------------------------------------------------------------------------------------------------------
+#BSD 2-Clause License
+#
+#Copyright (c) [2020], [Anubhav <anubhav@pnnl.gov>]
+#All rights reserved.
+#
+#Redistribution and use in source and binary forms, with or without
+#modification, are permitted provided that the following conditions are met:
+#
+#1. Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+#
+#2. Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
+#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+#AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+#IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+#DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+#FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+#DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+#SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+#CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+#OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+#OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# ----------------------------------------------------------------------------------------------------------------
+# -------------------------------------THANKS & CREDITS to:-------------------------------------------------------
 
-# .NET 4+ on Wine 64-bit with base image Ubuntu-16.04
+#1. Proteowizard [Chambers, Matthew <matt.chambers42@gmail.com>]
+#    ProteoWizard_description   :: "Convert MS RAW vendor files to open formats or analyze them with Skyline."
+#    ProteoWizard_website       :: https://github.com/ProteoWizard/container
+#    ProteoWizard_license       :: https://github.com/ProteoWizard/container
+#    - NOTE: Use base Wine at least until the .NET version needs to be upgraded!
+#               https://hub.docker.com/r/chambm/wine-dotnet
+#               [ built of:https://github.com/ProteoWizard/container/blob/master/dotnet/Dockerfile]
+#
+#2. MoTrPAC  [David Jimenez-Morales <david.jimenez-morales@stanford.edu>]
+#   https://github.com/MoTrPAC/motrpac-proteomics-pnnl-prototype
+#3. Mono 5.16.0.220 [pgermishuys <https://hub.docker.com/u/pgermishuys>]
+#   https://hub.docker.com/r/eventstore/eventstore-ci-ubuntu-16.04/dockerfile
+#4. PNNL-Comp-Mass-Spec [Monroe, Matthew E <Matthew.Monroe@pnnl.gov>]
+#   MSGFPlus                  :: https://github.com/MSGFPlus/msgfplus/releases/
+#   MzidToTsvConverter        :: https://github.com/PNNL-Comp-Mass-Spec/Mzid-To-Tsv-Converter/releases/
+#   PeptideHitResultsProcessor:: https://github.com/PNNL-Comp-Mass-Spec/PHRP/releases/
+#   MASIC                     :: https://github.com/PNNL-Comp-Mass-Spec/MASIC/releases/
+# ---------------------------------------------------------------------------------------------------------------
 FROM chambm/wine-dotnet:4.7-x64
 
-# pwiz MSconvert
-# download Windows 64-bit tar.bz2 from http://proteowizard.sourceforge.net/download.html
+ARG BUILD_DATE
+#ARG VCS_REF
+ARG BUILD_VERSION
+
+# Labels.
+LABEL org.label-schema.build-date=$BUILD_DATE
+LABEL org.label-schema.name="National Microbiome Data Collaborative: Meta-proteomics workflow"
+LABEL org.label-schema.description="NMDC Meta-proteomics workflow \
+                                    - This image is built on Ubuntu-16.04 and more information about the image and \
+                                      how to run it's container can be found on ["org.label-schema.vcs-url"] \
+                                    - Additionally, documentation[Examples, datasets etc] is at \
+                                      https://nmdc-proteomics-workflow.readthedocs.io/en/latest/"
+LABEL org.label-schema.url="https://microbiomedata.org/"
+LABEL org.label-schema.vcs-url="https://github.com/PNNL-Comp-Mass-Spec/NMDC-Proteomics-Workflow"
+#LABEL org.label-schema.vcs-ref=$VCS_REF
+LABEL org.label-schema.vendor="Pacific Northwest National Laboratory-Integrative omics group"
+LABEL org.label-schema.version=$BUILD_VERSION
+LABEL maintainer="Anubhav <anubhav@pnnl.gov>"
+LABEL tags="Proteomics,MassSpectrometry"
+
+#                          ----- ProteoWizard :: msconvert :: Start -----
+# .NET 4+ on Wine 64-bit with base image Ubuntu-16.04
+# pwiz MSconvert :: Download Windows 64-bit tar.bz2 [ http://proteowizard.sourceforge.net/download.html ]
 ADD pwiz-bin-windows-*.tar.bz2 /wineprefix64/drive_c/pwiz
-
 ENV CONTAINER_GITHUB=https://github.com/ProteoWizard/container
-
-LABEL description="Convert MS RAW vendor files to open formats or analyze them with Skyline."
-LABEL website=https://github.com/ProteoWizard/container
-LABEL documentation=https://github.com/ProteoWizard/container
-LABEL license=https://github.com/ProteoWizard/container
-LABEL tags="Metabolomics,Proteomics,MassSpectrometry"
 
 ENV WINEDEBUG -all
 ENV WINEPATH "C:\pwiz"
-
 # sudo needed to run wine when container is run as a non-default user (e.g. -u 1234)
 # wine*_anyuser scripts are convenience scripts that work like wine/wine64 no matter what user calls them
 RUN apt-get update && \
@@ -45,7 +102,6 @@ RUN groupadd -r galaxy -g 1450 && \
 ## Set up working directory and permissions to let user xclient save data
 RUN mkdir /data
 WORKDIR /data
-
 CMD ["wine64_anyuser", "msconvert" ]
 
 ## If you need a proxy during build, don't put it into the Dockerfile itself:
@@ -53,35 +109,46 @@ CMD ["wine64_anyuser", "msconvert" ]
 
 ADD mywine /usr/bin/
 RUN chmod ugo+rx /usr/bin/mywine
+#                          ----- ProteoWizard :: msconvert :: End -----
 
-
+#                          ----- Java8 [ MSGFPlus ]-----
 RUN apt-get update \
     && apt-get -y install gcc \
     && apt-get -y install -y git \
     && apt-get -y install openjdk-8-jre \
-    && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF \
-    && apt-get -y install apt-transport-https ca-certificates \
-    && echo "deb https://download.mono-project.com/repo/ubuntu stable-xenial main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.listn\
-    && sudo apt-get update \
-    && apt-get -y install mono-vbnc \
-    && apt-get -y install mono-complete \
+    && apt-get -y install tzdata \
     && apt-get -y install unixodbc unixodbc-dev freetds-dev freetds-bin tdsodbc \
     && apt-get clean
 
+#                          ----- mono [ MASIC :: MzidToTsvConverter :: PeptideHitResultsProcessor ] -----
+# install mono
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update \
+    && apt install software-properties-common -y
+RUN add-apt-repository ppa:git-core/ppa -y
+RUN apt-get update \
+    && apt-get install -y apt-transport-https curl unzip rake python sudo libcurl3
+RUN curl -s -o packages-microsoft-prod.deb https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb \
+    && sudo dpkg -i packages-microsoft-prod.deb
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF \
+    && echo "deb http://download.mono-project.com/repo/ubuntu stable-xenial/snapshots/5.16.0.220 main" main | sudo tee /etc/apt/sources.list.d/mono-official.list \
+    && apt-get update
+RUN apt-get install -y mono-devel=5.16.0.220-0xamarin4+ubuntu1604b1 msbuild=1:16.0+xamarinxplat.2018.09.26.17.53-0xamarin3+ubuntu1604b1 dotnet-sdk-2.1
+
 # MASIC layer
-RUN wget -P /app/masic/ https://github.com/PNNL-Comp-Mass-Spec/MASIC/releases/download/v3.0.7235/MASIC_Console_Program.zip \
+RUN wget -P /app/masic/ https://github.com/PNNL-Comp-Mass-Spec/MASIC/releases/download/v3.2.7465/MASIC_Console_Program.zip \
     && cd /app/masic/ \
     && unzip MASIC_Console_Program.zip \
     && rm MASIC_Console_Program.zip
 
 # MSGFPlus layer
-RUN wget -P /app/msgf https://github.com/MSGFPlus/msgfplus/releases/download/v2019.06.28/MSGFPlus_v20190628.zip \
+RUN wget -P /app/msgf https://github.com/MSGFPlus/msgfplus/releases/download/v2020.08.05/MSGFPlus_v20200805.zip \
     && cd /app/msgf/ \
-    && unzip MSGFPlus_v20190628.zip \
-    && rm MSGFPlus_v20190628.zip
+    && unzip MSGFPlus_v20200805.zip \
+    && rm MSGFPlus_v20200805.zip
 
 # MzidToTSVConverter layer
-RUN wget -P /app/mzid2tsv/ https://github.com/PNNL-Comp-Mass-Spec/Mzid-To-Tsv-Converter/releases/download/v1.3.3/MzidToTsvConverter.zip \
+RUN wget -P /app/mzid2tsv/ https://github.com/PNNL-Comp-Mass-Spec/Mzid-To-Tsv-Converter/releases/download/v1.4.3/MzidToTsvConverter.zip \
     && cd /app/mzid2tsv/ \
     && unzip MzidToTsvConverter.zip \
     && rm MzidToTsvConverter.zip
@@ -96,7 +163,7 @@ RUN wget -P /app/sqlite/ https://github.com/AshleyLab/motrpac-proteomics-pnnl-pr
     && /app/sqlite/Setup/compile-interop-assembly-release.sh
 
 # PeptideHitResultsProcessor layer
-RUN wget -P /app/phrp/ https://github.com/PNNL-Comp-Mass-Spec/PHRP/releases/download/v1.5.7130/PeptideHitResultsProcessor_Debian.zip \
+RUN wget -P /app/phrp/ https://github.com/PNNL-Comp-Mass-Spec/PHRP/releases/download/v1.5.7458/PeptideHitResultsProcessor.zip \
     && cd /app/phrp/ \
     && unzip PeptideHitResultsProcessor*.zip \
     && rm PeptideHitResultsProcessor*.zip \
@@ -107,17 +174,16 @@ ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
 ENV MONO_HOME=/usr/bin/mono
 ENV WINE_HOME=/usr/bin/wine
 
-#------------------mePro Analysis------------------#
-
-# to access DMS
+#                          ----- Download Meta-proteomics workflow -----
+# to access DMS (PNNL-internal)
 COPY freetds.conf /etc/freetds/freetds.conf
 COPY odbc.ini /etc/odbc.ini
 COPY odbcinst.ini /etc/odbcinst.ini
 
-# copy entire analysis into the image.
-#RUN wget -P /app/ https://stash.pnnl.gov/scm/omcs/nmdc-proteomics-workflow.git \
-COPY ./nmdc-proteomics-workflow /app/nmdc-proteomics-workflow
+RUN cd /app/ \
+    && git clone https://stash.pnnl.gov/scm/omcs/nmdc-proteomics-workflow.git
 
+#                          ----- Miniconda3 :: Meta-proteomics workflow virtual environment :: Start -----
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV PATH /opt/conda/bin:$PATH
 RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
@@ -135,7 +201,7 @@ RUN apt-get install -y curl grep sed dpkg && \
     apt-get clean
 
 ENTRYPOINT [ "/usr/bin/tini", "--" ]
-
+#                          ----- Miniconda3 :: Meta-proteomics workflow virtual environment :: END -----
 
 RUN conda create --name proteomics_env python=3.7
 SHELL ["conda", "run", "-n", "proteomics_env", "/bin/bash", "-c"]
