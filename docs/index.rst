@@ -1,4 +1,4 @@
-Metaproteomic Workflow
+Metaproteomic Workflow (v1.0.0)
 ==============================
 
 Summary
