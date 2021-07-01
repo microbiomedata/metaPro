@@ -3,10 +3,10 @@ import hashlib
 import fnmatch
 import json
 import pandas as pd
-from datetime import datetime, timezone
+from datetime import datetime
 from pymongo import MongoClient
 import csv
-from utility.utils import timeit
+# from utility.utils import timeit
 '''
 TODO: planning to split this class calling instances of this class from 
       different components of pipeline.(only Definations will live here!)
@@ -17,6 +17,7 @@ TODO: planning to split this class calling instances of this class from
 STORAGE="/Volumes/MSSHARE/Anubhav/storage"
 STUDY= "stegen"
 RESULT_LOC= os.path.join(STORAGE,"results/set_of_Dataset_IDs", STUDY)
+
 
 xlsx_file = os.path.join(STORAGE, "data/mappings", "stegen_sample.xlsx")
 ROOT_LOC = "/Users/anub229/PycharmProjects/nmdc-proteomics-workflow/benchmark/metadata"
@@ -45,7 +46,6 @@ class GenMetadata:
         self.new=[]
         self.data_object_file=[]
         self.quant_bucket=[]
-        self.iso_date_with_microseconds=None
 
     def write_to_json_file(self, filenames):
         '''
@@ -118,19 +118,15 @@ class GenMetadata:
         '''
         Start and end time of running the pipeline.
         '''
-        datetime_now = datetime.now(tz=timezone.utc)
-        self.iso_date_with_microseconds = datetime_now.strftime('%Y-%m-%dT%H:%M:%S.%fZ%z')
-        return self.iso_date_with_microseconds
+        return datetime.today().strftime('%Y-%m-%d')
 
     def gen_id(self, nersc_seq_id ):
         '''
         - Generate unique ID foreach dataset in the _activity.json
         '''
-        txt = "{}\n{}\n{}\n{}\n".format( str(self.dataset_id),
+        txt = "{}\n{}\n{}\n".format( str(self.dataset_id),
                                      str(self.genome_directory),
-                                     str(nersc_seq_id),
-                                     self.iso_date_with_microseconds
-                                    )
+                                     str(nersc_seq_id))
         return 'nmdc:{}'.format(hashlib.md5(txt.encode('utf-8')).hexdigest())
 
     def prepare_quant_activity_object(self, file):
@@ -173,7 +169,7 @@ class GenMetadata:
             data_object['description'] = description
             data_object['file_size_bytes'] =os.stat(file_path).st_size
             data_object['type'] =TYPE
-            data_object['url']= "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/"+ self.dataset_id +'_'+ self.genome_directory+'_'+file_name
+            data_object['url']= "https://nmdcdemo.emsl.pnnl.gov/proteomics/"+ self.dataset_id +'_'+ self.genome_directory+'_'+file_name
             self.data_object_file.append(data_object)
             return file_id
         else:
@@ -192,7 +188,6 @@ class GenMetadata:
         '''
         has_output=[]
         # add MSGFjobs_MASIC_resultant
-        # TODO: Remove temporary Sams_results dependency
         has_output.append(self.prepare_file_data_object_(   os.path.join(RESULT_LOC, self.dataset_id, "MSGFjobs_MASIC_resultant.tsv"),
                                                             'MSGFjobs_MASIC_resultant.tsv',
                                                             "Aggregation of analysis tools{MSGFplus, MASIC} results"
@@ -264,16 +259,15 @@ class GenMetadata:
             to   : _emsl_analysis_data_objects.json."id"
 
         '''
-        self.gettime()
         self.activity["id"] = self.gen_id(nersc_seq_id)
         self.activity["name"]= ":".join(["Metaproteome",self.dataset_id, self.genome_directory])
         self.activity["was_informed_by"]= ":".join(["emsl", self.dataset_id])
-        self.activity["started_at_time"]= self.iso_date_with_microseconds
-        self.gettime()
-        self.activity["ended_at_time"]= self.iso_date_with_microseconds
+        self.activity["started_at_time"]= self.gettime()
+        self.activity["ended_at_time"]= self.gettime()
         self.activity["type"]=PIPELINE_TYPE
         self.activity["execution_resource"]=EXECUTION_RESOURCE
         self.activity["git_url"]=GIT_URL
+
         self.create_has_input()
         self.create_has_output()
 
@@ -293,14 +287,14 @@ class GenMetadata:
             print(self.activity)
             print('*'*50)
             print(self.data_object_file)
-            self.activity_coll.insert_one(self.activity)
-            self.data_obj_coll.insert_one(self.data_object)
-            self.activity.clear()
-            self.data_object.clear()
+            # self.activity_coll.insert_one(self.activity)
+            # self.data_obj_coll.insert_one(self.data_object)
+            # self.activity.clear()
+            # self.data_object.clear()
         else:
             print("genome_directory:{} can't be empty/missing!".format(self.genome_directory))
 
-    @timeit
+    # @timeit
     def start(self):
         '''
         Beging parsing EMSL-JGI mapper file.
@@ -313,21 +307,20 @@ class GenMetadata:
 if __name__ == "__main__":
 
     meta_file= GenMetadata()
-    db_name= "mp_metadata"
-    coll_names= ["{}_MetaProteomicAnalysis_activity".format(STUDY),
-                 "{}_emsl_analysis_data_objects".format(STUDY)]
-    #setup the cursors
-    meta_file.make_connection(db_name, coll_names)
+    # db_name= "mp_metadata"
+    # coll_names= ["{}_MetaProteomicAnalysis_activity".format(STUDY),
+    #              "{}_emsl_analysis_data_objects".format(STUDY)]
+    # #setup the cursors
+    # meta_file.make_connection(db_name, coll_names)
 
     meta_file.start()
 
     # database to json dump
-    activity= os.path.join(ROOT_LOC , STUDY+'_MetaProteomicAnalysis_activity.json')
-    data_obj= os.path.join(ROOT_LOC , STUDY+'_emsl_analysis_data_objects.json')
-    meta_file.write_to_json_file([activity, data_obj])
-    print(meta_file.new)
-
-    # Pipeline uses this file to process datasets.
+    # activity= os.path.join(ROOT_LOC , STUDY+'_MetaProteomicAnalysis_activity.json')
+    # data_obj= os.path.join(ROOT_LOC , STUDY+'_emsl_analysis_data_objects.json')
+    # meta_file.write_to_json_file([activity, data_obj])
+    # print(meta_file.new)
+    # # Pipeline uses this file to process datasets.
     # emsl_to_jgi_file= os.path.join(DATA_LOC, "emsl_to_jgi.json")
     # if not os.path.exists(emsl_to_jgi_file):
     #     with open(emsl_to_jgi_file , 'w' ) as fptr:

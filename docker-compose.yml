@@ -1,0 +1,70 @@
+version: '3.7'
+services:
+
+  analysis-job:
+    build:
+      context: ./
+      dockerfile: ./docker/analysisJobDockerfile
+    networks:
+      - default
+    ports:
+      - 8085:8082
+    volumes:
+      - shared-data:/app/storage
+      - log-data:/app/log
+    environment:
+      STAGE: dev
+    env_file:
+      - ./conf.env
+    command: tail -f /dev/null
+
+
+  download-dms-data:
+    build:
+      context: ./
+      dockerfile: ./docker/dmsDataDownloadDockerfile
+    networks:
+      - default
+    ports:
+      - 8083:8082
+    volumes:
+      - shared-data:/app/storage
+      - log-data:/app/log
+    environment:
+      STAGE: dev
+    env_file:
+      - ./conf.env
+    tty: true
+
+
+  post-processing:
+    build:
+      context: ./
+      dockerfile: ./docker/postProcessingDockerfile
+    networks:
+      - default
+    ports:
+      - 8084:8082
+    volumes:
+      - shared-data:/usr/src/app/storage
+      - log-data:/usr/src/app/log
+    environment:
+      STAGE: dev
+    env_file:
+      - ./conf.env
+    tty: true
+
+
+volumes:
+  shared-data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./storage #/mnt/anubhav_NMDC_proposal/storage
+  log-data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./

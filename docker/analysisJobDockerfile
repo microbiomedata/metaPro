@@ -1,26 +1,29 @@
-# --------------------------disclaimer---------------------------------------------------------------------------
-#This material was prepared as an account of work sponsored by an agency of the
-#United States Government.  Neither the United States Government nor the United
-#States Department of Energy, nor Battelle, nor any of their employees, nor any
-#jurisdiction or organization that has cooperated in the development of these
-#materials, makes any warranty, express or implied, or assumes any legal
-#liability or responsibility for the accuracy, completeness, or usefulness or
-#any information, apparatus, product, software, or process disclosed, or
-#represents that its use would not infringe privately owned rights.
+# -----------------------------------------------------------------------------------------------------------------
+#BSD 2-Clause License
 #
-#Reference herein to any specific commercial product, process, or service by
-#trade name, trademark, manufacturer, or otherwise does not necessarily
-#constitute or imply its endorsement, recommendation, or favoring by the United
-#States Government or any agency thereof, or Battelle Memorial Institute. The
-#views and opinions of authors expressed herein do not necessarily state or
-#reflect those of the United States Government or any agency thereof.
+#Copyright (c) [year], [fullname]
+#All rights reserved.
 #
-#                 PACIFIC NORTHWEST NATIONAL LABORATORY
-#                              operated by
-#                                BATTELLE
-#                                for the
-#                   UNITED STATES DEPARTMENT OF ENERGY
-#                    under Contract DE-AC05-76RL01830
+#Redistribution and use in source and binary forms, with or without
+#modification, are permitted provided that the following conditions are met:
+#
+#1. Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+#
+#2. Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
+#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+#AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+#IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+#DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+#FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+#DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+#SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+#CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+#OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+#OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------------------------------------------
 # -------------------------------------THANKS & CREDITS to:-------------------------------------------------------
 
@@ -67,7 +70,7 @@ LABEL tags="Proteomics,MassSpectrometry"
 #                          ----- ProteoWizard :: msconvert :: Start -----
 # .NET 4+ on Wine 64-bit with base image Ubuntu-16.04
 # pwiz MSconvert :: Download Windows 64-bit tar.bz2 [ http://proteowizard.sourceforge.net/download.html ]
-ADD pwiz-bin-windows-*.tar.bz2 /wineprefix64/drive_c/pwiz
+ADD ./docker/pwiz-bin-windows-*.tar.bz2 /wineprefix64/drive_c/pwiz
 ENV CONTAINER_GITHUB=https://github.com/ProteoWizard/container
 
 ENV WINEDEBUG -all
@@ -104,27 +107,39 @@ CMD ["wine64_anyuser", "msconvert" ]
 ## If you need a proxy during build, don't put it into the Dockerfile itself:
 ## docker build --build-arg http_proxy=http://proxy.example.com:3128/  -t repo/image:version .
 
-ADD mywine /usr/bin/
+ADD ./docker/mywine /usr/bin/
 RUN chmod ugo+rx /usr/bin/mywine
 #                          ----- ProteoWizard :: msconvert :: End -----
 
-#                          ----- Java8 [ MSGFPlus ]-----
+# Install necessary tools
 RUN apt-get update \
-    && apt-get -y install gcc \
-    && apt-get -y install -y git \
-    && apt-get -y install openjdk-8-jre \
-    && apt-get -y install tzdata \
-    && apt-get -y install unixodbc unixodbc-dev freetds-dev freetds-bin tdsodbc \
+    && apt-get install --no-install-recommends --yes gcc \
+                                                    git \
+                                                    openjdk-8-jre \
+                                                    tzdata \
+                                                    unixodbc \
+                                                    unixodbc-dev \
+                                                    freetds-dev \
+                                                    freetds-bin \
+                                                    tdsodbc \
+                                                    software-properties-common \
+                                                    apt-transport-https \
+                                                    curl \
+                                                    unzip \
+                                                    rake \
+                                                    python \
+                                                    sudo \
+                                                    libcurl3 \
     && apt-get clean
 
 #                          ----- mono [ MASIC :: MzidToTsvConverter :: PeptideHitResultsProcessor ] -----
 # install mono
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update \
-    && apt install software-properties-common -y
+#RUN apt-get update \
+#    && apt install software-properties-common -y
 RUN add-apt-repository ppa:git-core/ppa -y
-RUN apt-get update \
-    && apt-get install -y apt-transport-https curl unzip rake python sudo libcurl3
+#RUN apt-get update \
+#    && apt-get install -y apt-transport-https curl unzip rake python sudo libcurl3
 RUN curl -s -o packages-microsoft-prod.deb https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb \
     && sudo dpkg -i packages-microsoft-prod.deb
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF \
@@ -167,44 +182,38 @@ RUN wget -P /app/phrp/ https://github.com/PNNL-Comp-Mass-Spec/PHRP/releases/down
     && cp /app/sqlite/bin/2013/Release/bin/libSQLite.Interop.so /app/phrp/ \
     && chmod -x /app/phrp/libSQLite.Interop.so
 
+# ProteinDigestionSimulator layer
+RUN wget -P /app/ProteinDigestionSimulator/ https://github.com/PNNL-Comp-Mass-Spec/Protein-Digestion-Simulator/releases/download/v2.3.7494/ProteinDigestionSimulator_Program.zip \
+    && cd /app/ProteinDigestionSimulator/ \
+    && unzip ProteinDigestionSimulator_Program.zip \
+    && rm ProteinDigestionSimulator_Program.zip
+
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
 ENV MONO_HOME=/usr/bin/mono
 ENV WINE_HOME=/usr/bin/wine
 
-#                          ----- Download Meta-proteomics workflow -----
-# to access DMS (PNNL-internal)
-COPY freetds.conf /etc/freetds/freetds.conf
-COPY odbc.ini /etc/odbc.ini
-COPY odbcinst.ini /etc/odbcinst.ini
+# add python3.8 support.
+RUN sudo add-apt-repository ppa:deadsnakes/ppa -y
+RUN sudo apt-get update
+RUN sudo apt install python3.8 python3.8-distutils -y
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+RUN python3.8 get-pip.py
+RUN pip3.8 install six
 
-RUN cd /app/ \
-    && git clone https://stash.pnnl.gov/scm/omcs/nmdc-proteomics-workflow.git
+# copy project
+COPY ./src /app/nmdc-proteomics-workflow/
+COPY ./utility /app/nmdc-proteomics-workflow/
+COPY ./setup.py /app/nmdc-proteomics-workflow/
 
-#                          ----- Miniconda3 :: Meta-proteomics workflow virtual environment :: Start -----
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-ENV PATH /opt/conda/bin:$PATH
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
-    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
-    rm ~/miniconda.sh && \
-    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc
-
-RUN apt-get install -y curl grep sed dpkg && \
-    TINI_VERSION=`curl https://github.com/krallin/tini/releases/latest | grep -o "/v.*\"" | sed 's:^..\(.*\).$:\1:'` && \
-    curl -L "https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini_${TINI_VERSION}.deb" > tini.deb && \
-    dpkg -i tini.deb && \
-    rm tini.deb && \
-    apt-get clean
-
-ENTRYPOINT [ "/usr/bin/tini", "--" ]
-#                          ----- Miniconda3 :: Meta-proteomics workflow virtual environment :: END -----
-
-RUN conda create --name proteomics_env python=3.7
-SHELL ["conda", "run", "-n", "proteomics_env", "/bin/bash", "-c"]
-RUN pip install pymssql pandas requests bs4 seaborn openpyxl
-RUN echo "conda activate proteomics_env" >> ~/.bashrc
 RUN cd /app/nmdc-proteomics-workflow/ \
-    && pip install -e .
+    && pip3.8 install -e .
 
+#clean unnecessary packages
+RUN  apt-get -y remove  curl \
+                        git \
+                        unzip \
+                        libcurl3 \
+     &&  apt-get -y autoremove && apt-get clean
 WORKDIR /app
+
+

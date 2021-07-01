@@ -1,0 +1,23 @@
+# pull official base image
+FROM python:3.6-stretch
+
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# install dependencies
+RUN pip install --upgrade pip
+RUN export LDFLAGS="-L/usr/local/opt/openssl/lib"
+
+# copy project
+COPY ./src /app/nmdc-proteomics-workflow/
+COPY ./utility /app/nmdc-proteomics-workflow/
+COPY ./setup.py /app/nmdc-proteomics-workflow/
+
+RUN cd /app/nmdc-proteomics-workflow/ \
+    && pip install -e .
+
+RUN pip install openpyxl xlsxwriter xlrd gffpandas pandas
+
+# set work directory
+WORKDIR /app
