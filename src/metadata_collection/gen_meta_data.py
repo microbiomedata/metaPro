@@ -5,8 +5,13 @@ import json
 import pandas as pd
 from datetime import datetime
 from pymongo import MongoClient
+from bson import json_util
 import csv
-# from utility.utils import timeit
+
+import json
+from bson import ObjectId
+
+
 '''
 TODO: planning to split this class calling instances of this class from 
       different components of pipeline.(only Definations will live here!)
@@ -14,17 +19,14 @@ TODO: planning to split this class calling instances of this class from
 '''
 
 
-STORAGE="/Volumes/MSSHARE/Anubhav/storage"
+STORAGE="/Volumes/storage/"
 STUDY= "stegen"
-RESULT_LOC= os.path.join(STORAGE,"results/set_of_Dataset_IDs", STUDY)
-
-
-xlsx_file = os.path.join(STORAGE, "data/mappings", "stegen_sample.xlsx")
-ROOT_LOC = "/Users/anub229/PycharmProjects/nmdc-proteomics-workflow/benchmark/metadata"
-# FASTA_LOC= os.path.join(STORAGE,"fasta", STUDY)
-# FASTA_LOC= os.path.join(STORAGE,"fastas/Stegen_IMG_annotations/1781_100336/")
-FASTA_LOC= os.path.join(STORAGE,"fastas/test_new/")
-CONTAMINANT_FILE= os.path.join(STORAGE,"fastas/Tryp_Pig_Bov.fasta")
+RESULT_LOC= os.path.join(STORAGE,"results", STUDY)
+RESULT_PICK_LOC =os.path.join('/Volumes/Anubhav/storage/',"results/set_of_Dataset_IDs/", STUDY)
+xlsx_file = os.path.join('/Volumes/Anubhav/storage/data/mappings', "EMSL48473_JGI1781_Stegen_DatasetToMetagenomeMapping_2021-01-25.xlsx")
+ROOT_LOC = "./benchmark/metadata"
+FASTA_LOC= '/Volumes/Anubhav/storage/fastas/stegen_copy/Stegen_IMG_annotations'
+CONTAMINANT_FILE= os.path.join('/Volumes/Anubhav/storage/',"fastas/Tryp_Pig_Bov.fasta")
 
 PIPELINE_TYPE= "nmdc:MetaProteomicAnalysis"
 EXECUTION_RESOURCE = "EMSL"
@@ -37,15 +39,17 @@ class GenMetadata:
     '''
     def __init__(self):
 
+        self.annotation_file_name=None
         self.dataset_id=None,
         self.genome_directory=None
         self.activity={}
+        self.data_object = {}
         self.uri = 'mongodb://localhost:27017/'
         self.activity_coll= None
         self.data_obj_coll= None
         self.new=[]
-        self.data_object_file=[]
         self.quant_bucket=[]
+
 
     def write_to_json_file(self, filenames):
         '''
@@ -53,24 +57,27 @@ class GenMetadata:
         :param filenames:
         :return:
         '''
-        with open(filenames[0], 'w') as fptr1 ,\
-            open(filenames[1], 'w') as fptr2:
+        activity_count = self.activity_coll.count()
+        data_obj_count = self.activity_coll.count()
+        print(f"_MetaProteomicAnalysis_activity count: {activity_count} \n _emsl_analysis_data_objects count: {data_obj_count}")
+
+        with open(filenames[0], 'w') as fptr1 , open(filenames[1], 'w') as fptr2:
+
             fptr1.write('[\n')
-            fptr2.write('[\n')
-            activity_count= self.activity_coll.count()
-            data_obj_count= self.activity_coll.count()
-            for index, (doc1, doc2) in enumerate(zip(self.activity_coll.find(),self.data_obj_coll.find()) ):
+            for doc1 in self.activity_coll.find():
                 doc1["id"] = doc1.pop("_id")
-                doc2["id"] = doc2.pop("_id")
-                fptr1.write(json.dumps(doc1, indent=4))
-                fptr2.write(json.dumps(doc2, indent=4))
-                if index != activity_count-1: # skip for last document.
-                    fptr1.write(",\n")
-                    fptr2.write(',\n')
+                fptr1.write( json.dumps(doc1, default=str, indent=4) )
+                fptr1.write(",\n")
             fptr1.write('\n]')
+
+            fptr2.write('[\n')
+            for doc2 in self.data_obj_coll.find():
+                doc2["id"] = doc2.pop("_id")
+                fptr2.write( json.dumps(doc2, default=str, indent=4))
+                fptr2.write(',\n')
             fptr2.write('\n]')
 
-        print("Finished parsing {}=={}".format(activity_count,data_obj_count))
+
 
     def make_connection(self, db_name, coll_names):
         '''
@@ -99,20 +106,22 @@ class GenMetadata:
         else:
             return ""
 
-    def grab_fasta_file(self, fasta_file_name):
+    def grab_fasta_file(self):
         '''
         Search for desired fasta file
 
         :return: absolute path to a fasta.
         '''
-
-        for path,subdirs,files in os.walk(FASTA_LOC):
+        fasta_file=''
+        for path,subdirs,files in os.walk( os.path.join(FASTA_LOC, self.genome_directory) ):
             for file in files:
                 # looking for exact match!
-                if fnmatch.fnmatch(file, '.'.join([fasta_file_name,'faa'])):
-                    return os.path.join(path, file)
-                else:
-                    print("{}.faa doesn't exist at {}".format(self.genome_directory, os.path.join(path)))
+                if fnmatch.fnmatch(file, self.annotation_file_name ):
+                    fasta_file= os.path.join(path, file)
+                    return fasta_file
+            if not fasta_file:
+                print("{}.faa doesn't exist at {}".format(self.genome_directory, os.path.join(path)))
+
 
     def gettime(self):
         '''
@@ -134,21 +143,22 @@ class GenMetadata:
         with open(file, encoding='utf-8-sig') as tsvfile:
             tsvreader = csv.reader(tsvfile, delimiter="\t")
             header = next(tsvreader)
-            PeptideSequence = header[1]
-            BestProtein = header[2]
-            # all_proteins=header[9] "FullGeneList" aka "all_proteins"
-            min_QValue = header[11]
-            SpectralCount = header[12]
-            sum_MASICAbundance = header[13]
+            #reading the header names
+            PeptideSequence = header[2]
+            BestProtein = header[3]
+            # all_proteins=header[10] "FullGeneList" aka "all_proteins"
+            # min_QValue = header[12]
+            # SpectralCount = header[13]
+            # sum_MASICAbundance = header[14]
 
             for line in tsvreader:
                 quant_dict = {}
-                quant_dict[PeptideSequence] = line[1]
-                quant_dict[BestProtein] = 'nmdc:' + line[2].replace(" ", "")
-                quant_dict["all_proteins"] = ['nmdc:' + protein.replace(" ", "") for protein in line[9].split(',')]
-                quant_dict[min_QValue] = line[11]
-                quant_dict[SpectralCount] = line[12]
-                quant_dict[sum_MASICAbundance] = line[13]
+                quant_dict[PeptideSequence] = line[2]
+                quant_dict[BestProtein] = 'nmdc:' + line[3].replace(" ", "")
+                quant_dict["all_proteins"] = ['nmdc:' + protein.replace(" ", "") for protein in line[10].split(',')]
+                quant_dict['min_QValue'] = line[12]
+                quant_dict['SpectralCount'] = line[13]
+                quant_dict['sum_MASICAbundance'] = line[14]
                 self.quant_bucket.append(quant_dict)
 
 
@@ -163,14 +173,16 @@ class GenMetadata:
         if checksum:
             file_id = 'nmdc:'+ checksum
             print("{} : {}".format(checksum, file_name))
-            data_object={}
-            data_object['id']= file_id
-            data_object['name'] = self.dataset_id+'_'+self.genome_directory+'_'+file_name
-            data_object['description'] = description
-            data_object['file_size_bytes'] =os.stat(file_path).st_size
-            data_object['type'] =TYPE
-            data_object['url']= "https://nmdcdemo.emsl.pnnl.gov/proteomics/"+ self.dataset_id +'_'+ self.genome_directory+'_'+file_name
-            self.data_object_file.append(data_object)
+
+            self.data_object['id']= file_id
+            self.data_object['name'] = file_name
+            self.data_object['description'] = description
+            self.data_object['file_size_bytes'] =os.stat(file_path).st_size
+            self.data_object['type'] =TYPE
+            self.data_object['url']= "https://nmdcdemo.emsl.pnnl.gov/proteomics/"+file_name
+            # self.data_object_file.append(self.data_object)
+            self.data_obj_coll.insert_one(self.data_object)
+            self.data_object.clear()
             return file_id
         else:
             print("Found HASH empty for {}".format(file_name))
@@ -188,23 +200,27 @@ class GenMetadata:
         '''
         has_output=[]
         # add MSGFjobs_MASIC_resultant
-        has_output.append(self.prepare_file_data_object_(   os.path.join(RESULT_LOC, self.dataset_id, "MSGFjobs_MASIC_resultant.tsv"),
-                                                            'MSGFjobs_MASIC_resultant.tsv',
+        resultant_filename= f"{self.dataset_id}_{self.genome_directory}_MSGFjobs_MASIC_resultant.tsv"
+        has_output.append(self.prepare_file_data_object_(   os.path.join(RESULT_PICK_LOC, self.dataset_id, resultant_filename),
+                                                            resultant_filename,
                                                             "Aggregation of analysis tools{MSGFplus, MASIC} results"
                                                             ))
         # add Peptide_Report
-        has_output.append(self.prepare_file_data_object_(   os.path.join(RESULT_LOC, self.dataset_id, "Sams_results/500088_1781_100336_Peptide_Report.tsv"),
-                                                            'Peptide_Report.tsv',
+        peptide_report_filename=f"{self.dataset_id}_{self.genome_directory}_Peptide_Report.tsv"
+        has_output.append(self.prepare_file_data_object_(   os.path.join(RESULT_LOC, self.dataset_id, peptide_report_filename),
+                                                            peptide_report_filename,
                                                             "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR"
                                                             ))
         # add Protein_Report
-        has_output.append(self.prepare_file_data_object_(   os.path.join(RESULT_LOC, self.dataset_id, "Sams_results/500088_1781_100336_Protein_Report.tsv"),
-                                                            'Protein_Report.tsv',
+        protein_report_filename =f"{self.dataset_id}_{self.genome_directory}_Protein_Report.tsv"
+        has_output.append(self.prepare_file_data_object_(   os.path.join(RESULT_LOC, self.dataset_id, protein_report_filename),
+                                                            protein_report_filename,
                                                             "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR"
                                                             ))
         # add QC_Metrics
-        has_output.append(self.prepare_file_data_object_(   os.path.join(RESULT_LOC, self.dataset_id, "Sams_results/500088_1781_100336_QC_metrics.tsv"),
-                                                            'QC_Metrics.tsv',
+        qc_metric_filename =f"{self.dataset_id}_{self.genome_directory}_QC_Metrics.tsv"
+        has_output.append(self.prepare_file_data_object_(   os.path.join(RESULT_LOC, self.dataset_id, qc_metric_filename),
+                                                            qc_metric_filename,
                                                             "Overall statistics from MSGF+ search results filtered to ~5% FDR"
                                                             ))
 
@@ -225,7 +241,7 @@ class GenMetadata:
         ptr_to_raw_in_bills_json=  "emsl:output_"+self.dataset_id
         has_input.append(ptr_to_raw_in_bills_json)
         # add JGI fasta
-        fasta = self.grab_fasta_file("Ga0482236_proteins")
+        fasta = self.grab_fasta_file()
         emsl_to_jgi[self.dataset_id]= fasta
         self.new.append(emsl_to_jgi)
         emsl_to_jgi.clear()
@@ -247,7 +263,7 @@ class GenMetadata:
 
         # add Quantifications
 
-        self.prepare_quant_activity_object( os.path.join(RESULT_LOC,self.dataset_id,  "Sams_results/500088_1781_100336_Peptide_Report.tsv"))
+        self.prepare_quant_activity_object( os.path.join(RESULT_LOC,self.dataset_id,  f"{self.dataset_id}_{self.genome_directory}_Peptide_Report.tsv"))
         self.activity["has_peptide_quantifications"] = self.quant_bucket
         pass
 
@@ -271,30 +287,33 @@ class GenMetadata:
         self.create_has_input()
         self.create_has_output()
 
+        # add to database!
+        self.activity_coll.insert_one(self.activity)
+        self.activity.clear()
+        pass
+
 
     def on_each_row(self, row):
         '''
         Runs foreach dataset and make entry in a collection.
-
         '''
+
         self.dataset_id = str(row['Dataset ID'])
         nersc_seq_id = str(row['sequencing_project_extid'])
         self.genome_directory = str(row['genome directory'])
+        self.annotation_file_name= str(row['annotation file name'])
+
         print(">>Prepare activity for datasetID:{} genome_directory:{}".format(self.dataset_id,self.genome_directory))
+
         if not self.genome_directory in ( "", "missing"):
             # skip empty or missing genome_directory
             self.prepare_activity(nersc_seq_id)
-            print(self.activity)
+            # print(self.activity)
             print('*'*50)
-            print(self.data_object_file)
-            # self.activity_coll.insert_one(self.activity)
-            # self.data_obj_coll.insert_one(self.data_object)
-            # self.activity.clear()
-            # self.data_object.clear()
+            # print(self.data_object_file)
         else:
             print("genome_directory:{} can't be empty/missing!".format(self.genome_directory))
 
-    # @timeit
     def start(self):
         '''
         Beging parsing EMSL-JGI mapper file.
@@ -307,23 +326,20 @@ class GenMetadata:
 if __name__ == "__main__":
 
     meta_file= GenMetadata()
-    # db_name= "mp_metadata"
-    # coll_names= ["{}_MetaProteomicAnalysis_activity".format(STUDY),
-    #              "{}_emsl_analysis_data_objects".format(STUDY)]
-    # #setup the cursors
-    # meta_file.make_connection(db_name, coll_names)
+    db_name= "mp_metadata"
+    coll_names= [f"{STUDY}_MetaProteomicAnalysis_activity",
+                 f"{STUDY}_emsl_analysis_data_objects"]
 
-    meta_file.start()
+    # setup the cursors
+    meta_file.make_connection(db_name, coll_names)
 
-    # database to json dump
-    # activity= os.path.join(ROOT_LOC , STUDY+'_MetaProteomicAnalysis_activity.json')
-    # data_obj= os.path.join(ROOT_LOC , STUDY+'_emsl_analysis_data_objects.json')
-    # meta_file.write_to_json_file([activity, data_obj])
-    # print(meta_file.new)
-    # # Pipeline uses this file to process datasets.
-    # emsl_to_jgi_file= os.path.join(DATA_LOC, "emsl_to_jgi.json")
-    # if not os.path.exists(emsl_to_jgi_file):
-    #     with open(emsl_to_jgi_file , 'w' ) as fptr:
-    #         fptr.write(json.dumps(meta_file.new, indent=2))
+    # 1. Make collection and populate them.
+    # meta_file.start()
 
-    print("Hit the bottom!")
+    # 2. dump collections in json files
+    if not os.path.exists(ROOT_LOC):
+        os.makedirs(ROOT_LOC)
+    activity = os.path.join(ROOT_LOC, STUDY + '_MetaProteomicAnalysis_activity.json')
+    data_obj = os.path.join(ROOT_LOC, STUDY + '_emsl_analysis_data_objects.json')
+    meta_file.write_to_json_file([activity, data_obj])
+

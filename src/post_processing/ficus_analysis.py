@@ -1,8 +1,8 @@
 import pandas as pd
 
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_rows', None)
-pd.set_option('display.max_colwidth', -1)
+# pd.set_option('display.max_columns', None)
+# pd.set_option('display.max_rows', None)
+# pd.set_option('display.max_colwidth', -1)
 pd.set_option("precision", 20)
 import warnings
 
@@ -20,8 +20,10 @@ class DataOutputtable:
     Created based of data manipulation performed using MSSQLsever queries by
     Purvine, Samuel O <Samuel.Purvine@pnnl.gov>
     '''
-    def __init__(self, gff_file, resultant_file, fasta_txt_file, qvalue_threshold ):
+    def __init__(self, gff_file, resultant_file, fasta_txt_file, qvalue_threshold, dataset_id, genome_name ):
 
+        self.dataset_id=dataset_id
+        self.genome_name=genome_name
         self.QValue_threshold= qvalue_threshold
         # read annotation file.
         self.gff_file = gff_file
@@ -551,7 +553,16 @@ class DataOutputtable:
 
     def gen_reports(self):
         self.peptide_report = self.create_peptide_report()
-        peptide_report =self.create_protein_report()
+        protein_report =self.create_protein_report()
         qc_metrics_report = self.create_qc_metrics()
-        return self.peptide_report, peptide_report, qc_metrics_report
+
+        write_dir= os.path.join('/mnt/anubhav_NMDC_proposal/storage/results', 'stegen', self.dataset_id)
+
+        if not os.path.exists(write_dir):
+            os.makedirs(write_dir)
+
+        self.peptide_report.to_csv(f"{write_dir}/{self.dataset_id}_{self.genome_name}_Peptide_Report.tsv", sep="\t")
+        protein_report.to_csv(f"{write_dir}/{self.dataset_id}_{self.genome_name}_Protein_Report.tsv", sep="\t")
+        qc_metrics_report.to_csv(f"{write_dir}/{self.dataset_id}_{self.genome_name}_QC_metrics.tsv", sep="\t")
+        # return self.peptide_report, protein_report, qc_metrics_report
 

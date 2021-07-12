@@ -1,0 +1,75 @@
+########## GIT AVOID TRACKING THESE FILES ##########
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+db.sqlite3
+migrations/
+media/
+settings.py
+
+# C extensions
+*.so
+
+# Avoiding Mac OS X .DS_Store files
+.DS_Store
+data/.DS_Store
+results/.DS_Store
+src/access_methods/.DS_Store
+src/access_methods/direct_access/.DS_Store
+utility/.DS_Store
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Sphinx documentation
+devDocs/build/
+
+data/
+results/
+.ipynb_checkpoints
+
+
+# pwiz installer
+pwiz-bin-windows-*.tar.bz2
+sqlite-netFx-full-source-*.zip
+
+# Editor backup files
+*~
+
+# sourcetrail generated files
+.nmdc_vis.srctrlbm
+.nmdc_vis.srctrldb
+.nmdc_vis.srctrlprj
+.nmdc.srctrlbm
+.nmdc.srctrldb
+.nmdc.srctrlprj
+.nmdc_review.srctrlbm
+.nmdc_review.srctrldb
+.nmdc_review.srctrlprj
+
+# Meta_data output file
+../workflow.json
+../output.json
+
+.idea/
+venv/
+
+docker/pwiz-bin-windows-x86_64-vc141-release-3_0_20216_eb1e58e2c.tar.bz2
+storage/data/set_of_Dataset_IDs/stegen/500088/Froze_Core_2015_N2_50_60_34_QE_26May16_Pippin_16-03-39.raw
+
+src/metadata_collection/benchmark/*
