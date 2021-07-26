@@ -1,10 +1,10 @@
 version: '3.7'
 services:
-
   analysis-job:
     build:
       context: ./
       dockerfile: ./docker/analysisJobDockerfile
+    container_name: analysisJobContainer
     networks:
       - default
     ports:
@@ -18,11 +18,11 @@ services:
       - ./conf.env
     command: tail -f /dev/null
 
-
   download-dms-data:
     build:
       context: ./
       dockerfile: ./docker/dmsDataDownloadDockerfile
+    container_name: downloadDMSDataContainer
     networks:
       - default
     ports:
@@ -36,24 +36,37 @@ services:
       - ./conf.env
     tty: true
 
-
   post-processing:
     build:
       context: ./
       dockerfile: ./docker/postProcessingDockerfile
+    container_name: postProcessingContainer
     networks:
       - default
     ports:
       - 8084:8082
     volumes:
-      - shared-data:/usr/src/app/storage
-      - log-data:/usr/src/app/log
+      - shared-data:/app/storage
+      - log-data:/app/log
     environment:
       STAGE: dev
+
     env_file:
       - ./conf.env
     tty: true
 
+  mongo-db:
+    restart: always
+    image: mongo:latest
+    container_name: mongoDbContainer
+    networks:
+      - default
+    volumes:
+      - db-volume:/data/db
+    ports:
+      - 27017:27017
+    env_file:
+      - ./conf.env
 
 volumes:
   shared-data:
@@ -61,10 +74,11 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: ./storage #/mnt/anubhav_NMDC_proposal/storage
+      device: /mnt/anubhav_msshare/storage #./storage #  # /mnt/anubhav_NMDC_proposal/storage
   log-data:
     driver: local
     driver_opts:
       o: bind
       type: none
-      device: ./
+      device: ./logs
+  db-volume:

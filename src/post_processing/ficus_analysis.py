@@ -1,9 +1,4 @@
 import pandas as pd
-
-# pd.set_option('display.max_columns', None)
-# pd.set_option('display.max_rows', None)
-# pd.set_option('display.max_colwidth', -1)
-pd.set_option("precision", 20)
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -11,9 +6,9 @@ warnings.filterwarnings('ignore')
 import gffpandas.gffpandas as gffpd
 import os
 
-__author__ =  "Anubhav <anubhav@pnnl.gov>"
+pd.set_option("precision", 20)
 
-DATA_LOG='data_output_table_new'
+__author__ =  "Anubhav <anubhav@pnnl.gov>"
 
 class DataOutputtable:
     '''
@@ -24,7 +19,7 @@ class DataOutputtable:
 
         self.dataset_id=dataset_id
         self.genome_name=genome_name
-        self.QValue_threshold= qvalue_threshold
+        self.QValue_threshold= float(qvalue_threshold)
         # read annotation file.
         self.gff_file = gff_file
         self.annotation = gffpd.read_gff3(gff_file)
@@ -42,7 +37,7 @@ class DataOutputtable:
 
         # building log excel files:
         file_loc = os.path.join(*self.gff_file.split('/')[:-1])
-        self.writer = pd.ExcelWriter(f"/{file_loc}/{DATA_LOG}.xlsx", engine='xlsxwriter')
+        # self.writer = pd.ExcelWriter(f"/{file_loc}/{DATA_LOG}.xlsx", engine='xlsxwriter')
 
         # log dataframe.
         indexes = [f'query_{idx}' for idx in range(23)]
@@ -55,8 +50,7 @@ class DataOutputtable:
         self.log_df.at[sheet_name, '#row'] = df.shape[0]
         self.log_df.at[sheet_name, '#col'] = df.shape[1]
         self.log_df.at[sheet_name, 'col_name'] = ', '.join(df.columns.tolist())
-
-        df.to_excel(self.writer, sheet_name=sheet_name, index=False)
+        # df.to_excel(self.writer, sheet_name=sheet_name, index=False)
 
     def FiltPeps(self, df):
         qvalue_filtered_df = df[df['QValue'] <= self.QValue_threshold]
@@ -552,17 +546,27 @@ class DataOutputtable:
         return qc_metrics_df
 
     def gen_reports(self):
+        print(f"ReportGen start {self.dataset_id} : {self.genome_name}")
         self.peptide_report = self.create_peptide_report()
         protein_report =self.create_protein_report()
         qc_metrics_report = self.create_qc_metrics()
+        print(f"ReportGen end {self.dataset_id} : {self.genome_name}")
 
-        write_dir= os.path.join('/mnt/anubhav_NMDC_proposal/storage/results', 'stegen', self.dataset_id)
+        # rename to adhere nmdc.schema.json
+        cols_to_rename = {
+            'PeptideSequence' : 'peptide_sequence',
+            'BestProtein': 'best_protein',
+            'FullGeneList': 'all_proteins',
+            'min(QValue)': 'min_q_value',
+            'SpectralCount': 'peptide_spectral_count',
+            'sum(MASICAbundance)':  'peptide_sum_masic_abundance' }
+        self.peptide_report.rename(columns=cols_to_rename, inplace=True)
 
-        if not os.path.exists(write_dir):
-            os.makedirs(write_dir)
-
-        self.peptide_report.to_csv(f"{write_dir}/{self.dataset_id}_{self.genome_name}_Peptide_Report.tsv", sep="\t")
-        protein_report.to_csv(f"{write_dir}/{self.dataset_id}_{self.genome_name}_Protein_Report.tsv", sep="\t")
-        qc_metrics_report.to_csv(f"{write_dir}/{self.dataset_id}_{self.genome_name}_QC_metrics.tsv", sep="\t")
-        # return self.peptide_report, protein_report, qc_metrics_report
+        # rename to adhere nmdc.schema.json
+        cols_to_rename = {
+            'BestProtein': 'best_protein',
+            'FullGeneList': 'all_proteins',
+            'sum(MASICAbundance)':  'peptide_sum_masic_abundance' }
+        protein_report.rename(columns=cols_to_rename, inplace=True)
+        return self.peptide_report, protein_report, qc_metrics_report
 

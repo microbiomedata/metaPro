@@ -1,11 +1,14 @@
 import os
 import json
 import pandas as pd
-# from utility.utils import stats
+import fnmatch
+from utility.utils import logger
 
 """
-Program reads in mapper file and creates "emsl_to_jgi_file".
-Pipeline uses this file to process datasets.
+- Program reads in mapper file provided by user and
+- create emsl_to_jgi.json having file location information of user's input data.
+
+Note: workflow uses this file to process datasets.
 
 Choose:
     "STUDY" name such as "stegen" / "hess" / "blanchard"
@@ -14,31 +17,84 @@ Choose:
         "EMSL48099_JGI1393_Hess_DatasetToMetagenomeMapping.xlsx"
         "EMSL48473_JGI1781_Stegen_DatasetToMetagenomeMapping.xlsx"
         "EMSL49483_JGI503125_Blanchard_DatasetToMetagenomeMapping.xlsx"
-    and
-    "STORAGE" location such as a share drive:
-        "/mnt/anub229_msshare/anubhav/storage/"
-        "/Volumes/MSSHARE/Anubhav/storage/"
 """
 
-def prepare_activity( dataset_id, genome_directory, emsl_to_jgi):
+def search_file_loc( dataset_id, dataset_name, genome_directory, nersc_seq_id, emsl_to_jgi):
+    '''
 
-    # faa_file_loc = os.path.join(FASTA_LOC, STUDY, genome_directory, "annotation")
-    faa_file_loc = os.path.join(FASTA_LOC, "stegen01152021")
-    faa_file_loc = faa_file_loc + '/' + '.'.join([genome_directory, 'faa'])
-    if dataset_id not in emsl_to_jgi:
-        emsl_to_jgi[dataset_id] = [faa_file_loc]
-    else:
-        emsl_to_jgi[dataset_id].append(faa_file_loc)
+    :param dataset_id:
+    :param dataset_name:
+    :param genome_directory:
+    :param emsl_to_jgi:
+    :return:
+    '''
+
+    data_loc=  os.path.join('storage', 'data')
+    fasta_loc = os.path.join('storage', 'fastas')
+
+    raw_file_loc=''
+    # search for raw_file.
+    for path, subdirs, files in os.walk(data_loc):
+        for name in files:
+            if fnmatch.fnmatch(name, f'{dataset_name}.raw'):
+                # set path
+                raw_file_loc = os.path.join(path, name)
+    if not raw_file_loc:
+        logger.info('rawfile not present', extra={'dataset_id':f'{dataset_id}',
+                                                  'dataset_name':f'{dataset_name}'})
+
+    faa_file_loc=''
+    gff_file_loc=''
+    # search for fasta file.
+    for root, dirnames, filenames in os.walk(fasta_loc):
+        if genome_directory in os.path.basename(root):
+            for filename in filenames:
+                if fnmatch.fnmatch(filename, '*_functional_annotation.gff'):
+                    # set path
+                    gff_file_loc = os.path.join(root, filename)
+                if fnmatch.fnmatch(filename, '*_proteins.faa'):
+                    # set path
+                    faa_file_loc = os.path.join(root, filename)
+    if not gff_file_loc:
+        logger.info('gff_file not present', extra={'genome_directory':f'{genome_directory}'})
+    if not faa_file_loc:
+        logger.info('faa_file not present', extra={'genome_directory': f'{genome_directory}'})
+    # add to dict.
+    if raw_file_loc and faa_file_loc and gff_file_loc:
+        if dataset_id not in emsl_to_jgi:
+            emsl_to_jgi[dataset_id] = {
+                "raw_file_loc": raw_file_loc,
+                "dataset_name": dataset_name,
+                'genome_directory': { f"{genome_directory}": { "nersc_seq_id": nersc_seq_id,
+                                                               "faa_file_loc": faa_file_loc,
+                                                               "gff_file_loc": gff_file_loc
+                                                               }
+                                      }
+            }
+        else:
+            emsl_to_jgi[dataset_id]['genome_directory'][genome_directory]= { "nersc_seq_id": nersc_seq_id,
+                                                               "faa_file_loc": faa_file_loc,
+                                                               "gff_file_loc": gff_file_loc
+                                                               }
 
 def on_each_row( row, emsl_to_jgi):
+    '''
+
+    :param row:
+    :param emsl_to_jgi:
+    :return:
+    '''
     dataset_id = str(row['Dataset ID'])
+    dataset_name = str(row['Dataset Name'])
     genome_directory = str(row['genome directory'])
-    # print(">>Prepare activity for datasetID:{} genome_directory:{}".format(dataset_id, genome_directory))
+    nersc_seq_id = str(row['sequencing_project_extid'])
+
     if not genome_directory in ("", "missing"):
         # skip empty or missing genome_directory
-        prepare_activity(dataset_id, genome_directory, emsl_to_jgi)
+        search_file_loc(dataset_id, dataset_name, genome_directory, nersc_seq_id, emsl_to_jgi)
     else:
-        print("genome_directory:{} can't be empty/missing!".format(genome_directory))
+        logger.info('Workflow will not run for missing faa files from JGI', extra={'dataset_id': f'{dataset_id}',
+                                                                                   'genome_directory':f'{genome_directory}'})
 
 def create_mapper(xlsx_file):
     '''
@@ -46,26 +102,42 @@ def create_mapper(xlsx_file):
     :return:
     '''
     emsl_to_jgi={}
-
     df_xlsx = pd.read_excel(xlsx_file)
-    print("Parsing file {} :: {}".format(xlsx_file, df_xlsx.shape))
     df_xlsx.apply(lambda row: on_each_row(row, emsl_to_jgi), axis=1)
+    return emsl_to_jgi
 
-    print(emsl_to_jgi)
-    emsl_to_jgi_file = os.path.join(DATA_LOC, "emsl_to_jgi_Stegen01212021.json")
-    if not os.path.exists(emsl_to_jgi_file):
-        with open(emsl_to_jgi_file, 'w') as fptr:
-            fptr.write(json.dumps(emsl_to_jgi))
-    print("Look at {}".format(emsl_to_jgi_file))
-    return emsl_to_jgi_file
+def write_to_json(file, object_to_write):
+    '''
 
-STORAGE="/Volumes/MSSHARE/Anubhav/storage/"
-STUDY= "stegen"
-DATA_LOC= os.path.join(STORAGE,"data/set_of_Dataset_IDs", STUDY)
-FASTA_LOC= os.path.join(STORAGE,"fastas")
+    :param file:
+    :param object_to_write:
+    :return:
+    '''
+    with open( file , 'w') as fptr:
+        fptr.write(json.dumps(object_to_write, default=str, indent=4))
+    logger.info('Workflow driver file', extra={'emsl_to_jgi_file': file})
 
 if __name__ == "__main__":
 
-    xlsx_file = os.path.join(STORAGE, "data/mappings", "EMSL48473_JGI1781_Stegen_DatasetToMetagenomeMapping.xlsx")
-    create_mapper(xlsx_file)
+    os.environ['STUDY']= 'stegen'
+    os.environ['MAPPING_FILENAME']= 'EMSL48473_JGI1781_Stegen_DatasetToMetagenomeMapping_2021-01-25.xlsx'
+    #----
+
+    mapper_file=os.path.join('storage','mappings', os.environ.get('MAPPING_FILENAME'))
+    if os.path.isfile(mapper_file):
+        # parse mapping file.
+        mapper = create_mapper(mapper_file)
+        # add contaminant file loc
+        contaminant_file_loc = os.path.join('storage', 'parameters', os.environ.get('CONTAMINANT_FILENAME'))
+        mapper['contaminant_file_loc']= contaminant_file_loc
+        # add study info.
+        mapper['STUDY'] = os.environ['STUDY']
+        # dump it.
+        results_loc= os.path.join('storage', 'results', os.environ.get('STUDY'))
+        if not os.path.exists(results_loc):
+            os.makedirs(results_loc)
+        write_to_json( os.path.join(results_loc,'emsl_to_jgi.json'), mapper )
+    else:
+        logger.info('Mapping file not found.', extra={"MAPPING_FILENAME": os.environ.get('MAPPING_FILENAME')})
+
 

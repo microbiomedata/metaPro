@@ -8,24 +8,36 @@ from inspect import getcallargs, signature
 from collections import OrderedDict, Iterable
 from itertools import *
 import six
+
+
 import logging
+import json_log_formatter
 
-t= time.localtime()
+
+json_handler = logging.FileHandler(filename='./log/{}.log'.format(datetime.utcnow().strftime("%Y_%m_%d-%I_%M_%S_%p")) )
+json_handler.setFormatter(json_log_formatter.JSONFormatter())
+# json_handler.setFormatter(json_log_formatter.VerboseJSONFormatter())
+logger = logging.getLogger('metaPro')
+logger.addHandler(json_handler)
+logger.setLevel(logging.INFO)
+
+logger.info('NMDC-PNNL Meta-Proteomics workflow run record.')
 
 
-logger = logging.getLogger('Mepro_processing')
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s :: %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S',
-                    filename='./log/log_{}.log'.format(datetime.now().strftime("%Y_%m_%d-%I_%M_%S_%p") ),
-                    filemode='a')
+def stats(method):
+    def checked(*args, **kw):
+        ts = time.time()
+        tracemalloc.start()
+        result = method(*args, **kw)
+        current, peak = tracemalloc.get_traced_memory()
+        te = time.time()
+        logger.info(method.__name__, extra={'runtime': time.strftime("%H:%M:%S", time.gmtime((te - ts))),
+                                            'current_m/m(MB)': current / 10 ** 6,
+                                            'peak_m/m(MB)'   : peak / 10 ** 6})
+        tracemalloc.stop()
+        return result
+    return checked
 
-console = logging.StreamHandler()
-console.setLevel(logging.INFO)
-formatter = logging.Formatter(fmt='%(asctime)s :: %(message)s')
-console.setFormatter(formatter)
-logging.getLogger('mepro').addHandler(console)
-logging.info('Start pipeline!')
 
 def timeit(method):
     def timed(*args, **kw):
@@ -122,33 +134,3 @@ def log_to(logger_func):
     return decorator
 
 logdebug = log_to(logging.debug)
-
-# @logdebug
-# def myfunc(a,b,c, *args, **kwargs):
-#     pass
-
-# if __name__ == "__main__":
-#     logging.basicConfig(level=logging.DEBUG)
-#     myfunc(1,2,3,4,5,6,x=7,y=8,z=9,g="blarg", f=lambda x: x+2)
-
-
-def stats(method):
-    def checked(*args, **kw):
-        ts = time.time()
-        tracemalloc.start()
-        result = method(*args, **kw)
-        current, peak = tracemalloc.get_traced_memory()
-        te = time.time()
-        print("\t\t{} ==> time:{} , current_m/m:{}MB , peak_m/m:{}MB .".format(method.__name__,
-                                                                        time.strftime("%H:%M:%S" , time.gmtime((te - ts))),
-                                                                        current / 10 ** 6,
-                                                                        peak / 10 ** 6
-                                                                        ))
-        logger.info(msg= "\t\t{} took {}.".format(method.__name__,
-                                               time.strftime("%H:%M:%S" , time.gmtime((te - ts))),
-                                               current / 10 ** 6,
-                                               peak / 10 ** 6
-                                               ))
-        tracemalloc.stop()
-        return result
-    return checked

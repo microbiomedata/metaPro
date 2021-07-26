@@ -1,4 +1,4 @@
-Metaproteomic Workflow (v1.0.0)
+Metaproteomic Workflow (v2.0.0)
 ==============================
 
 Summary
@@ -24,18 +24,12 @@ Third party software
     | pwiz-bin-windows           | x86_64-vc141-release-3_0_20149_b73158966 |
     | MASIC                      | v3.0.7235                                |
     | sqlite-netFx-full-source   | 1.0.111.0                                |
-    | Conda                      | (3-clause BSD)                           |
-    |                            |                                          |
-
 
 Workflow Availability
 ---------------------
 
 The workflow is available in GitHub:
 https://github.com/microbiomedata/metaPro
-
-The container is available at Docker Hub (microbiomedata/mepro):
-https://hub.docker.com/r/microbiomedata/mepro
 
 Inputs
 ~~~~~~~~
@@ -49,19 +43,7 @@ Outputs
 
 .. code-block:: bash
 
-        .
-        ├── Data/
-        ├── FDR_table.csv
-        ├── Plots/
-        ├── dataset_job_map.csv
-        ├── peak_area_crosstab_by_dataset_id.csv
-        ├── protein_peptide_map.csv
-        ├── specID_table.csv
-        └── spectra_count_crosstab_by_dataset_id.csv
-
 2. Processing single FICUS dataset.
-
-- metadatafile, [Example](https://jsonblob.com/400362ef-c70c-11ea-bf3d-05dfba40675b)
 
 .. code-block:: bash
 
@@ -124,6 +106,7 @@ Version History
 ---------------
 
 - 1.0.0
+- 2.0.0
 
 Point of contact
 ----------------

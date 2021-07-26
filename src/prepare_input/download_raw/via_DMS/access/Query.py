@@ -1,4 +1,3 @@
-
 class Query:
     '''
     SQL queries to access data from DMS

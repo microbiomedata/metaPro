@@ -48,12 +48,7 @@ class MASICmerger(MSGFplusMerger):
         masic_DF= masic_DF.rename(columns={'FragScanNumber': 'Scan'})
 
         self.MSGFjobs_MASIC_resultant = pd.merge(MSGF_df, masic_DF, how='left', left_on=['Scan'], right_on=['Scan'])
-        self.write_to_disk(self.MSGFjobs_MASIC_resultant , self.parent_folder, "MSGFjobs_MASIC_resultant.tsv" )
-        logger.info("---MERGE:3---M+Mmerge :: 'MSGFjobs_MASIC_resultant' shape: {}".format(self.MSGFjobs_MASIC_resultant.shape))
-        # print(masic_DF.shape, masic_DF.columns.values)
-        # print('`' * 5)
-        # print(self.MSGFjobs_MASIC_resultant.shape, self.MSGFjobs_MASIC_resultant.columns.values)
-        # print('`' * 5)
+        # self.write_to_disk(self.MSGFjobs_MASIC_resultant , self.parent_folder, "MSGFjobs_MASIC_resultant.tsv" )
 
 
 

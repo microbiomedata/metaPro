@@ -124,19 +124,13 @@ RUN apt-get update \
                                                     curl \
                                                     unzip \
                                                     rake \
-                                                    python \
                                                     sudo \
                                                     libcurl3 \
     && apt-get clean
-
 #                          ----- mono [ MASIC :: MzidToTsvConverter :: PeptideHitResultsProcessor ] -----
 # install mono
 ENV DEBIAN_FRONTEND noninteractive
-#RUN apt-get update \
-#    && apt install software-properties-common -y
 RUN add-apt-repository ppa:git-core/ppa -y
-#RUN apt-get update \
-#    && apt-get install -y apt-transport-https curl unzip rake python sudo libcurl3
 RUN curl -s -o packages-microsoft-prod.deb https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb \
     && sudo dpkg -i packages-microsoft-prod.deb
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF \
@@ -163,7 +157,7 @@ RUN wget -P /app/mzid2tsv/ https://github.com/PNNL-Comp-Mass-Spec/Mzid-To-Tsv-Co
     && rm MzidToTsvConverter.zip
 
 # install System.Data.SQLite
-# donwload from https://system.data.sqlite.org/downloads/1.0.111.0/sqlite-netFx-full-source-1.0.111.0.zip
+# download from https://system.data.sqlite.org/downloads/1.0.111.0/sqlite-netFx-full-source-1.0.111.0.zip
 RUN wget -P /app/sqlite/ https://github.com/AshleyLab/motrpac-proteomics-pnnl-prototype/raw/master/step06/sqlite-netFx-full-source-1.0.111.0.zip \
     && cd /app/sqlite/ \
     && unzip sqlite-netFx-full-source-1.0.111.0.zip \
@@ -195,14 +189,15 @@ RUN sudo apt-get update
 RUN sudo apt install python3.8 python3.8-distutils -y
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 RUN python3.8 get-pip.py
-RUN pip3.8 install six
+# add dependencies
+RUN pip3.8 install six pandas openpyxl JSON-log-formatter
 
 # copy project
-COPY ./src /app/nmdc-proteomics-workflow/
-COPY ./utility /app/nmdc-proteomics-workflow/
-COPY ./setup.py /app/nmdc-proteomics-workflow/
+COPY ./src /app/metaPro/src
+COPY ./utility /app/metaPro/utility
+COPY ./setup.py /app/metaPro/setup.py
 
-RUN cd /app/nmdc-proteomics-workflow/ \
+RUN cd /app/metaPro/ \
     && pip3.8 install -e .
 
 #clean unnecessary packages

@@ -1,5 +1,4 @@
-# pull official base image
-FROM python:3.6-stretch
+FROM python:3.8-buster
 
 # set work directory
 WORKDIR /app
@@ -8,26 +7,24 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# install dependencies
 RUN pip install --upgrade pip
 RUN export LDFLAGS="-L/usr/local/opt/openssl/lib"
 
 # copy project
-COPY ./src /app/nmdc-proteomics-workflow/
-COPY ./utility /app/nmdc-proteomics-workflow/
-COPY ./setup.py /app/nmdc-proteomics-workflow/
+COPY ./src /app/metaPro/src
+COPY ./utility /app/metaPro/utility
+COPY ./setup.py /app/metaPro/setup.py
+
 
 # to access DMS (PNNL-internal)
 COPY ./docker/freetds.conf /etc/freetds/freetds.conf
 COPY ./docker/odbc.ini /etc/odbc.ini
 COPY ./docker/odbcinst.ini /etc/odbcinst.ini
 
-#RUN cd /app/ \
-#    && git clone https://stash.pnnl.gov/scm/omcs/nmdc-proteomics-workflow.git
+# add dependencies
+RUN pip install pymssql pandas requests bs4 seaborn openpyxl biopython
 
-RUN pip install pymssql pandas requests bs4 seaborn openpyxl
-
-RUN cd /app/nmdc-proteomics-workflow/ \
+RUN cd /app/metaPro/ \
     && pip install -e .
 
 
