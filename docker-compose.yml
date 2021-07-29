@@ -74,7 +74,7 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: /mnt/anubhav_msshare/storage #./storage #  # /mnt/anubhav_NMDC_proposal/storage
+      device: ./storage
   log-data:
     driver: local
     driver_opts:

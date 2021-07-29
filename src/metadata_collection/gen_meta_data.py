@@ -8,6 +8,7 @@ from pymongo import MongoClient
 import csv
 import json
 import fastjsonschema
+import copy
 
 class GenMetadata:
     '''
@@ -55,6 +56,14 @@ class GenMetadata:
             except fastjsonschema.JsonSchemaException as err:
                 return False
             return True
+
+    def register_job_in_emsl_to_jgi(self, job_key, job_value, emsl_to_jgi_copy):
+
+        locations = emsl_to_jgi_copy[self.dataset_id]['genome_directory'][self.genome_directory]
+        if job_key not in locations:
+            locations[job_key] = job_value
+        else:
+            print(f'{job_key} already present in {self.genome_directory}')
 
     def write_to_json_file(self, filenames):
         '''
@@ -139,7 +148,7 @@ class GenMetadata:
 
 
     def prepare_PeptideQuantification(self):
-        print('>>',self.peptide_report)
+        # print('>>',self.peptide_report)
         with open(self.peptide_report, encoding='utf-8-sig') as tsvfile:
             tsvreader = csv.reader(tsvfile, delimiter="\t")
             header = next(tsvreader)
@@ -165,7 +174,7 @@ class GenMetadata:
         checksum= self.get_md5(file_path)
         if checksum:
             file_id = 'nmdc:'+ checksum
-            print("{} : {}".format(checksum, os.path.basename(file_name) ) )
+            # print("{} : {}".format(checksum, os.path.basename(file_name) ) )
 
             self.data_object['id']= file_id
             self.data_object['name'] = file_name
@@ -213,7 +222,7 @@ class GenMetadata:
         self.activity["has_output"] = has_output
         pass
 
-    def create_has_input(self):
+    def create_has_input(self, emsl_to_jgi_copy):
         '''
         "has_input":
               - created for .RAW file pointer to Bill's JSON
@@ -233,6 +242,8 @@ class GenMetadata:
         fasta_checksum= self.get_md5(self.fasta_file)
         if fasta_checksum:
             # print("{} : {}".format(fasta_checksum, self.fasta_file))
+            # add to metadata.
+            self.register_job_in_emsl_to_jgi('faa_file_checksum', fasta_checksum, emsl_to_jgi_copy)
             has_input.append('nmdc:' + fasta_checksum)
             self.activity["has_input"] = has_input
         else:
@@ -247,14 +258,11 @@ class GenMetadata:
             print("Found HASH empty for {}".format(self.fasta_file))
 
         # add Quantifications
-
         self.prepare_PeptideQuantification()
         self.activity["has_peptide_quantifications"] = self.quant_bucket
         pass
 
-
-
-    def prepare_activity(self, nersc_seq_id):
+    def prepare_activity(self, nersc_seq_id, emsl_to_jgi_copy):
         '''
         - Makes entry in _MetaProteomicAnalysis_activity.json
         - Foreach dataset, a pointer:
@@ -273,7 +281,7 @@ class GenMetadata:
         self.activity["execution_resource"]= os.environ.get('EXECUTION_RESOURCE')
         self.activity["git_url"]= os.environ.get('GIT_URL')
 
-        self.create_has_input()
+        self.create_has_input(emsl_to_jgi_copy)
         self.create_has_output()
 
         # add to database!
@@ -298,17 +306,7 @@ class GenMetadata:
         self.started_at_time= started_at_time
         self.ended_at_time= ended_at_time
 
-def register_in_emsl_to_jgi(dataset_id, genome_directory, key, value, emsl_to_jgi_copy):
-    locations = emsl_to_jgi_copy[dataset_id]['genome_directory'][genome_directory]
-    if key not in locations:
-        locations[key] = value
-    else:
-        print(f'{key} already present in {genome_directory}')
-
-
 if __name__ == '__main__':
-
-    os.environ['MONGO_URI'] = "mongodb://devtest:devtestpass@mongoDbContainer:27017/"
 
     result_loc = os.path.join('storage', 'results', os.environ.get('STUDY'))
     mapper_file= os.path.join(result_loc, 'emsl_to_jgi.json' )
@@ -320,15 +318,14 @@ if __name__ == '__main__':
     meta_file.make_connection( os.environ.get('MONGO_INITDB_DATABASE'), coll_names)
 
     # 1. Make collection and populate them.
-
     with open(mapper_file, 'r+') as json_file:
         emsl_to_jgi = json.load(json_file)
-        emsl_to_jgi_copy = emsl_to_jgi
+        emsl_to_jgi_copy = copy.deepcopy(emsl_to_jgi)
         contaminant_file= emsl_to_jgi['contaminant_file_loc']
         # run for each dataset
         for dataset_id, values in emsl_to_jgi.items():
             if dataset_id not in ['contaminant_file_loc', 'analysis_activity_file_loc', 'data_objects_file_loc',
-                                  'STUDY']:
+                                  'STUDY','tools_used']:
                 # dataset search against a fasta file
                 for genome_directory, locations in values['genome_directory'].items():
                     print(f"Prepare activity {dataset_id} : {genome_directory}")
@@ -338,16 +335,15 @@ if __name__ == '__main__':
                                        locations['protein_report_loc'], locations['qc_metric_report_loc'], locations['started_at_time'],locations['ended_at_time'])
 
                     nersc_seq_id = locations['nersc_seq_id']
-                    meta_file.prepare_activity(nersc_seq_id )
-
+                    meta_file.prepare_activity(nersc_seq_id ,emsl_to_jgi_copy)
                     # 2. dump collections in json files
                     activity_file = os.path.join(result_loc, f"{os.environ.get('STUDY')}_MetaProteomicAnalysis_activity.json")
-                    register_in_emsl_to_jgi(dataset_id, genome_directory, 'analysis_activity_file_loc', activity_file,
-                                            emsl_to_jgi_copy)
                     data_obj_file = os.path.join(result_loc, f"{os.environ.get('STUDY')}_emsl_analysis_data_objects.json")
-                    register_in_emsl_to_jgi(dataset_id, genome_directory, 'data_objects_file_loc', data_obj_file,
-                                            emsl_to_jgi_copy)
                     meta_file.write_to_json_file([activity_file, data_obj_file])
+                    # add meta-data information.
+                    emsl_to_jgi_copy['analysis_activity_file_loc'] = activity_file
+                    emsl_to_jgi_copy['data_objects_file_loc'] = data_obj_file
+                    emsl_to_jgi_copy['contaminant_file_checksum'] = meta_file.get_md5(contaminant_file)
 
         json_file.seek(0)  # move back to BOF.
         json_file.truncate()

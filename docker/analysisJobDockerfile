@@ -1,19 +1,19 @@
-# --------------------------disclaimer---------------------------------------------------------------------------
-#This material was prepared as an account of work sponsored by an agency of the
-#United States Government.  Neither the United States Government nor the United
-#States Department of Energy, nor Battelle, nor any of their employees, nor any
-#jurisdiction or organization that has cooperated in the development of these
-#materials, makes any warranty, express or implied, or assumes any legal
-#liability or responsibility for the accuracy, completeness, or usefulness or
-#any information, apparatus, product, software, or process disclosed, or
-#represents that its use would not infringe privately owned rights.
+#       -------------------------------Disclaimer-----------------------------------------------------------------------
+#       This material was prepared as an account of work sponsored by an agency of the
+#       United States Government.  Neither the United States Government nor the United
+#       States Department of Energy, nor Battelle, nor any of their employees, nor any
+#       jurisdiction or organization that has cooperated in the development of these
+#       materials, makes any warranty, express or implied, or assumes any legal
+#       liability or responsibility for the accuracy, completeness, or usefulness or
+#       any information, apparatus, product, software, or process disclosed, or
+#       represents that its use would not infringe privately owned rights.
 #
-#Reference herein to any specific commercial product, process, or service by
-#trade name, trademark, manufacturer, or otherwise does not necessarily
-#constitute or imply its endorsement, recommendation, or favoring by the United
-#States Government or any agency thereof, or Battelle Memorial Institute. The
-#views and opinions of authors expressed herein do not necessarily state or
-#reflect those of the United States Government or any agency thereof.
+#       Reference herein to any specific commercial product, process, or service by
+#       trade name, trademark, manufacturer, or otherwise does not necessarily
+#       constitute or imply its endorsement, recommendation, or favoring by the United
+#       States Government or any agency thereof, or Battelle Memorial Institute. The
+#       views and opinions of authors expressed herein do not necessarily state or
+#       reflect those of the United States Government or any agency thereof.
 #
 #                 PACIFIC NORTHWEST NATIONAL LABORATORY
 #                              operated by
@@ -21,27 +21,28 @@
 #                                for the
 #                   UNITED STATES DEPARTMENT OF ENERGY
 #                    under Contract DE-AC05-76RL01830
-# ----------------------------------------------------------------------------------------------------------------
-# -------------------------------------THANKS & CREDITS to:-------------------------------------------------------
+#       ----------------------------------------------------------------------------------------------------------
 
-#1. Proteowizard [Chambers, Matthew <matt.chambers42@gmail.com>]
-#    ProteoWizard_description   :: "Convert MS RAW vendor files to open formats or analyze them with Skyline."
-#    ProteoWizard_website       :: https://github.com/ProteoWizard/container
-#    ProteoWizard_license       :: https://github.com/ProteoWizard/container
-#    - NOTE: Use base Wine at least until the .NET version needs to be upgraded!
-#               https://hub.docker.com/r/chambm/wine-dotnet
-#               [ built of:https://github.com/ProteoWizard/container/blob/master/dotnet/Dockerfile]
+#       -------------------------------THANKS & CREDITS to:-------------------------------------------------------
+#        1. Proteowizard [Chambers, Matthew <matt.chambers42@gmail.com>]
+#                    ProteoWizard_description   :: "Convert MS RAW vendor files to open formats or analyze them with Skyline."
+#                    ProteoWizard_website       :: https://github.com/ProteoWizard/container
+#                    ProteoWizard_license       :: https://github.com/ProteoWizard/container
+#                    - NOTE: Use base Wine at least until the .NET version needs to be upgraded!
+#                            https://hub.docker.com/r/chambm/wine-dotnet
+#                            [ built of:https://github.com/ProteoWizard/container/blob/master/dotnet/Dockerfile]
 #
-#2. MoTrPAC  [David Jimenez-Morales <david.jimenez-morales@stanford.edu>]
-#   https://github.com/MoTrPAC/motrpac-proteomics-pnnl-prototype
-#3. Mono 5.16.0.220 [pgermishuys <https://hub.docker.com/u/pgermishuys>]
-#   https://hub.docker.com/r/eventstore/eventstore-ci-ubuntu-16.04/dockerfile
-#4. PNNL-Comp-Mass-Spec [Monroe, Matthew E <Matthew.Monroe@pnnl.gov>]
-#   MSGFPlus                  :: https://github.com/MSGFPlus/msgfplus/releases/
-#   MzidToTsvConverter        :: https://github.com/PNNL-Comp-Mass-Spec/Mzid-To-Tsv-Converter/releases/
-#   PeptideHitResultsProcessor:: https://github.com/PNNL-Comp-Mass-Spec/PHRP/releases/
-#   MASIC                     :: https://github.com/PNNL-Comp-Mass-Spec/MASIC/releases/
-# ---------------------------------------------------------------------------------------------------------------
+#        2. MoTrPAC  [David Jimenez-Morales <david.jimenez-morales@stanford.edu>]
+#                    https://github.com/MoTrPAC/motrpac-proteomics-pnnl-prototype
+#        3. Mono 5.16.0.220 [pgermishuys <https://hub.docker.com/u/pgermishuys>]
+#                    https://hub.docker.com/r/eventstore/eventstore-ci-ubuntu-16.04/dockerfile
+#        4. PNNL-Comp-Mass-Spec [Monroe, Matthew E <Matthew.Monroe@pnnl.gov>]
+#                    MSGFPlus                  :: https://github.com/MSGFPlus/msgfplus/releases/
+#                    MzidToTsvConverter        :: https://github.com/PNNL-Comp-Mass-Spec/Mzid-To-Tsv-Converter/releases/
+#                    PeptideHitResultsProcessor:: https://github.com/PNNL-Comp-Mass-Spec/PHRP/releases/
+#                    MASIC                     :: https://github.com/PNNL-Comp-Mass-Spec/MASIC/releases/
+#                    ProteinDigestionSimulator :: https://github.com/PNNL-Comp-Mass-Spec/Protein-Digestion-Simulator/releases/
+#       --------------------------------------------------------------------------------------------------------
 FROM chambm/wine-dotnet:4.7-x64
 
 ARG BUILD_DATE
@@ -67,6 +68,9 @@ LABEL tags="Proteomics,MassSpectrometry"
 #                          ----- ProteoWizard :: msconvert :: Start -----
 # .NET 4+ on Wine 64-bit with base image Ubuntu-16.04
 # pwiz MSconvert :: Download Windows 64-bit tar.bz2 [ http://proteowizard.sourceforge.net/download.html ]
+ENV PROTEOWIZARD_RELEASE_VERSION="3.0.21193 (ccb3e0136)"
+ENV PROTEOWIZARD_DOWNLOADED_FILE="pwiz-bin-windows-x86_64-vc141-release-3_0_21193_ccb3e0136.tar.bz2"
+
 ADD ./docker/pwiz-bin-windows-*.tar.bz2 /wineprefix64/drive_c/pwiz
 ENV CONTAINER_GITHUB=https://github.com/ProteoWizard/container
 
@@ -100,7 +104,6 @@ RUN groupadd -r galaxy -g 1450 && \
 RUN mkdir /data
 WORKDIR /data
 CMD ["wine64_anyuser", "msconvert" ]
-
 ## If you need a proxy during build, don't put it into the Dockerfile itself:
 ## docker build --build-arg http_proxy=http://proxy.example.com:3128/  -t repo/image:version .
 
@@ -139,19 +142,23 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E03280
 RUN apt-get install -y mono-devel=5.16.0.220-0xamarin4+ubuntu1604b1 msbuild=1:16.0+xamarinxplat.2018.09.26.17.53-0xamarin3+ubuntu1604b1 dotnet-sdk-2.1
 
 # MASIC layer
-RUN wget -P /app/masic/ https://github.com/PNNL-Comp-Mass-Spec/MASIC/releases/download/v3.2.7465/MASIC_Console_Program.zip \
+ENV MASIC_VERSION=v3.2.7762
+RUN wget -P /app/masic/ https://github.com/PNNL-Comp-Mass-Spec/MASIC/releases/download/$MASIC_VERSION/MASIC_Console_Program.zip \
     && cd /app/masic/ \
     && unzip MASIC_Console_Program.zip \
     && rm MASIC_Console_Program.zip
 
 # MSGFPlus layer
-RUN wget -P /app/msgf https://github.com/MSGFPlus/msgfplus/releases/download/v2020.08.05/MSGFPlus_v20200805.zip \
+ENV MSGFPLUS_VERSION=v2021.03.22
+ENV MSGFPLUS_ZIP_VERSION=v20210322
+RUN wget -P /app/msgf https://github.com/MSGFPlus/msgfplus/releases/download/$MSGFPLUS_VERSION/MSGFPlus_$MSGFPLUS_ZIP_VERSION.zip \
     && cd /app/msgf/ \
-    && unzip MSGFPlus_v20200805.zip \
-    && rm MSGFPlus_v20200805.zip
+    && unzip MSGFPlus_$MSGFPLUS_ZIP_VERSION.zip \
+    && rm MSGFPlus_$MSGFPLUS_ZIP_VERSION.zip
 
 # MzidToTSVConverter layer
-RUN wget -P /app/mzid2tsv/ https://github.com/PNNL-Comp-Mass-Spec/Mzid-To-Tsv-Converter/releases/download/v1.4.3/MzidToTsvConverter.zip \
+ENV MZID2TSV_VERSION=v1.4.6
+RUN wget -P /app/mzid2tsv/ https://github.com/PNNL-Comp-Mass-Spec/Mzid-To-Tsv-Converter/releases/download/$MZID2TSV_VERSION/MzidToTsvConverter.zip \
     && cd /app/mzid2tsv/ \
     && unzip MzidToTsvConverter.zip \
     && rm MzidToTsvConverter.zip
@@ -166,7 +173,8 @@ RUN wget -P /app/sqlite/ https://github.com/AshleyLab/motrpac-proteomics-pnnl-pr
     && /app/sqlite/Setup/compile-interop-assembly-release.sh
 
 # PeptideHitResultsProcessor layer
-RUN wget -P /app/phrp/ https://github.com/PNNL-Comp-Mass-Spec/PHRP/releases/download/v1.5.7458/PeptideHitResultsProcessor.zip \
+ENV PEPTIDE_HIT_RESULTS_PROCESSOR_VERSION=v3.0.7842
+RUN wget -P /app/phrp/ https://github.com/PNNL-Comp-Mass-Spec/PHRP/releases/download/$PEPTIDE_HIT_RESULTS_PROCESSOR_VERSION/PeptideHitResultsProcessor.zip \
     && cd /app/phrp/ \
     && unzip PeptideHitResultsProcessor*.zip \
     && rm PeptideHitResultsProcessor*.zip \
@@ -174,7 +182,8 @@ RUN wget -P /app/phrp/ https://github.com/PNNL-Comp-Mass-Spec/PHRP/releases/down
     && chmod -x /app/phrp/libSQLite.Interop.so
 
 # ProteinDigestionSimulator layer
-RUN wget -P /app/ProteinDigestionSimulator/ https://github.com/PNNL-Comp-Mass-Spec/Protein-Digestion-Simulator/releases/download/v2.3.7494/ProteinDigestionSimulator_Program.zip \
+ENV PROTEIN_DIGESTION_SIMULATOR_VERSION=v2.3.7794
+RUN wget -P /app/ProteinDigestionSimulator/ https://github.com/PNNL-Comp-Mass-Spec/Protein-Digestion-Simulator/releases/download/$PROTEIN_DIGESTION_SIMULATOR_VERSION/ProteinDigestionSimulator_Program.zip \
     && cd /app/ProteinDigestionSimulator/ \
     && unzip ProteinDigestionSimulator_Program.zip \
     && rm ProteinDigestionSimulator_Program.zip

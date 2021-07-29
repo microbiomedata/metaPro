@@ -16,7 +16,6 @@ import json_log_formatter
 
 json_handler = logging.FileHandler(filename='./log/{}.log'.format(datetime.utcnow().strftime("%Y_%m_%d-%I_%M_%S_%p")) )
 json_handler.setFormatter(json_log_formatter.JSONFormatter())
-# json_handler.setFormatter(json_log_formatter.VerboseJSONFormatter())
 logger = logging.getLogger('metaPro')
 logger.addHandler(json_handler)
 logger.setLevel(logging.INFO)

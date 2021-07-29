@@ -119,10 +119,6 @@ def write_to_json(file, object_to_write):
 
 if __name__ == "__main__":
 
-    os.environ['STUDY']= 'stegen'
-    os.environ['MAPPING_FILENAME']= 'EMSL48473_JGI1781_Stegen_DatasetToMetagenomeMapping_2021-01-25.xlsx'
-    #----
-
     mapper_file=os.path.join('storage','mappings', os.environ.get('MAPPING_FILENAME'))
     if os.path.isfile(mapper_file):
         # parse mapping file.
@@ -131,7 +127,36 @@ if __name__ == "__main__":
         contaminant_file_loc = os.path.join('storage', 'parameters', os.environ.get('CONTAMINANT_FILENAME'))
         mapper['contaminant_file_loc']= contaminant_file_loc
         # add study info.
-        mapper['STUDY'] = os.environ['STUDY']
+        mapper['STUDY'] = os.environ.get('STUDY')
+        # add 3rd party tools information.
+        tools = {
+            'msconvert': {
+                'version': os.environ.get('PROTEOWIZARD_RELEASE_VERSION'),
+                'download_file': os.environ.get('PROTEOWIZARD_DOWNLOADED_FILE'),
+                'download_from': 'http://proteowizard.sourceforge.net/download.html'
+            },
+            'masic': {
+                'version': os.environ.get('MASIC_VERSION'),
+                'download_from': 'https://github.com/PNNL-Comp-Mass-Spec/MASIC/releases'
+            },
+            'MSGFPlus': {
+                'version': os.environ.get('MSGFPLUS_VERSION'),
+                'download_from': 'https://github.com/MSGFPlus/msgfplus/releases'
+            },
+            'MzidToTSVConverter': {
+                'version': os.environ.get('MZID2TSV_VERSION'),
+                'download_from': 'https://github.com/PNNL-Comp-Mass-Spec/Mzid-To-Tsv-Converter/releases'
+            },
+            'PeptideHitResultsProcessor': {
+                'version': os.environ.get('PEPTIDE_HIT_RESULTS_PROCESSOR_VERSION'),
+                'download_from': 'https://github.com/PNNL-Comp-Mass-Spec/PHRP/releases'
+            },
+            'ProteinDigestionSimulator': {
+                'version': os.environ.get('PROTEIN_DIGESTION_SIMULATOR_VERSION'),
+                'download_from': 'https://github.com/PNNL-Comp-Mass-Spec/Protein-Digestion-Simulator/releases'
+            }
+        }
+        mapper['tools_used'] = tools
         # dump it.
         results_loc= os.path.join('storage', 'results', os.environ.get('STUDY'))
         if not os.path.exists(results_loc):

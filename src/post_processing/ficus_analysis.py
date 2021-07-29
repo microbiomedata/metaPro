@@ -258,15 +258,15 @@ class DataOutputtable:
         if not Protein.startswith('Contaminant'):
 
             annotation_str = f'gene_name={Protein}'
-            if Product and (Product is not None) and (Product is not 'nan'):
+            if Product and (Product != None) and (Product != 'nan'):
                 annotation_str = annotation_str + f';product={Product}'
-            if pfam and (pfam is not None) and (pfam is not 'nan'):
+            if pfam and (pfam != None) and (pfam != 'nan'):
                 annotation_str = annotation_str + f';pfam={pfam}'
-            if ko and (ko is not None) and (ko is not 'nan'):
+            if ko and (ko != None) and (ko != 'nan'):
                 annotation_str = annotation_str + f';ko={ko}'
-            if ec_number and (ec_number is not None) and (ec_number is not 'nan'):
+            if ec_number and (ec_number != None) and (ec_number != 'nan'):
                 annotation_str = annotation_str + f';ec_number={ec_number}'
-            if cog and (cog is not None) and (cog is not 'nan'):
+            if cog and (cog != None) and (cog != 'nan'):
                 annotation_str = annotation_str + f';cog={cog}'
         else:
             # the contaminants aren't present in the JGI provided annotation files!
@@ -421,13 +421,13 @@ class DataOutputtable:
         else:
 
             annotation_str = f'gene_name={Protein}' + f';product={Product}'
-            if pfam and (pfam is not None) and (pfam is not 'nan'):
+            if pfam and (pfam != None) and (pfam != 'nan'):
                 annotation_str = annotation_str + f';pfam={pfam}'
-            if ko and (ko is not None) and (ko is not 'nan'):
+            if ko and (ko != None) and (ko != 'nan'):
                 annotation_str = annotation_str + f';ko={ko}'
-            if ec_number and (ec_number is not None) and (ec_number is not 'nan'):
+            if ec_number and (ec_number != None) and (ec_number != 'nan'):
                 annotation_str = annotation_str + f';ec_number={ec_number}'
-            if cog and (cog is not None) and (cog is not 'nan'):
+            if cog and (cog != None) and (cog != 'nan'):
                 annotation_str = annotation_str + f';cog={cog}'
             return annotation_str
 

@@ -15,8 +15,7 @@ settings.py
 .DS_Store
 data/.DS_Store
 results/.DS_Store
-src/access_methods/.DS_Store
-src/access_methods/direct_access/.DS_Store
+src/.DS_Store
 utility/.DS_Store
 
 # Distribution / packaging
@@ -39,14 +38,12 @@ var/
 # Sphinx documentation
 devDocs/build/
 
-data/
-results/
 .ipynb_checkpoints
 
 
 # pwiz installer
-pwiz-bin-windows-*.tar.bz2
-sqlite-netFx-full-source-*.zip
+#pwiz-bin-windows-*.tar.bz2
+#sqlite-netFx-full-source-*.zip
 
 # Editor backup files
 *~
@@ -68,8 +65,9 @@ sqlite-netFx-full-source-*.zip
 
 .idea/
 venv/
-
-docker/pwiz-bin-windows-x86_64-vc141-release-3_0_20216_eb1e58e2c.tar.bz2
-storage/data/set_of_Dataset_IDs/stegen/500088/Froze_Core_2015_N2_50_60_34_QE_26May16_Pippin_16-03-39.raw
+storage/*
+storage/data/*
+storage/results/*
+storage/fastas/*
 
 src/metadata_collection/benchmark/*

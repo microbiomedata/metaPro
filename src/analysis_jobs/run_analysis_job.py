@@ -4,13 +4,14 @@ import json
 from datetime import datetime, timezone
 import time
 import tracemalloc
-
+import copy
 from utility.utils import logger
 
 from src.analysis_jobs.merge_jobs.DatasetsMerger import DatasetsMerger
 
 LOGGED_ANALYSIS_JOB = {}
 ANALYSIS_JOBS_OBJECT = {}
+
 
 def stats(method):
     def collected(*args, **kw):
@@ -51,7 +52,7 @@ class ProcessingTools:
         self.MSGFPLUS_MODEF_PARAM_FILE=parameters['MSGFPLUS_MODEF_PARAM_FILE']
         self.MASS_CORRECTION_PARAM_FILE=parameters['MASS_CORRECTION_PARAM_FILE']
 
-    def register_in_emsl_to_jgi(self, dataset_id, genome_directory, key, value, emsl_to_jgi_copy):
+    def register_job_in_emsl_to_jgi(self, dataset_id, genome_directory, key, value, emsl_to_jgi_copy):
 
         locations= emsl_to_jgi_copy[dataset_id]['genome_directory'][genome_directory]
         if key not in locations:
@@ -298,7 +299,7 @@ class ProcessingTools:
 
         job_name = f'{dataset_id}:{genome_directory}'
         job_object = {'job_name': job_name}
-        self.register_in_emsl_to_jgi(dataset_id, genome_directory, 'job_name', job_name,
+        self.register_job_in_emsl_to_jgi(dataset_id, genome_directory, 'job_name', job_name,
                                      emsl_to_jgi_copy)
         # log dataset_id
         if dataset_id not in LOGGED_ANALYSIS_JOB:
@@ -312,7 +313,7 @@ class ProcessingTools:
             if job['job_name'] == job_name:
                 if 'started_at_time' not in job:
                     job['started_at_time'] = started_at_time
-        self.register_in_emsl_to_jgi(dataset_id, genome_directory, 'started_at_time', started_at_time, emsl_to_jgi_copy)
+        self.register_job_in_emsl_to_jgi(dataset_id, genome_directory, 'started_at_time', started_at_time, emsl_to_jgi_copy)
 
         # run the job
         self.analysis_job(dataset_id, faa_file_loc, raw_file_loc)
@@ -323,14 +324,14 @@ class ProcessingTools:
             if job['job_name'] == job_name:
                 if 'ended_at_time' not in job:
                     job['ended_at_time'] = ended_at_time
-        self.register_in_emsl_to_jgi(dataset_id, genome_directory, 'ended_at_time', ended_at_time, emsl_to_jgi_copy)
+        self.register_job_in_emsl_to_jgi(dataset_id, genome_directory, 'ended_at_time', ended_at_time, emsl_to_jgi_copy)
 
         # log analysis_job object
         for job in LOGGED_ANALYSIS_JOB[dataset_id]:
             if job['job_name'] == job_name:
                 if 'analysis_jobs' not in job:
                     job['analysis_jobs'] = ANALYSIS_JOBS_OBJECT
-        self.register_in_emsl_to_jgi(dataset_id, genome_directory, 'analysis_jobs', ANALYSIS_JOBS_OBJECT, emsl_to_jgi_copy)
+        self.register_job_in_emsl_to_jgi(dataset_id, genome_directory, 'analysis_jobs', ANALYSIS_JOBS_OBJECT, emsl_to_jgi_copy)
         pass
 
     def convert_faa2txt(self,dataset_id, faa_file_loc):
@@ -381,13 +382,13 @@ class ProcessingTools:
 
         with open(self.mappings, 'r+') as json_file:
             emsl_to_jgi= json.load(json_file)
-            emsl_to_jgi_copy=emsl_to_jgi
+            emsl_to_jgi_copy=copy.deepcopy(emsl_to_jgi)
 
             contaminant_file_loc=emsl_to_jgi['contaminant_file_loc']
             # run for each dataset
             for dataset_id, values in emsl_to_jgi.items():
                 if dataset_id not in ['contaminant_file_loc', 'analysis_activity_file_loc', 'data_objects_file_loc',
-                                      'STUDY']:
+                                      'STUDY','tools_used']:
                     raw_file_loc= values['raw_file_loc']
                     self.dataset_name = values['dataset_name']
                     # dataset search against a fasta file
@@ -403,18 +404,19 @@ class ProcessingTools:
 
                         files= [locations['faa_file_loc'] , contaminant_file_loc]
                         contaminated_faa_file_loc= self.contaminate_fasta(files)
-                        self.register_in_emsl_to_jgi(dataset_id, genome_directory, 'contaminated_faa_file_loc', contaminated_faa_file_loc,
+
+                        self.register_job_in_emsl_to_jgi(dataset_id, genome_directory, 'contaminated_faa_file_loc', contaminated_faa_file_loc,
                                                      emsl_to_jgi_copy)
                         # convert .faa to .txt
                         faa_txt_file=self.convert_faa2txt(dataset_id, contaminated_faa_file_loc)
-                        self.register_in_emsl_to_jgi(dataset_id, genome_directory, 'txt_faa_file_loc', faa_txt_file, emsl_to_jgi_copy)
+                        self.register_job_in_emsl_to_jgi(dataset_id, genome_directory, 'txt_faa_file_loc', faa_txt_file, emsl_to_jgi_copy)
 
                         # log & run job
                         self.run_n_log_job(dataset_id, genome_directory, contaminated_faa_file_loc, raw_file_loc, emsl_to_jgi_copy)
 
                         # merge analysis
                         resultant_file= self.merge_analysis_jobs(dataset_id, genome_directory)
-                        self.register_in_emsl_to_jgi(dataset_id, genome_directory, 'resultant_file_loc', resultant_file, emsl_to_jgi_copy)
+                        self.register_job_in_emsl_to_jgi(dataset_id, genome_directory, 'resultant_file_loc', resultant_file, emsl_to_jgi_copy)
 
             # capture the job metadata object
             logger.info('Jobrun', extra=LOGGED_ANALYSIS_JOB)
@@ -434,7 +436,7 @@ if __name__ == '__main__':
         'MASIC_PARAM_FILE': os.path.join( param_file_loc,  os.environ.get('MASIC_PARAM_FILENAME') ),
         'MSGFPLUS_PARAM_FILE': os.path.join( param_file_loc,os.environ.get('MSGFPLUS_PARAM_FILENAME') ),
         'MSGFPLUS_MODEF_PARAM_FILE': ( os.path.join( param_file_loc, os.environ.get('MSGFPLUS_MODEF_PARAM_FILENAME')) ) if os.environ.get('MSGFPLUS_MODEF_PARAM_FILENAME') is not None else '' ,
-        'MASS_CORRECTION_PARAM_FILE': os.path.join( param_file_loc, os.environ.get('MASS_CORRECTION_PARAM_FILENAME') )
+        'MASS_CORRECTION_PARAM_FILE':( os.path.join( param_file_loc, os.environ.get('MASS_CORRECTION_PARAM_FILENAME')) ) if os.environ.get('MSGFPLUS_MODEF_PARAM_FILENAME') is not None else '' ,
         }
 
     # TODO: Log information whether you're running FullyvsPartially tripic mode
