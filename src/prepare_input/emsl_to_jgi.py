@@ -12,7 +12,7 @@ Note: workflow uses this file to process datasets.
 
 Choose:
     "STUDY" name such as "stegen" / "hess" / "blanchard"
-    and 
+    and
     " MAPPER_FILE file: @Sam
         "EMSL48099_JGI1393_Hess_DatasetToMetagenomeMapping.xlsx"
         "EMSL48473_JGI1781_Stegen_DatasetToMetagenomeMapping.xlsx"
@@ -46,15 +46,19 @@ def search_file_loc( dataset_id, dataset_name, genome_directory, nersc_seq_id, e
     faa_file_loc=''
     gff_file_loc=''
     # search for fasta file.
-    for root, dirnames, filenames in os.walk(fasta_loc):
-        if genome_directory in os.path.basename(root):
-            for filename in filenames:
-                if fnmatch.fnmatch(filename, '*_functional_annotation.gff'):
-                    # set path
-                    gff_file_loc = os.path.join(root, filename)
-                if fnmatch.fnmatch(filename, '*_proteins.faa'):
-                    # set path
-                    faa_file_loc = os.path.join(root, filename)
+    for path, subdirs, files in os.walk(fasta_loc):
+        #find genome_directory
+        if genome_directory in os.path.basename(path):
+            # look inside genome_directory
+            for root, dirnames, filenames in os.walk(path):
+                for filename in filenames:
+                    if fnmatch.fnmatch(filename, '*_functional_annotation.gff'):
+                        # set path
+                        gff_file_loc = os.path.join(root, filename)
+                    if fnmatch.fnmatch(filename, '*_proteins.faa'):
+                        # set path
+                        faa_file_loc = os.path.join(root, filename)
+
     if not gff_file_loc:
         logger.info('gff_file not present', extra={'genome_directory':f'{genome_directory}'})
     if not faa_file_loc:
@@ -164,5 +168,3 @@ if __name__ == "__main__":
         write_to_json( os.path.join(results_loc,'emsl_to_jgi.json'), mapper )
     else:
         logger.info('Mapping file not found.', extra={"MAPPING_FILENAME": os.environ.get('MAPPING_FILENAME')})
-
-
