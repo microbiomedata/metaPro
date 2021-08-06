@@ -42,6 +42,14 @@ class InternalAnalysis:
         p = re.compile(r'\.(?P<cleanseq>[A-Z\*@#]+)\.')
         m = p.search(s)
         return m.group('cleanseq')
+    
+    # Find # of missed cleavages from clean peptide
+    def MissedCleavages(s):
+        mc = 0
+        for i in range(len(s)-1):
+            if (s[i]=="K" or s[i]=="R") and (s[i+1]!="P"):
+                mc = mc +1
+        return mc
 
     def process_data(self):
         '''
@@ -133,6 +141,12 @@ def parameter_optimization(dataset_ID):
                          "_forward_peptide_identification.csv")
     data_r = pd.read_csv("Results/Data/" + str(dataset_ID) + \
                          "_reversed_peptide_identification.csv")
+    
+    # Only fully tryptic and maximum of 2 missed cleavages
+    data_f["MissedCleavage"] = data_f["Clean Peptide Sequence"].apply(MissedCleavages)
+    data_r["MissedCleavage"] = data_r["Clean Peptide Sequence"].apply(MissedCleavages)
+    data_f = data_f[(data_f["NTT"]==2)&(data_f["MissedCleavage"]<=2)].copy()
+    data_r = data_r[(data_r["NTT"]==2)&(data_r["MissedCleavage"]<=2)].copy()
 
     # Fit a 1-D data of DelM_PPM and get the peak ppm_shift
     ppm_shift_df = data_f[(data_f["DelM_PPM"] < 10) & (data_f["DelM_PPM"] > -10)].copy()
