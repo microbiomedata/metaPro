@@ -4,14 +4,14 @@ services:
     build:
       context: ./
       dockerfile: ./docker/analysisJobDockerfile
-    container_name: analysisJobContainer
+    container_name: analysisJobContainerProsser
     networks:
       - default
-    ports:
-      - 8085:8082
+#    ports:
+#      - 8085:8082
     volumes:
-      - shared-data:/app/storage
-      - log-data:/app/log
+      - shared-data1:/app/storage
+      - log-data1:/app/log
     environment:
       STAGE: dev
     env_file:
@@ -69,13 +69,13 @@ services:
       - ./conf.env
 
 volumes:
-  shared-data:
+  shared-data1:
     driver: local
     driver_opts:
       o: bind
       type: none
-      device: ./storage
-  log-data:
+      device: /mnt/anubhav_NMDC_proposal/storage/
+  log-data1:
     driver: local
     driver_opts:
       o: bind

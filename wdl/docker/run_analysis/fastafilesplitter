@@ -1,0 +1,25 @@
+FROM mono
+
+RUN apt-get update \
+    && apt-get install \
+    --no-install-recommends \ 
+    --yes  \
+    wget \
+    unzip \
+    && apt-get clean
+
+ARG Fasta_File_Splitter_VERSION
+RUN wget -P /app/FastaFileSplitter/ https://github.com/PNNL-Comp-Mass-Spec/Fasta-File-Splitter/releases/download/$Fasta_File_Splitter_VERSION/FASTA_File_Splitter_Program.zip \
+    && cd /app/FastaFileSplitter/ \
+    && unzip FASTA_File_Splitter_Program.zip \
+    && rm FASTA_File_Splitter_Program.zip
+
+#clean unnecessary packages
+RUN apt-get -y remove \
+    wget \
+    unzip \
+    &&  apt-get -y autoremove && apt-get clean
+
+# WORKDIR /app
+
+# ENTRYPOINT ["mono", "/app/FastaFileSplitter/FastaFileSplitter.exe"]

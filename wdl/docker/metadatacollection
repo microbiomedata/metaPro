@@ -1,0 +1,22 @@
+# pull official base image
+FROM python:3.6-stretch
+
+# set work directory
+WORKDIR /app/metadata_collection
+
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# install dependencies
+RUN pip install --upgrade pip
+RUN export LDFLAGS="-L/usr/local/opt/openssl/lib"
+
+RUN pip install pandas
+# swagger-UI is optional
+RUN pip install six pandas openpyxl
+
+# copy project
+COPY . /app/metadata_collection
+
+

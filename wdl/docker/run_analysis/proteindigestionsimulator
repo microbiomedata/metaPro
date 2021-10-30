@@ -1,0 +1,25 @@
+FROM mono
+
+RUN apt-get update \
+    && apt-get install \
+    --no-install-recommends \ 
+    --yes  \
+    wget \
+    unzip \
+    && apt-get clean
+    
+ARG PDS_VERSION
+RUN wget -P /app/pds/ https://github.com/PNNL-Comp-Mass-Spec/Protein-Digestion-Simulator/releases/download/$PDS_VERSION/ProteinDigestionSimulator_Program.zip \
+    && cd /app/pds/ \
+    && unzip ProteinDigestionSimulator_Program.zip \
+    && rm ProteinDigestionSimulator_Program.zip
+
+#clean unnecessary packages
+RUN apt-get -y remove \
+    wget \
+    unzip \
+    &&  apt-get -y autoremove && apt-get clean
+
+# WORKDIR /app
+
+# ENTRYPOINT ["mono", "/app/pds/ProteinDigestionSimulator.exe"]

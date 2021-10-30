@@ -1,0 +1,26 @@
+FROM mono
+
+# Install necessary tools
+RUN apt-get update \
+    && apt-get install \
+    --no-install-recommends \ 
+    --yes  \
+    wget \
+    unzip \
+    && apt-get clean
+
+ARG MASIC_VERSION
+RUN wget -P /app/masic/ https://github.com/PNNL-Comp-Mass-Spec/MASIC/releases/download/$MASIC_VERSION/MASIC_Console_Program.zip \
+    && cd /app/masic/ \
+    && unzip MASIC_Console_Program.zip \
+    && rm MASIC_Console_Program.zip
+
+#clean unnecessary packages
+RUN apt-get -y remove \
+    wget \
+    unzip \
+    &&  apt-get -y autoremove && apt-get clean
+
+# WORKDIR /app
+
+# ENTRYPOINT ["mono", "/app/masic/MASIC_Console.exe"]

@@ -1,0 +1,21 @@
+# pull official base image
+FROM python:3.6-stretch
+
+# set work directory
+WORKDIR /app/post-processing
+
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# install dependencies
+RUN pip install --upgrade pip
+RUN export LDFLAGS="-L/usr/local/opt/openssl/lib"
+
+RUN pip install pandas
+# swagger-UI is optional
+RUN pip install six pandas openpyxl gffpandas
+
+# copy project
+COPY code/ficus_analysis.py  /app/post-processing/ficus_analysis.py
+

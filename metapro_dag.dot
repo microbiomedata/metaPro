@@ -1,0 +1,1367 @@
+digraph "workflow"
+{
+  compound=true;
+  "PORT1010983633" -> "PORT199041063"
+  "PORT468950278" -> "PORT2092450685"
+  "PORT1831717330" -> "PORT532297836"
+  "PORT160696258" -> "PORT538292941"
+  "PORT1930319715" -> "PORT909786389"
+  "PORT680319659" -> "PORT911895107"
+  "PORT1350269431" -> "PORT1798180728"
+  "PORT203409962" -> "PORT745966298"
+  "PORT1164344728" -> "PORT1810970264"
+  "PORT1684615718" -> "PORT1004219512"
+  "PORT1760763936" -> "PORT81194567"
+  "PORT371932487" -> "PORT1568159144"
+  "PORT419792179" -> "PORT1347294617"
+  "PORT969014795" -> "PORT1046302571"
+  "PORT2128859746" -> "PORT1325147644"
+  "PORT917704874" -> "PORT864864095"
+  "PORT2089104518" -> "PORT273041802"
+  "PORT92941132" -> "PORT1935689965"
+  "PORT1234600900" -> "PORT605440398"
+  "PORT1673389762" -> "PORT2083106248"
+  "PORT31366484" -> "PORT1898167916"
+  "PORT1878267309" -> "PORT1833973673"
+  "PORT872592585" -> "PORT1765865093"
+  "PORT1336762904" -> "PORT1881585646"
+  "PORT1335256857" -> "PORT293326812"
+  "PORT449074057" -> "PORT557593923"
+  "PORT445192925" -> "PORT1751753651"
+  "PORT1103067610" -> "PORT2142450580"
+  "PORT999334666" -> "PORT697463019"
+  "PORT1855997464" -> "PORT1443335402"
+  "PORT1332208607" -> "PORT1998397435"
+  "PORT1335256857" -> "PORT1901700557"
+  "PORT281151050" -> "PORT269244031"
+  "PORT293667566" -> "PORT909516251"
+  "PORT204568533" -> "PORT1885562991"
+  "PORT225753796" -> "PORT1525241607"
+  "PORT390034407" -> "PORT774095232"
+  "PORT2007149130" -> "PORT1882395698"
+  "PORT817944369" -> "PORT287859212"
+  "PORT100703210" -> "PORT179233442"
+  "PORT1109461985" -> "PORT256139608"
+  "PORT1052962026" -> "PORT1867177582"
+  "PORT1842881670" -> "PORT103433239"
+  "PORT515036017" -> "PORT854640632"
+  "PORT481792876" -> "PORT1966114624"
+  "PORT1286134778" -> "PORT73351708"
+  "PORT1545644729" -> "PORT665641137"
+  "PORT1126112943" -> "PORT1653153736"
+  "PORT730955696" -> "PORT1202547191"
+  "PORT1406851189" -> "PORT430983166"
+  "PORT2115983437" -> "PORT208513211"
+  "PORT2016482777" -> "PORT404152906"
+  "PORT1673389762" -> "PORT1270565296"
+  "PORT1002410023" -> "PORT1781018589"
+  "PORT1819897025" -> "PORT1912172027"
+  "PORT481792876" -> "PORT577682023"
+  "PORT947173397" -> "PORT1998371610"
+  "PORT1202813399" -> "PORT427226423"
+  "PORT671981276" -> "PORT1950117092"
+  "PORT979117606" -> "PORT1957338226"
+  "PORT390994793" -> "PORT146346292"
+  "PORT1747025217" -> "PORT1898996968"
+  "PORT576261694" -> "PORT1083803390"
+  "PORT133987402" -> "PORT299162582"
+  "PORT2057954324" -> "PORT246745017"
+  "PORT1107218767" -> "PORT1001284816"
+  "PORT229329107" -> "PORT1201614274"
+  "PORT1688851596" -> "PORT1920321355"
+  "PORT1350269431" -> "PORT1462928549"
+  "PORT413946856" -> "PORT1237907176"
+  "PORT572370257" -> "PORT1316205906"
+  "PORT1694239102" -> "PORT2084863094"
+  "PORT229329107" -> "PORT1584688439"
+  "PORT947173397" -> "PORT1795560878"
+  "PORT1171672359" -> "PORT171160803"
+  "PORT757332719" -> "PORT1056953587"
+  "PORT225753796" -> "PORT447486093"
+  "PORT1610155589" -> "PORT1440995011"
+  "PORT225753796" -> "PORT926905424"
+  "PORT1134894336" -> "PORT956856274"
+  "PORT1926296244" -> "PORT1449664175"
+  "PORT118363130" -> "PORT812031404"
+  "PORT103394766" -> "PORT1412612727"
+  "PORT1429462130" -> "PORT1140202235"
+  "PORT816302479" -> "PORT2121491280"
+  "PORT1709882027" -> "PORT1110148152"
+  "PORT1970707120" -> "PORT1252713736"
+  "PORT225753796" -> "PORT942804532"
+  "PORT922547904" -> "PORT165137662"
+  "PORT187649742" -> "PORT497333939"
+  "PORT2076627578" -> "PORT254812619"
+  "PORT987805552" -> "PORT16556935"
+  "PORT956337311" -> "PORT1992525817"
+  "PORT1995986600" -> "PORT2113891589"
+  "PORT979117606" -> "PORT1023344953"
+  "PORT1582330795" -> "PORT1778028150"
+  "PORT1491890454" -> "PORT1280959582"
+  "PORT1141811719" -> "PORT368603167"
+  "PORT1030384622" -> "PORT1261321871"
+  "PORT280862192" -> "PORT914039525"
+  "PORT225753796" -> "PORT252276535"
+  "PORT732688777" -> "PORT550707"
+  "PORT892611887" -> "PORT1562090557"
+  "PORT2063332705" -> "PORT1847301137"
+  "PORT1776312161" -> "PORT1649026294"
+  "PORT409778321" -> "PORT971256592"
+  "PORT947647193" -> "PORT373342545"
+  "PORT372898106" -> "PORT1909141817"
+  "PORT44249014" -> "PORT1566269351"
+  "PORT680319659" -> "PORT2090589929"
+  "PORT1728897841" -> "PORT920497855"
+  "PORT1125509551" -> "PORT1235381529"
+  "PORT2063332705" -> "PORT604990529"
+  "PORT1366741625" -> "PORT1716411886"
+  "PORT1604020967" -> "PORT687685057"
+  "PORT880908391" -> "PORT889074285"
+  "PORT881977454" -> "PORT724736957"
+  "PORT225753796" -> "PORT1932303196"
+  "PORT1335256857" -> "PORT157004450"
+  "PORT917704874" -> "PORT798516062"
+  "PORT300659126" -> "PORT1279852178"
+  "PORT2128859746" -> "PORT911857585"
+  "PORT1266435158" -> "PORT1790229151"
+  "PORT1668376627" -> "PORT1363989824"
+  "PORT783218541" -> "PORT1147943200"
+  "PORT1523359711" -> "PORT1939970407"
+  "PORT598977164" -> "PORT311185452"
+  "PORT239648666" -> "PORT212874257"
+
+  
+  subgraph cluster_56 {
+    style="filled,solid";
+    fillcolor=lightskyblue1;
+    "NODE1500697171" [shape=plaintext label="String genome_dir"]
+    "PORT204568533" [shape=hexagon label="String genome_dir"];
+  
+  
+  }
+  
+  subgraph cluster_2 {
+    style="filled,solid";
+    fillcolor=lightskyblue1;
+    "NODE1338770454" [shape=plaintext label="String study"]
+    "PORT598977164" [shape=hexagon label="String study"];
+  
+  
+  }
+  
+  subgraph cluster_27 {
+    style="filled,solid";
+    fillcolor=lightskyblue1;
+    "NODE1861754673" [shape=plaintext label="File gff_file_loc"]
+    "PORT413946856" [shape=hexagon label="File gff_file_loc"];
+  
+  
+  }
+  
+  subgraph cluster_26 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE2009832657" [shape=plaintext label="File report_gen.resultant_file = f(job_analysis.resultant_file)"]
+    "PORT92941132" [shape=hexagon label="File report_gen.resultant_file"];
+    "PORT1901700557" [shape=oval label="File job_analysis.resultant_file"];
+  
+  
+  }
+  
+  subgraph cluster_104 {
+    style="filled,solid";
+    fillcolor=lightskyblue1;
+    "NODE836972194" [shape=plaintext label="String annotation_name"]
+    "PORT229329107" [shape=hexagon label="String annotation_name"];
+  
+  
+  }
+  
+  subgraph cluster_108 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE305651902" [shape=plaintext label="File job_analysis.raw_file_loc = f(raw_file_loc)"]
+    "PORT409778321" [shape=hexagon label="File job_analysis.raw_file_loc"];
+    "PORT1316205906" [shape=oval label="File raw_file_loc"];
+  
+  
+  }
+  
+  subgraph cluster_115 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE2036704540" [shape=plaintext label="String job_analysis.dataset_name = f(dataset_name)"]
+    "PORT133987402" [shape=hexagon label="String job_analysis.dataset_name"];
+    "PORT538292941" [shape=oval label="String dataset_name"];
+  
+  
+  }
+  
+  subgraph cluster_106 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE1779090574" [shape=plaintext label="File report_gen.gff_file = f(gff_file_loc)"]
+    "PORT2016482777" [shape=hexagon label="File report_gen.gff_file"];
+    "PORT1237907176" [shape=oval label="File gff_file_loc"];
+  
+  
+  }
+  
+  subgraph cluster_116 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE1055800875" [shape=plaintext label="File job_analysis.MASIC_PARAM_FILENAME = f(MASIC_PARAM_FILENAME)"]
+    "PORT2057954324" [shape=hexagon label="File job_analysis.MASIC_PARAM_FILENAME"];
+    "PORT1004219512" [shape=oval label="File MASIC_PARAM_FILENAME"];
+  
+  
+  }
+  
+  subgraph cluster_0 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE1109020385" [shape=plaintext label="String job_analysis.QVALUE_THRESHOLD = f(QVALUE_THRESHOLD)"]
+    "PORT1668376627" [shape=hexagon label="String job_analysis.QVALUE_THRESHOLD"];
+    "PORT1462928549" [shape=oval label="String QVALUE_THRESHOLD"];
+  
+  
+  }
+  
+  subgraph cluster_113 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE618696025" [shape=plaintext label="File report_gen.faa_txt_file = f(faa_file_loc)"]
+    "PORT371932487" [shape=hexagon label="File report_gen.faa_txt_file"];
+    "PORT604990529" [shape=oval label="File faa_file_loc"];
+  
+  
+  }
+  
+  subgraph cluster_112 {
+    style="filled,solid";
+    fillcolor=lightskyblue1;
+    "NODE1457417579" [shape=plaintext label="String QVALUE_THRESHOLD"]
+    "PORT1350269431" [shape=hexagon label="String QVALUE_THRESHOLD"];
+  
+  
+  }
+  
+  subgraph cluster_101 {
+    style="filled,solid";
+    fillcolor=palegreen;
+    "NODE1179093020" [shape=plaintext label="File report_gen.qc_metric_file"]
+    "PORT112200409" [shape=hexagon label="File report_gen.qc_metric_file"];
+    "PORT864864095" [shape=oval label="File report_gen.qc_metric_file"];
+  
+  
+  }
+  
+  subgraph cluster_100 {
+    style="filled,solid";
+    fillcolor=palegreen;
+    "NODE2031667192" [shape=plaintext label="File gen_metadata.data_object"]
+    "PORT1403380247" [shape=hexagon label="File gen_metadata.data_object"];
+    "PORT1649026294" [shape=oval label="File gen_metadata.data_object"];
+  
+  
+  }
+  
+  subgraph cluster_110 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE895705623" [shape=plaintext label="String report_gen.Dataset_id = f(dataset_id)"]
+    "PORT1202813399" [shape=hexagon label="String report_gen.Dataset_id"];
+    "PORT605440398" [shape=oval label="String dataset_id"];
+  
+  
+  }
+  
+  subgraph cluster_119 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE158460163" [shape=plaintext label="String report_gen.annotation_name = f(annotation_name)"]
+    "PORT956337311" [shape=hexagon label="String report_gen.annotation_name"];
+    "PORT1584688439" [shape=oval label="String annotation_name"];
+  
+  
+  }
+  
+  subgraph cluster_58 {
+    style="filled,solid";
+    fillcolor=palegreen;
+    "NODE593573025" [shape=plaintext label="String job_analysis.end_time"]
+    "PORT60221145" [shape=hexagon label="String job_analysis.end_time"];
+    "PORT1966114624" [shape=oval label="String job_analysis.end_time"];
+  
+  
+  }
+  
+  subgraph cluster_120 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE1498621286" [shape=plaintext label="File job_analysis.faa_file_loc = f(faa_file_loc)"]
+    "PORT1141811719" [shape=hexagon label="File job_analysis.faa_file_loc"];
+    "PORT1847301137" [shape=oval label="File faa_file_loc"];
+  
+  
+  }
+  
+  subgraph cluster_24 {
+    style="filled,solid";
+    fillcolor=lightgray;
+    "NODE1188671176" [shape=plaintext label="call metapro.gen_metadata (gen_metadata)"]
+    "PORT1776312161" [shape=hexagon label="File gen_metadata.data_object"];
+    "PORT1920321355" [shape=oval label="File protein_file"];
+    "PORT1562090557" [shape=oval label="String study"];
+    "PORT1912172027" [shape=oval label="String end_time"];
+    "PORT854640632" [shape=oval label="File resultant_file"];
+    "PORT1347294617" [shape=oval label="File qc_metric_file"];
+    "PORT1235381529" [shape=oval label="File peptide_file"];
+    "PORT256139608" [shape=oval label="String start_time"];
+    "PORT1930319715" [shape=hexagon label="File gen_metadata.activity"];
+    
+    subgraph cluster_23 {
+      style=filled;
+      fillcolor=white;
+      
+      subgraph cluster_14 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE555136651" [shape=plaintext label="File collect.qc_metric_file = f(qc_metric_file)"]
+        "PORT118363130" [shape=hexagon label="File collect.qc_metric_file"];
+        "PORT687685057" [shape=oval label="File qc_metric_file"];
+      
+      
+      }
+      
+      subgraph cluster_17 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE1634411546" [shape=plaintext label="File collect.resultant_file = f(resultant_file)"]
+        "PORT671981276" [shape=hexagon label="File collect.resultant_file"];
+        "PORT1810970264" [shape=oval label="File resultant_file"];
+      
+      
+      }
+      
+      subgraph cluster_21 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE2092066079" [shape=plaintext label="String collect.study = f(study)"]
+        "PORT281151050" [shape=hexagon label="String collect.study"];
+        "PORT199041063" [shape=oval label="String study"];
+      
+      
+      }
+      
+      subgraph cluster_7 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE299783910" [shape=plaintext label="String collect.end_time = f(end_time)"]
+        "PORT1709882027" [shape=hexagon label="String collect.end_time"];
+        "PORT1898167916" [shape=oval label="String end_time"];
+      
+      
+      }
+      
+      subgraph cluster_19 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE523794808" [shape=plaintext label="String collect.start_time = f(start_time)"]
+        "PORT1002410023" [shape=hexagon label="String collect.start_time"];
+        "PORT1778028150" [shape=oval label="String start_time"];
+      
+      
+      }
+      
+      subgraph cluster_22 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE540811471" [shape=plaintext label="File qc_metric_file"]
+        "PORT1604020967" [shape=hexagon label="File qc_metric_file"];
+      
+      
+      }
+      
+      subgraph cluster_11 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE1155437763" [shape=plaintext label="File protein_file"]
+        "PORT730955696" [shape=hexagon label="File protein_file"];
+      
+      
+      }
+      
+      subgraph cluster_13 {
+        style="filled,solid";
+        fillcolor=white;
+        "NODE727119352" [shape=plaintext label="call gen_metadata.collect (collect)"]
+        "PORT1950117092" [shape=oval label="File resultant_file"];
+        "PORT1110148152" [shape=oval label="String end_time"];
+        "PORT817944369" [shape=hexagon label="File collect.activity"];
+        "PORT1781018589" [shape=oval label="String start_time"];
+        "PORT1882395698" [shape=oval label="File protein_file"];
+        "PORT1833973673" [shape=oval label="File peptide_file"];
+        "PORT812031404" [shape=oval label="File qc_metric_file"];
+        "PORT103394766" [shape=hexagon label="File collect.data_object"];
+        "PORT269244031" [shape=oval label="String study"];
+      
+      
+      }
+      
+      subgraph cluster_8 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE1145165159" [shape=plaintext label="File collect.protein_file = f(protein_file)"]
+        "PORT2007149130" [shape=hexagon label="File collect.protein_file"];
+        "PORT1202547191" [shape=oval label="File protein_file"];
+      
+      
+      }
+      
+      subgraph cluster_12 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE1678889928" [shape=plaintext label="String study"]
+        "PORT1010983633" [shape=hexagon label="String study"];
+      
+      
+      }
+      
+      subgraph cluster_18 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE193864812" [shape=plaintext label="File collect.peptide_file = f(peptide_file)"]
+        "PORT1878267309" [shape=hexagon label="File collect.peptide_file"];
+        "PORT697463019" [shape=oval label="File peptide_file"];
+      
+      
+      }
+      
+      subgraph cluster_9 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE627746290" [shape=plaintext label="String start_time"]
+        "PORT1582330795" [shape=hexagon label="String start_time"];
+      
+      
+      }
+      
+      subgraph cluster_16 {
+        style="filled,solid";
+        fillcolor=palegreen;
+        "NODE2044150758" [shape=plaintext label="File activity"]
+        "PORT367066629" [shape=hexagon label="File activity"];
+        "PORT287859212" [shape=oval label="File collect.activity"];
+      
+      
+      }
+      
+      subgraph cluster_6 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE706604026" [shape=plaintext label="File resultant_file"]
+        "PORT1164344728" [shape=hexagon label="File resultant_file"];
+      
+      
+      }
+      
+      subgraph cluster_15 {
+        style="filled,solid";
+        fillcolor=palegreen;
+        "NODE2003305136" [shape=plaintext label="File data_object"]
+        "PORT277697988" [shape=hexagon label="File data_object"];
+        "PORT1412612727" [shape=oval label="File collect.data_object"];
+      
+      
+      }
+      
+      subgraph cluster_10 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE2075352262" [shape=plaintext label="String end_time"]
+        "PORT31366484" [shape=hexagon label="String end_time"];
+      
+      
+      }
+      
+      subgraph cluster_20 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE1263841085" [shape=plaintext label="File peptide_file"]
+        "PORT999334666" [shape=hexagon label="File peptide_file"];
+      
+      
+      }
+    
+    }
+  
+  }
+  
+  subgraph cluster_117 {
+    style="filled,solid";
+    fillcolor=palegreen;
+    "NODE57264571" [shape=plaintext label="File job_analysis.resultant_file"]
+    "PORT477463877" [shape=hexagon label="File job_analysis.resultant_file"];
+    "PORT293326812" [shape=oval label="File job_analysis.resultant_file"];
+  
+  
+  }
+  
+  subgraph cluster_57 {
+    style="filled,solid";
+    fillcolor=palegreen;
+    "NODE1993366729" [shape=plaintext label="String job_analysis.start_time"]
+    "PORT635068762" [shape=hexagon label="String job_analysis.start_time"];
+    "PORT1325147644" [shape=oval label="String job_analysis.start_time"];
+  
+  
+  }
+  
+  subgraph cluster_99 {
+    style="filled,solid";
+    fillcolor=lightgray;
+    "NODE1155399955" [shape=plaintext label="call metapro.job_analysis (job_analysis)"]
+    "PORT2128859746" [shape=hexagon label="String job_analysis.start_time"];
+    "PORT1867177582" [shape=oval label="File MSGFPLUS_PARAM_FILENAME"];
+    "PORT550707" [shape=oval label="String annotation_name"];
+    "PORT246745017" [shape=oval label="File MASIC_PARAM_FILENAME"];
+    "PORT481792876" [shape=hexagon label="String job_analysis.end_time"];
+    "PORT368603167" [shape=oval label="File faa_file_loc"];
+    "PORT299162582" [shape=oval label="String dataset_name"];
+    "PORT1335256857" [shape=hexagon label="File job_analysis.resultant_file"];
+    "PORT956856274" [shape=oval label="File CONTAMINANT_FILENAME"];
+    "PORT971256592" [shape=oval label="File raw_file_loc"];
+    "PORT1363989824" [shape=oval label="String QVALUE_THRESHOLD"];
+    
+    subgraph cluster_98 {
+      style=filled;
+      fillcolor=white;
+      
+      subgraph cluster_65 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE1477520324" [shape=plaintext label="File msconvert.raw_file = f(raw_file_loc)"]
+        "PORT947647193" [shape=hexagon label="File msconvert.raw_file"];
+        "PORT1957338226" [shape=oval label="File raw_file_loc"];
+      
+      
+      }
+      
+      subgraph cluster_87 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE1629759610" [shape=plaintext label="String dataset_name"]
+        "PORT225753796" [shape=hexagon label="String dataset_name"];
+      
+      
+      }
+      
+      subgraph cluster_61 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE1473313929" [shape=plaintext label="File peptidehitresultsprocrunner.tsv_file = f(mzidtotsvconverter.outfile)"]
+        "PORT239648666" [shape=hexagon label="File peptidehitresultsprocrunner.tsv_file"];
+        "PORT2142450580" [shape=oval label="File mzidtotsvconverter.outfile"];
+      
+      
+      }
+      
+      subgraph cluster_72 {
+        style="filled,solid";
+        fillcolor=white;
+        "NODE9361871" [shape=plaintext label="call job_analysis.masicresultmerge (masicresultmerge)"]
+        "PORT300659126" [shape=hexagon label="File masicresultmerge.outfile"];
+        "PORT179233442" [shape=oval label="File sic_stats_file"];
+        "PORT254812619" [shape=oval label="File synopsis_file"];
+        "PORT1252713736" [shape=oval label="String dataset_name"];
+      
+      
+      }
+      
+      subgraph cluster_74 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE514793058" [shape=plaintext label="File MSGFPLUS_PARAM_FILENAME"]
+        "PORT1673389762" [shape=hexagon label="File MSGFPLUS_PARAM_FILENAME"];
+      
+      
+      }
+      
+      subgraph cluster_67 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE1875108260" [shape=plaintext label="File peptidehitresultsprocrunner.revcatfasta_file = f(msgfplus.rev_cat_fasta)"]
+        "PORT1266435158" [shape=hexagon label="File peptidehitresultsprocrunner.revcatfasta_file"];
+        "PORT745966298" [shape=oval label="File msgfplus.rev_cat_fasta"];
+      
+      
+      }
+      
+      subgraph cluster_81 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE1847410999" [shape=plaintext label="String msgfplus.dataset_name = f(dataset_name)"]
+        "PORT1336762904" [shape=hexagon label="String msgfplus.dataset_name"];
+        "PORT1525241607" [shape=oval label="String dataset_name"];
+      
+      
+      }
+      
+      subgraph cluster_85 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE1001958076" [shape=plaintext label="File msgfplus.contaminated_fasta_file = f(faa_file_loc)"]
+        "PORT1747025217" [shape=hexagon label="File msgfplus.contaminated_fasta_file"];
+        "PORT1440995011" [shape=oval label="File faa_file_loc"];
+      
+      
+      }
+      
+      subgraph cluster_78 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE2091586824" [shape=plaintext label="String masic.dataset_name = f(dataset_name)"]
+        "PORT922547904" [shape=hexagon label="String masic.dataset_name"];
+        "PORT447486093" [shape=oval label="String dataset_name"];
+      
+      
+      }
+      
+      subgraph cluster_75 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE1847559273" [shape=plaintext label="String annotation_name"]
+        "PORT1855997464" [shape=hexagon label="String annotation_name"];
+      
+      
+      }
+      
+      subgraph cluster_83 {
+        style="filled,solid";
+        fillcolor=white;
+        "NODE775741122" [shape=plaintext label="call job_analysis.mzidtotsvconverter (mzidtotsvconverter)"]
+        "PORT1103067610" [shape=hexagon label="File mzidtotsvconverter.outfile"];
+        "PORT914039525" [shape=oval label="File mzid_file"];
+        "PORT16556935" [shape=oval label="File dataset_name"];
+      
+      
+      }
+      
+      subgraph cluster_62 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE1740797856" [shape=plaintext label="String peptidehitresultsprocrunner.msgfplus_modef_params = f()"]
+        "PORT445192925" [shape=hexagon label="String peptidehitresultsprocrunner.msgfplus_modef_params"];
+      
+      
+      }
+      
+      subgraph cluster_71 {
+        style="filled,solid";
+        fillcolor=palegreen;
+        "NODE73608444" [shape=plaintext label="String end_time"]
+        "PORT373973695" [shape=hexagon label="String end_time"];
+      
+      
+      }
+      
+      subgraph cluster_70 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE62309924" [shape=plaintext label="File CONTAMINANT_FILENAME"]
+        "PORT101740901" [shape=hexagon label="File CONTAMINANT_FILENAME"];
+      
+      
+      }
+      
+      subgraph cluster_90 {
+        style="filled,solid";
+        fillcolor=white;
+        "NODE822409149" [shape=plaintext label="call job_analysis.masic (masic)"]
+        "PORT1030384622" [shape=hexagon label="File masic.outfile"];
+        "PORT920497855" [shape=oval label="File raw_file"];
+        "PORT557593923" [shape=oval label="File masic_param"];
+        "PORT165137662" [shape=oval label="String dataset_name"];
+      
+      
+      }
+      
+      subgraph cluster_86 {
+        style="filled,solid";
+        fillcolor=palegreen;
+        "NODE582702662" [shape=plaintext label="File resultant_file"]
+        "PORT820422499" [shape=hexagon label="File resultant_file"];
+        "PORT1279852178" [shape=oval label="File masicresultmerge.outfile"];
+      
+      
+      }
+      
+      subgraph cluster_95 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE810672306" [shape=plaintext label="String mzidtotsvconverter.dataset_name = f(dataset_name)"]
+        "PORT987805552" [shape=hexagon label="String mzidtotsvconverter.dataset_name"];
+        "PORT252276535" [shape=oval label="String dataset_name"];
+      
+      
+      }
+      
+      subgraph cluster_92 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE1479100519" [shape=plaintext label="File peptidehitresultsprocrunner.msgfplus_params = f(MSGFPLUS_PARAM_FILENAME)"]
+        "PORT1491890454" [shape=hexagon label="File peptidehitresultsprocrunner.msgfplus_params"];
+        "PORT2083106248" [shape=oval label="File MSGFPLUS_PARAM_FILENAME"];
+      
+      
+      }
+      
+      subgraph cluster_68 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE1471633238" [shape=plaintext label="File msgfplus.mzml_file = f(msconvert.outfile)"]
+        "PORT1429462130" [shape=hexagon label="File msgfplus.mzml_file"];
+        "PORT2084863094" [shape=oval label="File msconvert.outfile"];
+      
+      
+      }
+      
+      subgraph cluster_89 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE1410186665" [shape=plaintext label="String masicresultmerge.dataset_name = f(dataset_name)"]
+        "PORT1970707120" [shape=hexagon label="String masicresultmerge.dataset_name"];
+        "PORT942804532" [shape=oval label="String dataset_name"];
+      
+      
+      }
+      
+      subgraph cluster_93 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE16196099" [shape=plaintext label="File masicresultmerge.sic_stats_file = f(masic.outfile)"]
+        "PORT100703210" [shape=hexagon label="File masicresultmerge.sic_stats_file"];
+        "PORT1261321871" [shape=oval label="File masic.outfile"];
+      
+      
+      }
+      
+      subgraph cluster_91 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE794563378" [shape=plaintext label="File masic.raw_file = f(raw_file_loc)"]
+        "PORT1728897841" [shape=hexagon label="File masic.raw_file"];
+        "PORT1023344953" [shape=oval label="File raw_file_loc"];
+      
+      
+      }
+      
+      subgraph cluster_80 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE2126664214" [shape=plaintext label="File masic.masic_param = f(MASIC_PARAM_FILENAME)"]
+        "PORT449074057" [shape=hexagon label="File masic.masic_param"];
+        "PORT1046302571" [shape=oval label="File MASIC_PARAM_FILENAME"];
+      
+      
+      }
+      
+      subgraph cluster_66 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE1067936865" [shape=plaintext label="String peptidehitresultsprocrunner.mass_correction_params = f()"]
+        "PORT1545644729" [shape=hexagon label="String peptidehitresultsprocrunner.mass_correction_params"];
+      
+      
+      }
+      
+      subgraph cluster_88 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE36707189" [shape=plaintext label="String msconvert.dataset_name = f(dataset_name)"]
+        "PORT44249014" [shape=hexagon label="String msconvert.dataset_name"];
+        "PORT1932303196" [shape=oval label="String dataset_name"];
+      
+      
+      }
+      
+      subgraph cluster_79 {
+        style="filled,solid";
+        fillcolor=white;
+        "NODE388436342" [shape=plaintext label="call job_analysis.msgfplus (msgfplus)"]
+        "PORT1898996968" [shape=oval label="File contaminated_fasta_file"];
+        "PORT757332719" [shape=hexagon label="File msgfplus.outfile"];
+        "PORT103433239" [shape=oval label="String annotation_name"];
+        "PORT1881585646" [shape=oval label="String dataset_name"];
+        "PORT203409962" [shape=hexagon label="File msgfplus.rev_cat_fasta"];
+        "PORT2092450685" [shape=oval label="File msgfplus_params"];
+        "PORT1140202235" [shape=oval label="File mzml_file"];
+      
+      
+      }
+      
+      subgraph cluster_64 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE209845522" [shape=plaintext label="File faa_file_loc"]
+        "PORT1610155589" [shape=hexagon label="File faa_file_loc"];
+      
+      
+      }
+      
+      subgraph cluster_96 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE775174220" [shape=plaintext label="File mzidtotsvconverter.mzid_file = f(msgfplus.outfile)"]
+        "PORT280862192" [shape=hexagon label="File mzidtotsvconverter.mzid_file"];
+        "PORT1056953587" [shape=oval label="File msgfplus.outfile"];
+      
+      
+      }
+      
+      subgraph cluster_84 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE775423528" [shape=plaintext label="File MASIC_PARAM_FILENAME"]
+        "PORT969014795" [shape=hexagon label="File MASIC_PARAM_FILENAME"];
+      
+      
+      }
+      
+      subgraph cluster_76 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE698676628" [shape=plaintext label="String msgfplus.annotation_name = f(annotation_name)"]
+        "PORT1842881670" [shape=hexagon label="String msgfplus.annotation_name"];
+        "PORT1443335402" [shape=oval label="String annotation_name"];
+      
+      
+      }
+      
+      subgraph cluster_77 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE90380642" [shape=plaintext label="String QVALUE_THRESHOLD"]
+        "PORT1510009630" [shape=hexagon label="String QVALUE_THRESHOLD"];
+      
+      
+      }
+      
+      subgraph cluster_60 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE425107133" [shape=plaintext label="File raw_file_loc"]
+        "PORT979117606" [shape=hexagon label="File raw_file_loc"];
+      
+      
+      }
+      
+      subgraph cluster_82 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE930089183" [shape=plaintext label="File masicresultmerge.synopsis_file = f(peptidehitresultsprocrunner.outfile)"]
+        "PORT2076627578" [shape=hexagon label="File masicresultmerge.synopsis_file"];
+        "PORT1653153736" [shape=oval label="File peptidehitresultsprocrunner.outfile"];
+      
+      
+      }
+      
+      subgraph cluster_69 {
+        style="filled,solid";
+        fillcolor=white;
+        "NODE161672347" [shape=plaintext label="call job_analysis.msconvert (msconvert)"]
+        "PORT1694239102" [shape=hexagon label="File msconvert.outfile"];
+        "PORT373342545" [shape=oval label="File raw_file"];
+        "PORT1566269351" [shape=oval label="String dataset_name"];
+      
+      
+      }
+      
+      subgraph cluster_63 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE525527919" [shape=plaintext label="String peptidehitresultsprocrunner.dataset_name = f(dataset_name)"]
+        "PORT1366741625" [shape=hexagon label="String peptidehitresultsprocrunner.dataset_name"];
+        "PORT926905424" [shape=oval label="String dataset_name"];
+      
+      
+      }
+      
+      subgraph cluster_97 {
+        style="filled,solid";
+        fillcolor=palegreen;
+        "NODE1386677799" [shape=plaintext label="String start_time"]
+        "PORT69160933" [shape=hexagon label="String start_time"];
+      
+      
+      }
+      
+      subgraph cluster_94 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE627709989" [shape=plaintext label="File msgfplus.msgfplus_params = f(MSGFPLUS_PARAM_FILENAME)"]
+        "PORT468950278" [shape=hexagon label="File msgfplus.msgfplus_params"];
+        "PORT1270565296" [shape=oval label="File MSGFPLUS_PARAM_FILENAME"];
+      
+      
+      }
+      
+      subgraph cluster_73 {
+        style="filled,solid";
+        fillcolor=white;
+        "NODE2066945445" [shape=plaintext label="call job_analysis.peptidehitresultsprocrunner (peptidehitresultsprocrunner)"]
+        "PORT1716411886" [shape=oval label="String dataset_name"];
+        "PORT1790229151" [shape=oval label="File revcatfasta_file"];
+        "PORT1126112943" [shape=hexagon label="File peptidehitresultsprocrunner.outfile"];
+        "PORT1280959582" [shape=oval label="File msgfplus_params"];
+        "PORT665641137" [shape=oval label="File mass_correction_params"];
+        "PORT1751753651" [shape=oval label="File msgfplus_modef_params"];
+        "PORT212874257" [shape=oval label="File tsv_file"];
+      
+      
+      }
+    
+    }
+  
+  }
+  
+  subgraph cluster_54 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE1215023524" [shape=plaintext label="File job_analysis.CONTAMINANT_FILENAME = f(CONTAMINANT_FILENAME)"]
+    "PORT1134894336" [shape=hexagon label="File job_analysis.CONTAMINANT_FILENAME"];
+    "PORT774095232" [shape=oval label="File CONTAMINANT_FILENAME"];
+  
+  
+  }
+  
+  subgraph cluster_102 {
+    style="filled,solid";
+    fillcolor=palegreen;
+    "NODE438873841" [shape=plaintext label="File report_gen.protein_file"]
+    "PORT1329938019" [shape=hexagon label="File report_gen.protein_file"];
+    "PORT2090589929" [shape=oval label="File report_gen.protein_file"];
+  
+  
+  }
+  
+  subgraph cluster_55 {
+    style="filled,solid";
+    fillcolor=lightskyblue1;
+    "NODE1618326227" [shape=plaintext label="String dataset_id"]
+    "PORT1234600900" [shape=hexagon label="String dataset_id"];
+  
+  
+  }
+  
+  subgraph cluster_114 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE169916747" [shape=plaintext label="String gen_metadata.start_time = f(job_analysis.start_time)"]
+    "PORT1109461985" [shape=hexagon label="String gen_metadata.start_time"];
+    "PORT911857585" [shape=oval label="String job_analysis.start_time"];
+  
+  
+  }
+  
+  subgraph cluster_5 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE1558133170" [shape=plaintext label="String gen_metadata.study = f(study)"]
+    "PORT892611887" [shape=hexagon label="String gen_metadata.study"];
+    "PORT311185452" [shape=oval label="String study"];
+  
+  
+  }
+  
+  subgraph cluster_111 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE357153703" [shape=plaintext label="String report_gen.q_value_threshold = f(QVALUE_THRESHOLD)"]
+    "PORT872592585" [shape=hexagon label="String report_gen.q_value_threshold"];
+    "PORT1798180728" [shape=oval label="String QVALUE_THRESHOLD"];
+  
+  
+  }
+  
+  subgraph cluster_25 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE1331946439" [shape=plaintext label="String job_analysis.annotation_name = f(annotation_name)"]
+    "PORT732688777" [shape=hexagon label="String job_analysis.annotation_name"];
+    "PORT1201614274" [shape=oval label="String annotation_name"];
+  
+  
+  }
+  
+  subgraph cluster_50 {
+    style="filled,solid";
+    fillcolor=lightgray;
+    "NODE1372668833" [shape=plaintext label="call metapro.report_gen (report_gen)"]
+    "PORT73351708" [shape=oval label="String genome_directory"];
+    "PORT1568159144" [shape=oval label="File faa_txt_file"];
+    "PORT947173397" [shape=hexagon label="File report_gen.peptide_file"];
+    "PORT680319659" [shape=hexagon label="File report_gen.protein_file"];
+    "PORT917704874" [shape=hexagon label="File report_gen.qc_metric_file"];
+    "PORT427226423" [shape=oval label="String Dataset_id"];
+    "PORT1935689965" [shape=oval label="File resultant_file"];
+    "PORT404152906" [shape=oval label="File gff_file"];
+    "PORT1992525817" [shape=oval label="String annotation_name"];
+    "PORT1765865093" [shape=oval label="String q_value_threshold"];
+    
+    subgraph cluster_49 {
+      style=filled;
+      fillcolor=white;
+      
+      subgraph cluster_48 {
+        style="filled,solid";
+        fillcolor=white;
+        "NODE1358169683" [shape=plaintext label="call report_gen.ficus_analysis (ficus_analysis)"]
+        "PORT783218541" [shape=hexagon label="File ficus_analysis.protein_file"];
+        "PORT1332208607" [shape=hexagon label="File ficus_analysis.peptide_file"];
+        "PORT532297836" [shape=oval label="String Dataset_id"];
+        "PORT372898106" [shape=hexagon label="File ficus_analysis.qc_metric_file"];
+        "PORT208513211" [shape=oval label="File resultant_file"];
+        "PORT2121491280" [shape=oval label="File gff_file"];
+        "PORT171160803" [shape=oval label="String genome_directory"];
+        "PORT1001284816" [shape=oval label="File faa_txt_file"];
+        "PORT146346292" [shape=oval label="String q_value_threshold"];
+      
+      
+      }
+      
+      subgraph cluster_36 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE311788384" [shape=plaintext label="String proteinDigestionSimulator.annotation_name = f(annotation_name)"]
+        "PORT1406851189" [shape=hexagon label="String proteinDigestionSimulator.annotation_name"];
+        "PORT724736957" [shape=oval label="String annotation_name"];
+      
+      
+      }
+      
+      subgraph cluster_34 {
+        style="filled,solid";
+        fillcolor=white;
+        "NODE975905570" [shape=plaintext label="call report_gen.proteinDigestionSimulator (proteinDigestionSimulator)"]
+        "PORT1760763936" [shape=hexagon label="File proteinDigestionSimulator.outfile"];
+        "PORT1083803390" [shape=oval label="File faa_file"];
+        "PORT430983166" [shape=oval label="String annotation_name"];
+      
+      
+      }
+      
+      subgraph cluster_47 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE1866403758" [shape=plaintext label="File ficus_analysis.faa_txt_file = f(proteinDigestionSimulator.outfile)"]
+        "PORT1107218767" [shape=hexagon label="File ficus_analysis.faa_txt_file"];
+        "PORT81194567" [shape=oval label="File proteinDigestionSimulator.outfile"];
+      
+      
+      }
+      
+      subgraph cluster_37 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE1863103905" [shape=plaintext label="String genome_directory"]
+        "PORT880908391" [shape=hexagon label="String genome_directory"];
+      
+      
+      }
+      
+      subgraph cluster_38 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE1870541675" [shape=plaintext label="File gff_file"]
+        "PORT293667566" [shape=hexagon label="File gff_file"];
+      
+      
+      }
+      
+      subgraph cluster_40 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE1578244276" [shape=plaintext label="File proteinDigestionSimulator.faa_file = f(faa_txt_file)"]
+        "PORT576261694" [shape=hexagon label="File proteinDigestionSimulator.faa_file"];
+        "PORT1449664175" [shape=oval label="File faa_txt_file"];
+      
+      
+      }
+      
+      subgraph cluster_32 {
+        style="filled,solid";
+        fillcolor=palegreen;
+        "NODE448569108" [shape=plaintext label="File qc_metric_file"]
+        "PORT608108604" [shape=hexagon label="File qc_metric_file"];
+        "PORT1909141817" [shape=oval label="File ficus_analysis.qc_metric_file"];
+      
+      
+      }
+      
+      subgraph cluster_31 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE1677590477" [shape=plaintext label="String ficus_analysis.q_value_threshold = f(q_value_threshold)"]
+        "PORT390994793" [shape=hexagon label="String ficus_analysis.q_value_threshold"];
+        "PORT273041802" [shape=oval label="String q_value_threshold"];
+      
+      
+      }
+      
+      subgraph cluster_42 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE564555077" [shape=plaintext label="File ficus_analysis.resultant_file = f(resultant_file)"]
+        "PORT2115983437" [shape=hexagon label="File ficus_analysis.resultant_file"];
+        "PORT2113891589" [shape=oval label="File resultant_file"];
+      
+      
+      }
+      
+      subgraph cluster_41 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE529949842" [shape=plaintext label="String ficus_analysis.Dataset_id = f(Dataset_id)"]
+        "PORT1831717330" [shape=hexagon label="String ficus_analysis.Dataset_id"];
+        "PORT497333939" [shape=oval label="String Dataset_id"];
+      
+      
+      }
+      
+      subgraph cluster_39 {
+        style="filled,solid";
+        fillcolor=palegreen;
+        "NODE1851241961" [shape=plaintext label="File peptide_file"]
+        "PORT1221433900" [shape=hexagon label="File peptide_file"];
+        "PORT1998397435" [shape=oval label="File ficus_analysis.peptide_file"];
+      
+      
+      }
+      
+      subgraph cluster_29 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE1700078557" [shape=plaintext label="File resultant_file"]
+        "PORT1995986600" [shape=hexagon label="File resultant_file"];
+      
+      
+      }
+      
+      subgraph cluster_44 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE1948835427" [shape=plaintext label="String ficus_analysis.genome_directory = f(genome_directory)"]
+        "PORT1171672359" [shape=hexagon label="String ficus_analysis.genome_directory"];
+        "PORT889074285" [shape=oval label="String genome_directory"];
+      
+      
+      }
+      
+      subgraph cluster_35 {
+        style="filled,solid";
+        fillcolor=palegreen;
+        "NODE1352913142" [shape=plaintext label="File protein_file"]
+        "PORT1601702534" [shape=hexagon label="File protein_file"];
+        "PORT1147943200" [shape=oval label="File ficus_analysis.protein_file"];
+      
+      
+      }
+      
+      subgraph cluster_30 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE1726519676" [shape=plaintext label="String q_value_threshold"]
+        "PORT2089104518" [shape=hexagon label="String q_value_threshold"];
+      
+      
+      }
+      
+      subgraph cluster_33 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE455726379" [shape=plaintext label="String annotation_name"]
+        "PORT881977454" [shape=hexagon label="String annotation_name"];
+      
+      
+      }
+      
+      subgraph cluster_46 {
+        style="filled,dashed";
+        fillcolor=white;
+        "NODE208539442" [shape=plaintext label="File ficus_analysis.gff_file = f(gff_file)"]
+        "PORT816302479" [shape=hexagon label="File ficus_analysis.gff_file"];
+        "PORT909516251" [shape=oval label="File gff_file"];
+      
+      
+      }
+      
+      subgraph cluster_43 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE1196716338" [shape=plaintext label="File faa_txt_file"]
+        "PORT1926296244" [shape=hexagon label="File faa_txt_file"];
+      
+      
+      }
+      
+      subgraph cluster_45 {
+        style="filled,solid";
+        fillcolor=lightskyblue1;
+        "NODE1318209130" [shape=plaintext label="String Dataset_id"]
+        "PORT187649742" [shape=hexagon label="String Dataset_id"];
+      
+      
+      }
+    
+    }
+  
+  }
+  
+  subgraph cluster_105 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE105663489" [shape=plaintext label="File gen_metadata.qc_metric_file = f(report_gen.qc_metric_file)"]
+    "PORT419792179" [shape=hexagon label="File gen_metadata.qc_metric_file"];
+    "PORT798516062" [shape=oval label="File report_gen.qc_metric_file"];
+  
+  
+  }
+  
+  subgraph cluster_118 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE231351829" [shape=plaintext label="File job_analysis.MSGFPLUS_PARAM_FILENAME = f(MSGFPLUS_PARAM_FILENAME)"]
+    "PORT1052962026" [shape=hexagon label="File job_analysis.MSGFPLUS_PARAM_FILENAME"];
+    "PORT1939970407" [shape=oval label="File MSGFPLUS_PARAM_FILENAME"];
+  
+  
+  }
+  
+  subgraph cluster_28 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE1045397707" [shape=plaintext label="String report_gen.genome_directory = f(genome_dir)"]
+    "PORT1286134778" [shape=hexagon label="String report_gen.genome_directory"];
+    "PORT1885562991" [shape=oval label="String genome_dir"];
+  
+  
+  }
+  
+  subgraph cluster_4 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE447320069" [shape=plaintext label="String gen_metadata.end_time = f(job_analysis.end_time)"]
+    "PORT1819897025" [shape=hexagon label="String gen_metadata.end_time"];
+    "PORT577682023" [shape=oval label="String job_analysis.end_time"];
+  
+  
+  }
+  
+  subgraph cluster_59 {
+    style="filled,solid";
+    fillcolor=lightskyblue1;
+    "NODE1585711807" [shape=plaintext label="File MSGFPLUS_PARAM_FILENAME"]
+    "PORT1523359711" [shape=hexagon label="File MSGFPLUS_PARAM_FILENAME"];
+  
+  
+  }
+  
+  subgraph cluster_107 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE1860754643" [shape=plaintext label="File gen_metadata.peptide_file = f(report_gen.peptide_file)"]
+    "PORT1125509551" [shape=hexagon label="File gen_metadata.peptide_file"];
+    "PORT1795560878" [shape=oval label="File report_gen.peptide_file"];
+  
+  
+  }
+  
+  subgraph cluster_53 {
+    style="filled,solid";
+    fillcolor=lightskyblue1;
+    "NODE1554118033" [shape=plaintext label="File CONTAMINANT_FILENAME"]
+    "PORT390034407" [shape=hexagon label="File CONTAMINANT_FILENAME"];
+  
+  
+  }
+  
+  subgraph cluster_51 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE1495414981" [shape=plaintext label="File gen_metadata.resultant_file = f(job_analysis.resultant_file)"]
+    "PORT515036017" [shape=hexagon label="File gen_metadata.resultant_file"];
+    "PORT157004450" [shape=oval label="File job_analysis.resultant_file"];
+  
+  
+  }
+  
+  subgraph cluster_3 {
+    style="filled,solid";
+    fillcolor=lightskyblue1;
+    "NODE1428022141" [shape=plaintext label="String dataset_name"]
+    "PORT160696258" [shape=hexagon label="String dataset_name"];
+  
+  
+  }
+  
+  subgraph cluster_122 {
+    style="filled,solid";
+    fillcolor=lightskyblue1;
+    "NODE1532756055" [shape=plaintext label="File MASIC_PARAM_FILENAME"]
+    "PORT1684615718" [shape=hexagon label="File MASIC_PARAM_FILENAME"];
+  
+  
+  }
+  
+  subgraph cluster_52 {
+    style="filled,solid";
+    fillcolor=palegreen;
+    "NODE393481646" [shape=plaintext label="File gen_metadata.activity"]
+    "PORT1188390859" [shape=hexagon label="File gen_metadata.activity"];
+    "PORT909786389" [shape=oval label="File gen_metadata.activity"];
+  
+  
+  }
+  
+  subgraph cluster_109 {
+    style="filled,solid";
+    fillcolor=palegreen;
+    "NODE339186291" [shape=plaintext label="File report_gen.peptide_file"]
+    "PORT753692748" [shape=hexagon label="File report_gen.peptide_file"];
+    "PORT1998371610" [shape=oval label="File report_gen.peptide_file"];
+  
+  
+  }
+  
+  subgraph cluster_121 {
+    style="filled,solid";
+    fillcolor=lightskyblue1;
+    "NODE1956598686" [shape=plaintext label="File raw_file_loc"]
+    "PORT572370257" [shape=hexagon label="File raw_file_loc"];
+  
+  
+  }
+  
+  subgraph cluster_1 {
+    style="filled,dashed";
+    fillcolor=white;
+    "NODE351520508" [shape=plaintext label="File gen_metadata.protein_file = f(report_gen.protein_file)"]
+    "PORT1688851596" [shape=hexagon label="File gen_metadata.protein_file"];
+    "PORT911895107" [shape=oval label="File report_gen.protein_file"];
+  
+  
+  }
+  
+  subgraph cluster_103 {
+    style="filled,solid";
+    fillcolor=lightskyblue1;
+    "NODE310412574" [shape=plaintext label="File faa_file_loc"]
+    "PORT2063332705" [shape=hexagon label="File faa_file_loc"];
+  
+  
+  }
+
+}
+

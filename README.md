@@ -19,14 +19,25 @@ Run the workflow:
     3. Must have installed [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) on your system.
        
     4. To run workflow, From [project directory](./):
-        1. Run 
-           `docker-compose up --build` to start services.
+        1. `make build_unified` to start services.
            Notes: - (to take containers down and remove volumes: `docker-compose down -v`)
-        2. Run 
-           `bash run_task.sh` 
+        2. `make run_workflow` 
            It will create a `storage/results` folder and create all the necessary files.
 
-- Using Cromwell-WDL:
-
+- Using WDL
+    1. prepare you input.json
+        `make prepare-your-input`
+       Note: User need to generate the input.json file based on the 
+             - mapping (dataset(raw) to annotations(.faa & .gff ))
+             - actual files respective file locations. 
+             For you help, a [script](wdl/scripts/prepare_input.sh) has been provided.
+    2. run the WDL:
+       Need an 
+       - execution engine(tested with [cromwell-66](https://github.com/broadinstitute/cromwell/releases)) to run WDL 
+       - along with Java runtime(tested with `openjdk 12.0.1`)
+             1. if docker support 
+                1. `make run_wdl`
+             2. if shifter support to run on cori:
+                1. `make run_wdl_on_cori`
 
 [More about workflow...](docs/index.rst)

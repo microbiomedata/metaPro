@@ -71,3 +71,4 @@ storage/results/*
 storage/fastas/*
 
 src/metadata_collection/benchmark/*
+wdl/cromwell/*

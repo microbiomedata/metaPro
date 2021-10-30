@@ -1,0 +1,21 @@
+FROM openjdk:12
+
+RUN yum -y update 
+RUN yum -y install wget unzip 
+
+ARG MSGFPLUS_VERSION
+ARG MSGFPLUS_ZIP_VERSION
+RUN wget -P /app/msgf https://github.com/MSGFPlus/msgfplus/releases/download/$MSGFPLUS_VERSION/MSGFPlus_$MSGFPLUS_ZIP_VERSION.zip \
+    && cd /app/msgf/ \
+    && unzip MSGFPlus_$MSGFPLUS_ZIP_VERSION.zip \
+    && rm MSGFPlus_$MSGFPLUS_ZIP_VERSION.zip
+
+#clean unnecessary packages
+RUN yum -y remove wget unzip 
+
+ARG JVM_MAX_HEAP_SIZE
+ARG THREADS
+
+# WORKDIR /app
+# ENTRYPOINT ["java", "$(echo ${$JVM_MAX_HEAP_SIZE})", "-jar" , "/app/msgf/MSGFPlus.jar", "-thread $(echo ${$THREADS})"]
+

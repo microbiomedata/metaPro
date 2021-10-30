@@ -1,0 +1,24 @@
+FROM mono
+
+RUN apt-get update \
+    && apt-get install \
+    --no-install-recommends \ 
+    --yes  \
+    wget \
+    unzip \
+    && apt-get clean
+
+ARG MZID2TSV_VERSION
+RUN wget -P /app/mzid2tsv/ https://github.com/PNNL-Comp-Mass-Spec/Mzid-To-Tsv-Converter/releases/download/$MZID2TSV_VERSION/MzidToTsvConverter.zip \
+    && cd /app/mzid2tsv/ \
+    && unzip MzidToTsvConverter.zip \
+    && rm MzidToTsvConverter.zip
+
+#clean unnecessary packages
+RUN apt-get -y remove \
+    wget \
+    unzip \
+    &&  apt-get -y autoremove && apt-get clean
+
+# WORKDIR /app
+# ENTRYPOINT ["mono", "/app/mzid2tsv/net462/MzidToTsvConverter.exe"]

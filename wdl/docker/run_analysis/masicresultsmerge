@@ -1,0 +1,24 @@
+FROM mono
+
+RUN apt-get update \
+    && apt-get install \
+    --no-install-recommends \ 
+    --yes  \
+    wget \
+    unzip \
+    && apt-get clean
+
+ARG MASICResultsMerge_VERSION
+RUN wget -P /app/MASICResultsMerge/ https://github.com/PNNL-Comp-Mass-Spec/MASIC-Results-Merger/releases/download/$MASICResultsMerge_VERSION/MASICResultsMerger_Program.zip \
+    && cd /app/MASICResultsMerge/ \
+    && unzip MASICResultsMerger_Program.zip \
+    && rm MASICResultsMerger_Program.zip
+
+#clean unnecessary packages
+RUN apt-get -y remove \
+    wget \
+    unzip \
+    &&  apt-get -y autoremove && apt-get clean
+
+# WORKDIR /app
+# ENTRYPOINT ["mono", "/app/MASICResultsMerge/MASICResultsMerger.exe"]

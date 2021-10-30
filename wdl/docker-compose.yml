@@ -1,0 +1,206 @@
+version: '3.7'
+services:
+  msconvert:
+    image: microbiomedata/metapro-msconvert:latest
+    build:
+      context: ./
+      dockerfile: docker/run_analysis/msconvert
+    container_name: raw-to-mzml
+    volumes:
+      - shared-data:/app/storage
+      - log-data:/app/log
+    command: tail -f /dev/null
+    
+  masic_console:
+    image: $MASIC_TAG
+    build:
+      context: ./
+      dockerfile: docker/run_analysis/masic_console
+      args:
+        MASIC_VERSION: ${MASIC_VERSION}
+    container_name: raw-to-sicstats
+    volumes:
+      - shared-data:/app/storage
+      - log-data:/app/log
+    env_file:
+      - ../metaPro-config.env
+      - .env
+    tty: true
+
+  msgfplus:
+    image: $MSGFPLUS_TAG
+    build:
+      context: ./
+      dockerfile: docker/run_analysis/msgfplus
+      args:
+        MSGFPLUS_VERSION: ${MSGFPLUS_VERSION}
+        MSGFPLUS_ZIP_VERSION: ${MSGFPLUS_ZIP_VERSION}
+        JVM_MAX_HEAP_SIZE: ${JVM_MAX_HEAP_SIZE}
+        THREADS : ${THREADS}
+    container_name: mzml-to-mzid
+    volumes:
+      - shared-data:/app/storage
+      - log-data:/app/log
+    env_file:
+      - ../metaPro-config.env
+      - .env
+    tty: true
+
+  mzidtotsvconverter:
+    image: $MZID2TSV_TAG
+    build:
+      context: ./
+      dockerfile: docker/run_analysis/mzidtotsvconverter
+      args:
+        MZID2TSV_VERSION: ${MZID2TSV_VERSION}
+    container_name: mzid-to-tsv
+    volumes:
+      - shared-data:/app/storage
+      - log-data:/app/log
+    env_file:
+      - ../metaPro-config.env
+      - .env
+    tty: true
+
+  peptidehitresultsprocrunner:
+    image: $PHRP_TAG
+    build:
+      context: ./
+      dockerfile: docker/run_analysis/peptidehitresultsprocrunner
+      args:
+        PHRP_VERSION: ${PHRP_VERSION}
+    container_name: tsv-to-syn
+    volumes:
+      - shared-data:/app/storage
+      - log-data:/app/log
+    env_file:
+      - ../metaPro-config.env
+      - .env
+    tty: true
+
+  proteindigestionsimulator:
+    image: $PDS_TAG
+    build:
+      context: ./
+      dockerfile: docker/run_analysis/proteindigestionsimulator
+      args:
+        PDS_VERSION: ${PDS_VERSION}
+    container_name: proteindigestionsimulator
+    volumes:
+      - shared-data:/app/storage
+      - log-data:/app/log
+    env_file:
+      - ../metaPro-config.env
+      - .env
+    tty: true
+
+  masicresultsmerge:
+    image: $MASIC_MERGE_TAG
+    build:
+      context: ./
+      dockerfile: docker/run_analysis/masicresultsmerge
+      args:
+        MASICResultsMerge_VERSION: ${MASICResultsMerge_VERSION}
+    container_name: masicresultsmerge
+    volumes:
+      - shared-data:/app/storage
+      - log-data:/app/log
+    env_file:
+      - ../metaPro-config.env
+      - .env
+    tty: true
+
+  mzidmerger:
+    image: $MZIDMERGER_TAG
+    build:
+      context: ./
+      dockerfile: docker/run_analysis/mzidmerger
+      args:
+        MzidMerger_VERSION: ${MzidMerger_VERSION}
+    container_name: mzidmerger
+    volumes:
+      - shared-data:/app/storage
+      - log-data:/app/log
+    env_file:
+      - ../metaPro-config.env
+      - .env
+    tty: true
+
+  validatefastafile:
+    image: $VFF_TAG
+    build:
+      context: ./
+      dockerfile: docker/run_analysis/validatefastafile
+      args:
+        VALIDATE_FASTA_FILE_VERSION: ${VALIDATE_FASTA_FILE_VERSION}
+    container_name: validatefastafile
+    volumes:
+      - shared-data:/app/storage
+      - log-data:/app/log
+    env_file:
+      - ../metaPro-config.env
+      - .env
+    tty: true
+
+  fastafilesplitter:
+    image: $FFS_TAG
+    build:
+      context: ./
+      dockerfile: docker/run_analysis/fastafilesplitter
+      args:
+        Fasta_File_Splitter_VERSION: ${Fasta_File_Splitter_VERSION}
+    container_name: fastafilesplitter
+    volumes:
+      - shared-data:/app/storage
+      - log-data:/app/log
+    env_file:
+      - ../metaPro-config.env
+      - .env
+    tty: true
+
+  metadatacollection:
+    image: $MMC_TAG
+    build:
+      context: ./
+      dockerfile: docker/metadatacollection
+    container_name: metadatacollection
+    networks:
+      - default
+    volumes:
+      - shared-data:/app/storage
+      - log-data:/app/log
+    env_file:
+      - ../metaPro-config.env
+      - .env
+    tty: true
+
+  post-processing:
+    image: $MPP_TAG
+    build:
+      context: ./
+      dockerfile: docker/postprocessing
+    container_name: postProcessing
+    networks:
+      - default
+    volumes:
+      - shared-data:/app/storage
+      - log-data:/app/log
+    env_file:
+      - ../metaPro-config.env
+      - .env
+    tty: true
+
+volumes:
+  shared-data:
+    # driver: local
+    # driver_opts:
+    #   o: bind
+    #   type: none
+    #   device: ../storage
+  log-data:
+    # driver: local
+    # driver_opts:
+    #   o: bind
+    #   type: none
+    #   device: ../logs
+#  db-volume:

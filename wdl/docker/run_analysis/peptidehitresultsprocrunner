@@ -1,0 +1,38 @@
+FROM mono
+
+RUN apt-get update \
+    && apt-get install \
+    --no-install-recommends \ 
+    --yes  \
+    wget \
+    unzip \
+    build-essential\
+    && apt-get clean
+
+# install System.Data.SQLite
+COPY docker/dependency/sqlite-netFx-full-source-1.0.115.0.zip /app/sqlite/sqlite-netFx-full-source-1.0.115.0.zip
+
+# RUN wget -P /app/sqlite/ https://github.com/AshleyLab/motrpac-proteomics-pnnl-prototype/raw/master/step06/sqlite-netFx-full-source-1.0.111.0.zip \
+RUN cd /app/sqlite/ \
+    && unzip sqlite-netFx-full-source-*.zip \
+    && rm sqlite-netFx-full-source-*.zip \
+    && chmod +x /app/sqlite/Setup/compile-interop-assembly-release.sh \
+    && /app/sqlite/Setup/compile-interop-assembly-release.sh
+
+ARG PHRP_VERSION
+RUN wget -P /app/phrp/ https://github.com/PNNL-Comp-Mass-Spec/PHRP/releases/download/$PHRP_VERSION/PeptideHitResultsProcessor.zip \
+    && cd /app/phrp/ \
+    && unzip PeptideHitResultsProcessor*.zip \
+    && rm PeptideHitResultsProcessor*.zip \
+    && cp /app/sqlite/bin/2013/Release/bin/libSQLite.Interop.so /app/phrp/ \
+    && chmod -x /app/phrp/libSQLite.Interop.so
+
+#clean unnecessary packages
+RUN apt-get -y remove \
+    wget \
+    unzip \
+    build-essential\
+    &&  apt-get -y autoremove && apt-get clean
+
+# WORKDIR /app
+# ENTRYPOINT ["mono", "/app/phrp/PeptideHitResultsProcRunner.exe"]
