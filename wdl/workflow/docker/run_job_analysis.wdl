@@ -1,11 +1,16 @@
+version 1.0
+
 task masic {
-    File raw_file
-    File masic_param
-    String dataset_name
+    input{
+        File raw_file
+        File masic_param
+        String dataset_name
+    }
+
     command {
         mono /app/masic/MASIC_Console.exe \
-        /I:${raw_file} \
-        /P:${masic_param}
+        /I:~{raw_file} \
+        /P:~{masic_param}
     }
     output {
         File outfile = "${dataset_name}_SICstats.txt"
@@ -15,11 +20,13 @@ task masic {
     }
 }
 task msconvert {
-    File raw_file
-    String dataset_name
+    input{
+        File raw_file
+        String dataset_name
+    }
     command {
         wine msconvert \
-        ${raw_file} \
+        ~{raw_file} \
         --zlib \
         --filter 'peakPicking true 2-'
     }
@@ -31,16 +38,19 @@ task msconvert {
     }
 }
 task msgfplus {
-    File mzml_file
-    File contaminated_fasta_file
-    File msgfplus_params
-    String dataset_name
-    String annotation_name
+    input{
+        File mzml_file
+        File contaminated_fasta_file
+        File msgfplus_params
+        String dataset_name
+        String annotation_name
+    }
     command {
         java -Xmx32G -jar /app/msgf/MSGFPlus.jar \
-        -s ${mzml_file} \
-        -d ${contaminated_fasta_file} \
-        -conf ${msgfplus_params} \
+        -s ~{mzml_file} \
+        -d ~{contaminated_fasta_file} \
+        -o "~{dataset_name}.mzid" \
+        -conf ~{msgfplus_params} \
         -thread 16 \
         -verbose 1
 
@@ -54,11 +64,13 @@ task msgfplus {
     }
 }
 task mzidtotsvconverter{
-    File mzid_file
-    File dataset_name
+    input{
+        File mzid_file
+        File dataset_name
+    }
     command {
         mono /app/mzid2tsv/net462/MzidToTsvConverter.exe \
-        -mzid:${mzid_file} \
+        -mzid:~{mzid_file} \
         -unroll \
         -showDecoy
     }
@@ -70,21 +82,23 @@ task mzidtotsvconverter{
     }
 }
 task peptidehitresultsprocrunner {
-    File tsv_file
-    File msgfplus_modef_params
-    File mass_correction_params
-    File msgfplus_params
-    File revcatfasta_file
-    String dataset_name
+    input{
+        File tsv_file
+        File msgfplus_modef_params
+        File mass_correction_params
+        File msgfplus_params
+        File revcatfasta_file
+        String dataset_name
+    }
     command {
         mono /app/phrp/PeptideHitResultsProcRunner.exe \
-        -I:${tsv_file} \
-        -M:${msgfplus_modef_params} \
-        -T:${mass_correction_params} \
-        -N:${msgfplus_params} \
+        -I:~{tsv_file} \
+        -M:~{msgfplus_modef_params} \
+        -T:~{mass_correction_params} \
+        -N:~{msgfplus_params} \
         -SynPvalue:0.2 -SynProb:0.05 \
         -ProteinMods \
-        -F:${revcatfasta_file} \
+        -F:~{revcatfasta_file} \
     }
     output {
         File outfile = "${dataset_name}_syn.txt"
@@ -94,13 +108,15 @@ task peptidehitresultsprocrunner {
     }
 }
 task masicresultmerge {
-    File sic_stats_file
-    File synopsis_file
-    String dataset_name
+    input{
+        File sic_stats_file
+        File synopsis_file
+        String dataset_name
+    }
     command {
         mono /app/MASICResultsMerge/MASICResultsMerger.exe \
-        ${synopsis_file} \
-        -M:${sic_stats_file}
+        ~{synopsis_file} \
+        -M:~{sic_stats_file}
         echo "========"
         ls -la
         echo "========"
@@ -114,6 +130,7 @@ task masicresultmerge {
 }
 
 workflow job_analysis{
+    input{
     String dataset_name
     String annotation_name
     File raw_file_loc
@@ -122,6 +139,7 @@ workflow job_analysis{
     File MASIC_PARAM_FILENAME
     File MSGFPLUS_PARAM_FILENAME
     File CONTAMINANT_FILENAME
+    }
 
     call masic {
         input:

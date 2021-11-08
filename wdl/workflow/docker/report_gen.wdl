@@ -1,19 +1,22 @@
-task ficus_analysis {
-    File faa_txt_file
-    File gff_file
-    File resultant_file
-    String Dataset_id
-    String genome_directory
-    String q_value_threshold
+version 1.0
 
+task ficus_analysis {
+    input{
+        File faa_txt_file
+        File gff_file
+        File resultant_file
+        String Dataset_id
+        String genome_directory
+        String q_value_threshold
+    }
     command {
        python /app/post-processing/ficus_analysis.py \
-        ${faa_txt_file} \
-        ${gff_file} \
-        ${resultant_file} \
-        ${Dataset_id} \
-        ${genome_directory} \
-        ${q_value_threshold}
+        ~{faa_txt_file} \
+        ~{gff_file} \
+        ~{resultant_file} \
+        ~{Dataset_id} \
+        ~{genome_directory} \
+        ~{q_value_threshold}
     }
     output {
         File peptide_file = "${Dataset_id}_${genome_directory}_Peptide_Report.tsv"
@@ -25,11 +28,13 @@ task ficus_analysis {
     }
 }
 task proteinDigestionSimulator {
-    File faa_file
-    String annotation_name
+    input{
+        File faa_file
+        String annotation_name
+    }
     command {
         mono /app/ProteinDigestionSimulator/ProteinDigestionSimulator.exe \
-        -I:${faa_file} \
+        -I:~{faa_file} \
         -F
     }
     output {
@@ -41,13 +46,15 @@ task proteinDigestionSimulator {
 }
 
 workflow report_gen{
-    File   faa_txt_file
-    File   gff_file
-    File   resultant_file
-    String Dataset_id
-    String genome_directory
-    String annotation_name
-    String q_value_threshold
+    input{
+        File   faa_txt_file
+        File   gff_file
+        File   resultant_file
+        String Dataset_id
+        String genome_directory
+        String annotation_name
+        String q_value_threshold
+    }
 
     call proteinDigestionSimulator {
         input:

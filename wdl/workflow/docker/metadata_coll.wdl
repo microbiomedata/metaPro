@@ -1,21 +1,24 @@
-task collect{
-    File resultant_file
-    File peptide_file
-    File protein_file
-    File qc_metric_file
-    String start_time
-    String end_time
-    String study
+version 1.0
 
+task collect{
+    input{
+        File resultant_file
+        File peptide_file
+        File protein_file
+        File qc_metric_file
+        String start_time
+        String end_time
+        String study
+    }
     command {
            python /app/metadata_collection/gen_metadata.py \
-            ${resultant_file} \
-            ${peptide_file} \
-            ${protein_file} \
-            ${qc_metric_file} \
-            ${start_time} \
-            ${end_time} \
-            ${study}
+            ~{resultant_file} \
+            ~{peptide_file} \
+            ~{protein_file} \
+            ~{qc_metric_file} \
+            ~{start_time} \
+            ~{end_time} \
+            ~{study}
     }
     output {
         File activity = "${study}_MetaProteomicAnalysis_activity.json"
@@ -27,14 +30,15 @@ task collect{
     }
 }
 workflow gen_metadata{
-    File resultant_file
-    File peptide_file
-    File protein_file
-    File qc_metric_file
-    String start_time
-    String end_time
-    String study
-
+    input{
+        File resultant_file
+        File peptide_file
+        File protein_file
+        File qc_metric_file
+        String start_time
+        String end_time
+        String study
+    }
     call collect {
         input:
             resultant_file=resultant_file,

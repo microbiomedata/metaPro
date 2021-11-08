@@ -1,8 +1,23 @@
 include wdl/.env
 export
 
+run_on_cori_jaws:
+	jaws submit wdl/test.wdl storage/input_local.json TAHOMA
+
+run_on_cori_local:
+	java -Dconfig.file=cromwell_shifter.conf \
+     -Dbackend.providers.Local.config.dockerRoot=$(pwd)/cromwell-executions \
+     -jar /global/cfs/projectdirs/jaws/cromwell/cromwell.jar run wdl/test.wdl -i storage/input_local.json
+
+run_test:
+	java -jar wdl/cromwell/cromwell-66.jar run wdl/workflow/docker/main.wdl -i storage/input_local.json
+
+validate_wdl:
+	java -jar wdl/cromwell/womtool-66.jar validate wdl/workflow/docker/main.wdl -i storage/input_local.json
+
 spit_dag:
 	java -jar wdl/cromwell/womtool-66.jar womgraph wdl/workflow/docker/main.wdl
+
 run_wdl:
 	java -jar wdl/cromwell/cromwell-66.jar run wdl/workflow/docker/main.wdl -i storage/input_local.json
 
