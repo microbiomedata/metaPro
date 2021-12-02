@@ -2,9 +2,9 @@ version 1.0
 
 task ficus_analysis {
     input{
-        File faa_txt_file
-        File gff_file
-        File resultant_file
+        File   faa_txt_file
+        File   gff_file
+        File   resultant_file
         String Dataset_id
         String genome_directory
         String q_value_threshold
@@ -19,9 +19,9 @@ task ficus_analysis {
         ~{q_value_threshold}
     }
     output {
-        File peptide_file = "${Dataset_id}_${genome_directory}_Peptide_Report.tsv"
-        File protein_file="${Dataset_id}_${genome_directory}_Protein_Report.tsv"
-        File qc_metric_file="${Dataset_id}_${genome_directory}_QC_metrics.tsv"
+        File   peptide_file   = "${Dataset_id}_${genome_directory}_Peptide_Report.tsv"
+        File   protein_file   = "${Dataset_id}_${genome_directory}_Protein_Report.tsv"
+        File   qc_metric_file = "${Dataset_id}_${genome_directory}_QC_metrics.tsv"
     }
     runtime {
         docker: 'microbiomedata/metapro-post-processing:2.0.0'
@@ -33,9 +33,10 @@ task proteinDigestionSimulator {
         String annotation_name
     }
     command {
-        mono /app/ProteinDigestionSimulator/ProteinDigestionSimulator.exe \
+        mono /app/pds/ProteinDigestionSimulator.exe \
         -I:~{faa_file} \
-        -F
+        -F \
+        -O:~{'.'}
     }
     output {
         File outfile = "${annotation_name}_proteins.txt"
@@ -58,22 +59,22 @@ workflow report_gen{
 
     call proteinDigestionSimulator {
         input:
-            faa_file=faa_txt_file,
-            annotation_name=annotation_name
+            faa_file        = faa_txt_file,
+            annotation_name = annotation_name
     }
     call ficus_analysis {
         input:
-            faa_txt_file=proteinDigestionSimulator.outfile,
-            gff_file=gff_file,
-            resultant_file=resultant_file,
-            Dataset_id=Dataset_id,
-            genome_directory=genome_directory,
-            q_value_threshold=q_value_threshold
+            faa_txt_file      = proteinDigestionSimulator.outfile,
+            gff_file          = gff_file,
+            resultant_file    = resultant_file,
+            Dataset_id        = Dataset_id,
+            genome_directory  = genome_directory,
+            q_value_threshold = q_value_threshold
     }
     output {
-        File peptide_file=ficus_analysis.peptide_file
-        File protein_file=ficus_analysis.protein_file
-        File qc_metric_file=ficus_analysis.qc_metric_file
+        File   peptide_file   = ficus_analysis.peptide_file
+        File   protein_file   = ficus_analysis.protein_file
+        File   qc_metric_file = ficus_analysis.qc_metric_file
      }
 
 }

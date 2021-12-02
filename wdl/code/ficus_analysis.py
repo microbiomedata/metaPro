@@ -470,6 +470,7 @@ class DataOutputtable:
 
     def query_13(self):
         temp_df = self.resultant_df.copy()
+        temp_df['Dataset_x'] = 'default value'
         filtered = self.get_FiltPeps_gen(temp_df)[
             ["Dataset_x", "PeptideSequence", "QValue"]
         ]
@@ -900,9 +901,11 @@ if __name__ == "__main__":
     fasta_txt_file = sys.argv[1]
     gff_file = sys.argv[2]
     resultant_file = sys.argv[3]
-    dataset_id= sys.argv[4]
+    dataset_name= sys.argv[4]
     genome_directory= sys.argv[5]
     QVALUE_THRESHOLD= sys.argv[6]
+
+    print(f"{fasta_txt_file}\n{gff_file}\n{resultant_file}\n{dataset_id}\n{genome_directory}\n{QVALUE_THRESHOLD}\n")
 
     data_obj = DataOutputtable(
         gff_file,
@@ -912,11 +915,13 @@ if __name__ == "__main__":
         dataset_id,
         genome_directory,
     )
+
     (
         peptide_report,
         protein_report,
         qc_metrics_report,
     ) = data_obj.gen_reports()
+
     # write dfs to file.
     peptide_report.to_csv(f"{dataset_id}_{genome_directory}_Peptide_Report.tsv", sep="\t")
     protein_report.to_csv(f"{dataset_id}_{genome_directory}_Protein_Report.tsv", sep="\t")

@@ -7,6 +7,15 @@
         "raw_file_loc": "/home/anub229/del_it/benchmarkrun/storage/500088/Froze_Core_2015_N2_50_60_34_QE_26May16_Pippin_16-03-39.raw",
         "faa_file_loc" : "/home/anub229/del_it/benchmarkrun/storage/1781_100336/img_annotation/Ga0482236_proteins.faa",
         "gff_file_loc": "/home/anub229/del_it/benchmarkrun/storage/1781_100336/img_annotation/Ga0482236_functional_annotation.gff"
+      },
+        {
+        "dataset_id": "500088",
+        "genome_dir":"1781_100336",
+        "dataset_name": "Froze_Core_2015_N2_50_60_34_QE_26May16_Pippin_16-03-39",
+        "annotation_name": "Ga0482236",
+        "raw_file_loc": "/home/anub229/del_it/benchmarkrun/storage/500088/Froze_Core_2015_N2_50_60_34_QE_26May16_Pippin_16-03-39.raw",
+        "faa_file_loc" : "/home/anub229/del_it/benchmarkrun/storage/1781_100336/img_annotation/Ga0482236_proteins.faa",
+        "gff_file_loc": "/home/anub229/del_it/benchmarkrun/storage/1781_100336/img_annotation/Ga0482236_functional_annotation.gff"
       }
   ],
   "metapro.MASIC_PARAM_FILE_LOC":"/home/anub229/del_it/benchmarkrun/storage/parameters/LTQ-FT_10ppm_2014-08-06.xml",

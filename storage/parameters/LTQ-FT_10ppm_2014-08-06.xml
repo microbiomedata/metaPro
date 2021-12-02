@@ -106,8 +106,8 @@
     <item key="CacheSpectraToRetainInMemory" value="5000" />
   </section>
   <section name="PlotOptions">
-    <item key="CreatePlots" value="True" />
-    <item key="PlotWithPython" value="True" />
+    <item key="CreatePlots" value="False" />
+    <item key="PlotWithPython" value="False" />
     <item key="SaveHistogramData" value="False" />
     <item key="SaveReporterIonObservationRateData" value="True" />
     <item key="SaveHtmlFile" value="True" />

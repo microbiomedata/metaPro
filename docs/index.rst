@@ -5,10 +5,65 @@ Summary
 -------
 The metaproteomics workflow/pipeline is an end-to-end data processing workflow for protein identification and characterization using MS/MS data. Briefly, mass spectrometry instrument generated data files(.RAW) are converted to mzML, an open data format, using MSConvert. Peptide identification is achieved using MSGF+ and the associated metagenomic information in the FASTA (protein sequences) file format. Intensity information for identified species is extracted using MASIC and combined with protein information.
 
+-  **Processing components:**
+
+   -  `msConvert <http://proteowizard.sourceforge.net/tools/msconvert.html>`__
+      : A command-line tool converting to/from various mass spectrometry
+      data formats including multiple proprietary formats. It
+      converts.RAW to `mzML <http://www.psidev.info/mzML>`__. Converting
+      to mzML which is an `open data
+      format <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3518119/>`__
+      makes easy for academic scientists to directly manipulate MS/MS
+      spectrum data. Open formats enable improved data sharing by
+      allowing the data to be read by a variety of software tools
+      without licensing restrictions
+   -  `MS-GF+ <https://www.nature.com/articles/ncomms6277>`__ which
+      performs peptide identification by scoring MS/MS spectra against
+      peptides derived from a protein sequence database (FASTA files).
+      Individual peptide sequences are identified(mzML file), then the
+      set of peptide sequences is used to infer which proteins may have
+      been present. It reads an open data format for MS/MS
+      identification i.e mzML files and searches again a protein
+      database(FASTA) to outputs a .mzId file which constitutes a set of
+      scored PSMs along with *E*-value estimates( i.e computes
+      *E*-values of PSMs and estimates FDRs)
+   -  `MzidToTSVConverter <https://msgfplus.github.io/msgfplus/MzidToTsv.html>`__
+      to converts MS-GF+ output (**.mzid**) into the tsv format
+      (**.tsv**).
+   -  `PeptideHitResultsProcessor <https://omics.pnl.gov/software/peptide-hit-results-processor>`__,
+      converts tsv format (**.tsv**) to syn.txt file used for downstream
+      analyses.
+   -  `MASIC <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2487672/>`__
+      which extracts intensity information for the identified peptides.
+      It accurately measures peptide abundances and elution times in an
+      LC-MS/MS analysis. It reads .Raw files from Thermo Fisher mass
+      spectrometers and generates .SIC files i.e “selected ion
+      chromatograms” (SICs) for each species chosen for MS/MS
+      fragmentation.
+
+-  **Analyzing component:**
+
+   -  MePro component of the workflow
+
+      -  Reads in syn.txt files & calculated the best scoring peptides
+         for each scan.
+      -  Even though, MSGF+ estimates False discovery rates(FDRs) in
+         some datasets MSGFplus tool when dealing with SPLIT
+         FASTAs(multiple FASTA for the same sample) doesn’t actually
+         account all of them due to which the QValue and PepQValue value
+         aren’t based on the entire FASTA file for that dataset.
+         Therefore, we’re recomputing QValue and PepQValue to improve
+         the FDR.
+      -  merges the outputs from MSGF+ and MASIC, and applies to filter
+         to control the false discovery rate. The output is a crosstab
+         format table with rows containing protein sequence information,
+         and columns with relative abundance measurements for proteins
+         identified in each sample analyzed.
+
 Workflow Diagram
 ------------------
 
-.. image:: workflow_diagram.png
+.. image:: detailed_workflow_diagram.png
 
 Workflow Dependencies
 ---------------------
@@ -87,6 +142,8 @@ Outputs
                              int: unique_peptide_seq_count(# of unique peptide sequences observed in pipeline analysis 5% FDR)
                              int: first_hit_protein_count(# of proteins observed assuming single peptide-to-protein relationships)
                              int: mean_peptide_count(Unique peptide sequences matching to each identified protein.)
+
+[more about the NMDC schema](https://github.com/microbiomedata/nmdc-schema/blob/main/jsonschema/nmdc.schema.json)
 
 - data_out_table
 

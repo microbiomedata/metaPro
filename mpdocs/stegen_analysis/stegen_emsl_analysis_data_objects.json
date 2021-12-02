@@ -1,0 +1,1058 @@
+{"data_object_set":[
+{
+    "id": "nmdc:45b88a478aaed1fe714ce780ef822458",
+    "name": "500088_1781_100336_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 17527779,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500088_1781_100336_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:206c8ef651ccfc32ece7f2ae91a4af28",
+    "name": "500088_1781_100336_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 332081,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500088_1781_100336_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:07a21f92d805d5d291959611fb5d73e9",
+    "name": "500088_1781_100336_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 167851,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500088_1781_100336_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:4ed89c704a24ca527bd68ec3f90dc628",
+    "name": "500088_1781_100336_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 177,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500088_1781_100336_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:a2933b7be5301b33e1fa6d95d39d6702",
+    "name": "500090_1781_100349_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 2515325,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500090_1781_100349_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:9d257dcd5bf6ff5906c23f2857b4151e",
+    "name": "500090_1781_100349_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 4111,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500090_1781_100349_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:68364aa3066ed50b8e545a08928f182f",
+    "name": "500090_1781_100349_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 2205,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500090_1781_100349_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:a1a252c36372788e7c4f514493dd5762",
+    "name": "500090_1781_100349_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 172,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500090_1781_100349_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:6633851e35ee42d3f652eb74c83af5e9",
+    "name": "500091_1781_100353_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 10471950,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500091_1781_100353_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:65ead13ef24aa332458b98bc88b8eb35",
+    "name": "500091_1781_100353_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 16511,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500091_1781_100353_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:9ca25709685f9ed3e2ee353d48f165ca",
+    "name": "500091_1781_100353_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 9581,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500091_1781_100353_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:b10c06c522b6091b686cd27699033255",
+    "name": "500091_1781_100353_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 174,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500091_1781_100353_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:bc21ca6d5ebe06a8a39a4527513d9c97",
+    "name": "500093_1781_100330_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 20317226,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500093_1781_100330_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:c2895ef6573d01d164d3c85ab9c048c2",
+    "name": "500093_1781_100330_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 316408,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500093_1781_100330_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:04ec63c9e3226a8e574b19ed1c121bcb",
+    "name": "500093_1781_100330_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 208490,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500093_1781_100330_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:84d91f6cc61611dac7f8d5bc6fe35f3f",
+    "name": "500093_1781_100330_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 177,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500093_1781_100330_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:88b864407e31ec95114efde23ce488b0",
+    "name": "500094_1781_100326_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 18226255,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500094_1781_100326_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:00eea9c63422deb2f2338086d1b48fac",
+    "name": "500094_1781_100326_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 85349,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500094_1781_100326_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:8d448b14fc0ba1fa7a493aeca90fd5d5",
+    "name": "500094_1781_100326_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 57166,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500094_1781_100326_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:33c8cb22eb3e16cf93562dba4ef69e99",
+    "name": "500094_1781_100326_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 176,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500094_1781_100326_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:1fa770fabd4793166121af13a92b086c",
+    "name": "500095_1781_100334_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 16034831,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500095_1781_100334_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:b99239fdd7e93c1715375398b894d323",
+    "name": "500095_1781_100334_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 131618,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500095_1781_100334_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:19a893c33a2c8f5ff1bfc15abfe49ffc",
+    "name": "500095_1781_100334_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 63604,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500095_1781_100334_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:7e5544a7f4b4e382077b3e9cdb886361",
+    "name": "500095_1781_100334_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 176,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500095_1781_100334_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:9d7126095a1388d21fec878383eff975",
+    "name": "500096_1781_100343_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 21773595,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500096_1781_100343_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:3f7313d0ae51123134b6be463a8d3ad7",
+    "name": "500096_1781_100343_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 466479,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500096_1781_100343_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:2c2e397e4d06738bc5d10ec8458ce11a",
+    "name": "500096_1781_100343_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 334591,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500096_1781_100343_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:52ed29c2bc688547036ec12cd9c882e0",
+    "name": "500096_1781_100343_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 164,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500096_1781_100343_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:e24ba7fdddac5ecf18f694b07a605568",
+    "name": "500097_1781_100325_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 16082454,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500097_1781_100325_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:2e23700ee5a577a8ee6199607f78498d",
+    "name": "500097_1781_100325_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 37527,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500097_1781_100325_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:3e108a6011272d17b48a04bd53b373b3",
+    "name": "500097_1781_100325_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 28346,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500097_1781_100325_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:4d5cbf27d498c3ec92493c7b8a72ed5a",
+    "name": "500097_1781_100325_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 163,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500097_1781_100325_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:fe963ef3c52577ecf1114ed47d42b509",
+    "name": "500098_1781_100342_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 15501027,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500098_1781_100342_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:92a642bedb1bf223a0cb76ce0ac4d1b5",
+    "name": "500098_1781_100342_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 142238,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500098_1781_100342_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:ae24b9b95686da2b6cee2e769bc3d23d",
+    "name": "500098_1781_100342_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 69811,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500098_1781_100342_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:51ef5ddc9cd66fe2d85f4f98aeaab125",
+    "name": "500098_1781_100342_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 177,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500098_1781_100342_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:da7acac4b49c6da58dad2f98d4939935",
+    "name": "500099_1781_100348_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 6150992,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500099_1781_100348_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:43ce0b790532839029f0e59b05742f9c",
+    "name": "500099_1781_100348_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 18628,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500099_1781_100348_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:63bcb0e7fd20db441edcdb698783216e",
+    "name": "500099_1781_100348_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 6505,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500099_1781_100348_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:a61961f47061ef2c80de77e3f6dc5c0c",
+    "name": "500099_1781_100348_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 160,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500099_1781_100348_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:82fb9339f44569bbe821e8eba71dcc07",
+    "name": "500100_1781_100356_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 19070768,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500100_1781_100356_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:b299070334b82985619b17632d92c9e9",
+    "name": "500100_1781_100356_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 379778,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500100_1781_100356_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:b1f7d2c16e98f62f2d9c15606a897a0c",
+    "name": "500100_1781_100356_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 201271,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500100_1781_100356_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:3ba52454f6555bad57d35c3a42f8c2b3",
+    "name": "500100_1781_100356_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 177,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500100_1781_100356_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:830bb1abebc923b0a739a49e009d6924",
+    "name": "500101_1781_100337_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 19766570,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500101_1781_100337_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:0bfae8449f4bc3759d31c4d3692a04c7",
+    "name": "500101_1781_100337_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 377034,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500101_1781_100337_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:00c9b94055ba43d728f79e571558a511",
+    "name": "500101_1781_100337_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 225567,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500101_1781_100337_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:3ed4c7c0f0ac74ff9456a347e84c838b",
+    "name": "500101_1781_100337_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 177,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500101_1781_100337_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:5238412ca0f3a9ff430d9c606e78b717",
+    "name": "500102_1781_100341_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 19655015,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500102_1781_100341_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:4c50ae806431360350cca93cba62b76a",
+    "name": "500102_1781_100341_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 285538,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500102_1781_100341_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:2465a7a08eb920311b0714d6c9a6a0a5",
+    "name": "500102_1781_100341_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 170519,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500102_1781_100341_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:7775365d7adfddfbb12cbb37a224c89e",
+    "name": "500102_1781_100341_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 163,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500102_1781_100341_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:b78161f36ce4d16ad7f0d15cd70d6d03",
+    "name": "500103_1781_100350_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 18255755,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500103_1781_100350_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:78c78ac34f682a9a8f23c9d138c9c641",
+    "name": "500103_1781_100350_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 209169,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500103_1781_100350_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:79bc9e82b99e1f46b26f206c97a849a6",
+    "name": "500103_1781_100350_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 121866,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500103_1781_100350_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:8447aa7c33373b1491e495b06a609659",
+    "name": "500103_1781_100350_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 175,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500103_1781_100350_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:37736751c6fc23350f13515e5e1b8ea6",
+    "name": "500160_1781_100333_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 20072086,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500160_1781_100333_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:49cf5b4837bf74a8111a6ad527741c6b",
+    "name": "500160_1781_100333_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 385623,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500160_1781_100333_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:36c646b61f93d67e970564e8a3d838c5",
+    "name": "500160_1781_100333_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 223237,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500160_1781_100333_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:8b86a2e32dcbe5ca9e46f6ef0c2d11c8",
+    "name": "500160_1781_100333_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 176,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500160_1781_100333_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:1225464dca0136563d6a00dbaaa251aa",
+    "name": "500161_1781_100357_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 15953144,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500161_1781_100357_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:40b37db65e26f469cc09fb0d812548a2",
+    "name": "500161_1781_100357_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 380954,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500161_1781_100357_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:13c2bdabf348aabee6f4f29c1b03fd59",
+    "name": "500161_1781_100357_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 141287,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500161_1781_100357_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:fb27fdda1a5cccb87e10f26733e2b466",
+    "name": "500161_1781_100357_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 177,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500161_1781_100357_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:51c7751ede4f52696d8547f40ee29ce9",
+    "name": "500162_1781_100327_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 19237795,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500162_1781_100327_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:3f0fe2d751f7d3fcc37007f044afff90",
+    "name": "500162_1781_100327_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 361861,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500162_1781_100327_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:e2a94a8fdbea548d9d728c0f1e19f901",
+    "name": "500162_1781_100327_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 207525,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500162_1781_100327_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:dc5a6506f205edb4ae66cef8c5f1a281",
+    "name": "500162_1781_100327_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 178,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500162_1781_100327_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:7f2728f3945c098ae67f3dc55a805294",
+    "name": "500163_1781_100345_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 12625283,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500163_1781_100345_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:13547bca55b71ebaf4defdb56a3447a1",
+    "name": "500163_1781_100345_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 21028,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500163_1781_100345_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:ebc5208639b5494f58ed2c76f970fef9",
+    "name": "500163_1781_100345_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 11868,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500163_1781_100345_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:bdcd291f7784e466b7074859793716a4",
+    "name": "500163_1781_100345_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 174,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500163_1781_100345_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:ea4cbb170ade293e5b6dd66800713a68",
+    "name": "500164_1781_100339_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 14795924,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500164_1781_100339_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:ab82b6ade2ed572de16005a8bff426a4",
+    "name": "500164_1781_100339_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 22012,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500164_1781_100339_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:059c191163f8bfe2d6c4710635ecb90c",
+    "name": "500164_1781_100339_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 15800,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500164_1781_100339_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:13b292071d4dd3f18d28ef1145a4032f",
+    "name": "500164_1781_100339_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 175,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500164_1781_100339_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:1f47c93ead0390ea8f5cf4638dbd0141",
+    "name": "500165_1781_100347_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 11561885,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500165_1781_100347_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:cabfa3b1dfbb904719d635755a828e6d",
+    "name": "500165_1781_100347_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 121482,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500165_1781_100347_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:fe99af037e5eec0f726c87f506573062",
+    "name": "500165_1781_100347_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 47506,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500165_1781_100347_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:3eddf925b84e9adafbf541de467c49f0",
+    "name": "500165_1781_100347_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 176,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500165_1781_100347_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:3c8e06c7bea4598cf0e8ac5be8bfdb2b",
+    "name": "500166_1781_100329_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 11043528,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500166_1781_100329_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:d1fac89585e98f659fa9d925c2ebd48b",
+    "name": "500166_1781_100329_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 62270,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500166_1781_100329_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:f531e09b77e533de48002c9197c5dc3a",
+    "name": "500166_1781_100329_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 23950,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500166_1781_100329_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:38c910ee28c4b2026f1a7acc89bafe2e",
+    "name": "500166_1781_100329_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 174,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500166_1781_100329_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:3371704cb01837a49c9204dfbb1d4dc4",
+    "name": "500167_1781_100633_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 16019651,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500167_1781_100633_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:18d86ea63db5e891d5b5c42369cb7aff",
+    "name": "500167_1781_100633_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 220996,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500167_1781_100633_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:f5c259e0ccb011f26ffa056ef66166cf",
+    "name": "500167_1781_100633_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 88136,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500167_1781_100633_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:9a91ded5cf8eb909f79b86b67dd2aa36",
+    "name": "500167_1781_100633_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 176,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500167_1781_100633_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:412a27774f8547ecaacd14fe76a6f386",
+    "name": "500829_1781_100332_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 7713818,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500829_1781_100332_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:97b78ed3a9808d7e06f343919ac9bf58",
+    "name": "500829_1781_100332_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 23569,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500829_1781_100332_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:855812f3d746ac502cb7cf21b69825a6",
+    "name": "500829_1781_100332_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 10374,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500829_1781_100332_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:25b4b6b8dccb1e58da377c0342e973a4",
+    "name": "500829_1781_100332_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 175,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500829_1781_100332_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:dad7755583b13c8e35b58b733f9100ed",
+    "name": "500830_1781_100346_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 10521682,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500830_1781_100346_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:d2fe78a7617525bddd2ddacf25ae8460",
+    "name": "500830_1781_100346_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 91072,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500830_1781_100346_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:f12a3567c5ffec82cf392f3af1f15465",
+    "name": "500830_1781_100346_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 31502,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500830_1781_100346_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:17555106ea5dcac8aaee80008db6aef1",
+    "name": "500830_1781_100346_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 174,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500830_1781_100346_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:7568d01d1759664ba41b0c937c451c37",
+    "name": "500831_1781_100344_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 16729741,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500831_1781_100344_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:abc860e5c35c14ba46e9893bf3b17a72",
+    "name": "500831_1781_100344_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 214415,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500831_1781_100344_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:9ff7ebb15da7442df3469d5bccf20c84",
+    "name": "500831_1781_100344_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 116742,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500831_1781_100344_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:19026cf2aaa12b7e88db25793e52d613",
+    "name": "500831_1781_100344_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 177,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500831_1781_100344_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:01c826c3a77231b65ae27e451b490a04",
+    "name": "500833_1781_100354_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 17708985,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500833_1781_100354_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:b233811241a31d99869c44edeb219416",
+    "name": "500833_1781_100354_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 458656,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500833_1781_100354_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:63f5b68e264b903ae3c66a42e8296d7b",
+    "name": "500833_1781_100354_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 188855,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500833_1781_100354_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:311f008a3fe65eeb4695119a3033a918",
+    "name": "500833_1781_100354_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 176,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500833_1781_100354_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:17f2b4bebfed9e1261c91c68d101b46d",
+    "name": "500834_1781_100355_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 6318120,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500834_1781_100355_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:3bd28cde7720029806e2ce606a954ec7",
+    "name": "500834_1781_100355_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 20318,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500834_1781_100355_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:a388da269ea15090723dc53be3fca621",
+    "name": "500834_1781_100355_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 12214,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500834_1781_100355_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:4ed4c0b9b344146b2f6a6654c0e9e244",
+    "name": "500834_1781_100355_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 173,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500834_1781_100355_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:88f07a34ce72574d106f05e367f8517c",
+    "name": "500835_1781_100331_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 21571625,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500835_1781_100331_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:2c509411ae37b9964e4e2801442c2c42",
+    "name": "500835_1781_100331_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 644331,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500835_1781_100331_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:7e3ec52214cfdc2d8281e21bd8ad4c10",
+    "name": "500835_1781_100331_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 383489,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500835_1781_100331_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:4cd06c2ffe92a7210fa0c047a9f598d6",
+    "name": "500835_1781_100331_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 178,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500835_1781_100331_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:eadf2523e2848d87080dea5c381dbfb3",
+    "name": "500836_1781_100338_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 10777169,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500836_1781_100338_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:315289276a91f02d4364c785bbae6ddb",
+    "name": "500836_1781_100338_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 175042,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500836_1781_100338_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:7e3995ab8c811fd0b66c61210c344eff",
+    "name": "500836_1781_100338_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 69480,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500836_1781_100338_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:e4e83e47c7c2baf8f5b8fd931a0cdaa8",
+    "name": "500836_1781_100338_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 174,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500836_1781_100338_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:ba0576662f1dbef245836b6365fa3e4a",
+    "name": "500837_1781_100328_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 16791530,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500837_1781_100328_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:434a3f2a3a5a528c54ae94d6b1f48b4e",
+    "name": "500837_1781_100328_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 142945,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500837_1781_100328_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:daea52bb2844a588d20b70d3c481bb04",
+    "name": "500837_1781_100328_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 69014,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500837_1781_100328_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:4a06de34d6130c113654abfe2f37f5b2",
+    "name": "500837_1781_100328_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 177,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/500837_1781_100328_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:83dad177ff305027e2540575e5a738e9",
+    "name": "501132_1781_100335_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 18898764,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/501132_1781_100335_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:9814a0504bb54b6f6576d66f5ee7aa4a",
+    "name": "501132_1781_100335_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 109946,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/501132_1781_100335_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:f8f3683d57628009407c528c61a78763",
+    "name": "501132_1781_100335_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 78941,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/501132_1781_100335_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:4f6ca122e4ea75efbfc4e9729d078bb7",
+    "name": "501132_1781_100335_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 176,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/501132_1781_100335_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:3ad870369a7d5077ebc5fa57eb91a3f9",
+    "name": "501138_1781_100351_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 17901747,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/501138_1781_100351_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:94f1c3ffce911fb2e308ec298f9eb158",
+    "name": "501138_1781_100351_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 232045,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/501138_1781_100351_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:fc9aaf9e991b3f5fd8873f669d82fc19",
+    "name": "501138_1781_100351_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 138873,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/501138_1781_100351_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:15c84c13c638936fc6a8a3532dab1516",
+    "name": "501138_1781_100351_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 176,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/501138_1781_100351_QC_metrics.tsv"
+},
+{
+    "id": "nmdc:66ce58906010a9db55ff04fc488bcb13",
+    "name": "501128_1781_100340_MSGFjobs_MASIC_resultant.tsv",
+    "description": "Aggregation of analysis tools{MSGFplus, MASIC} results",
+    "file_size_bytes": 18488299,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/501128_1781_100340_MSGFjobs_MASIC_resultant.tsv"
+},
+{
+    "id": "nmdc:3154a856d58d450aafca16b1c2a35ee8",
+    "name": "501128_1781_100340_Peptide_Report.tsv",
+    "description": "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 256990,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/501128_1781_100340_Peptide_Report.tsv"
+},
+{
+    "id": "nmdc:6061d2d559c364eea4111431ed8a957b",
+    "name": "501128_1781_100340_Protein_Report.tsv",
+    "description": "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 157448,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/501128_1781_100340_Protein_Report.tsv"
+},
+{
+    "id": "nmdc:20ce2090c6fbbfd882121d652dbe6625",
+    "name": "501128_1781_100340_QC_metrics.tsv",
+    "description": "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+    "file_size_bytes": 155,
+    "type": "nmdc:DataObject",
+    "url": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/501128_1781_100340_QC_metrics.tsv"
+}
+]}

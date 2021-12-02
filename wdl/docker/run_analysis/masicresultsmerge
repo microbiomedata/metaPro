@@ -2,7 +2,7 @@ FROM mono
 
 RUN apt-get update \
     && apt-get install \
-    --no-install-recommends \ 
+    --no-install-recommends \
     --yes  \
     wget \
     unzip \
@@ -20,5 +20,6 @@ RUN apt-get -y remove \
     unzip \
     &&  apt-get -y autoremove && apt-get clean
 
-# WORKDIR /app
-# ENTRYPOINT ["mono", "/app/MASICResultsMerge/MASICResultsMerger.exe"]
+#WORKDIR /app
+#ENTRYPOINT ["mono", "/app/MASICResultsMerge/MASICResultsMerger.exe"]
+
