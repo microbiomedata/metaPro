@@ -10,13 +10,15 @@ RUN export LDFLAGS="-L/usr/local/opt/openssl/lib"
 # copy project
 COPY ./src /app/metaPro/src
 COPY ./utility /app/metaPro/utility
+COPY ./docs /app/metaPro/docs
 COPY ./setup.py /app/metaPro/setup.py
+
 
 RUN cd /app/metaPro/ \
     && pip install -e .
 
 # add dependencies
-RUN pip install openpyxl xlsxwriter xlrd gffpandas pandas pymongo fastjsonschema
+RUN pip install openpyxl xlsxwriter xlrd gffpandas pandas pymongo requests jsonschema fastjsonschema
 
 # set work directory
 WORKDIR /app

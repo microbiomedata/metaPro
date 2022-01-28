@@ -65,12 +65,21 @@ LABEL org.label-schema.version=$BUILD_VERSION
 LABEL maintainer="Anubhav <anubhav@pnnl.gov>"
 LABEL tags="Proteomics,MassSpectrometry"
 
+# Based on mono:
+#       - MASIC_Console
+#       - MzidToTsvConverter
+#       - PeptideHitResultsProcRunner
+# Based on Wine:
+#       - msconvert
+#       - ProteinDigestionSimulator
+# Based on Java:
+#       - MSGFPlus
+
 #                          ----- ProteoWizard :: msconvert :: Start -----
 # .NET 4+ on Wine 64-bit with base image Ubuntu-16.04
 # pwiz MSconvert :: Download Windows 64-bit tar.bz2 [ http://proteowizard.sourceforge.net/download.html ]
 ENV PROTEOWIZARD_RELEASE_VERSION="3.0.21193 (ccb3e0136)"
 ENV PROTEOWIZARD_DOWNLOADED_FILE="pwiz-bin-windows-x86_64-vc141-release-3_0_21193_ccb3e0136.tar.bz2"
-
 ADD ./docker/pwiz-bin-windows-*.tar.bz2 /wineprefix64/drive_c/pwiz
 ENV CONTAINER_GITHUB=https://github.com/ProteoWizard/container
 
@@ -130,7 +139,7 @@ RUN apt-get update \
                                                     sudo \
                                                     libcurl3 \
     && apt-get clean
-#                          ----- mono [ MASIC :: MzidToTsvConverter :: PeptideHitResultsProcessor ] -----
+    
 # install mono
 ENV DEBIAN_FRONTEND noninteractive
 RUN add-apt-repository ppa:git-core/ppa -y
@@ -188,18 +197,51 @@ RUN wget -P /app/ProteinDigestionSimulator/ https://github.com/PNNL-Comp-Mass-Sp
     && unzip ProteinDigestionSimulator_Program.zip \
     && rm ProteinDigestionSimulator_Program.zip
 
+# Validate-Fasta-File layer
+ENV VALIDATE_FASTA_FILE_VERSION=v2.2.7887
+RUN wget -P /app/ValidateFastaFile/ https://github.com/PNNL-Comp-Mass-Spec/Validate-Fasta-File/releases/download/$VALIDATE_FASTA_FILE_VERSION/ValidateFastaFile_Program.zip \
+    && cd /app/ValidateFastaFile/ \
+    && unzip ValidateFastaFile_Program.zip \
+    && rm ValidateFastaFile_Program.zip
+
+
+
+# FastaFileSplitter layer
+ENV Fasta_File_Splitter_VERSION=v1.1.7887
+RUN wget -P /app/FastaFileSplitter/ https://github.com/PNNL-Comp-Mass-Spec/Fasta-File-Splitter/releases/download/$Fasta_File_Splitter_VERSION/FASTA_File_Splitter_Program.zip \
+    && cd /app/FastaFileSplitter/ \
+    && unzip FASTA_File_Splitter_Program.zip \
+    && rm FASTA_File_Splitter_Program.zip
+
+# MASICResultsMerge layer
+ENV MASICResultsMerge_VERSION=v2.0.7800
+RUN wget -P /app/MASICResultsMerge/ https://github.com/PNNL-Comp-Mass-Spec/MASIC-Results-Merger/releases/download/$MASICResultsMerge_VERSION/MASICResultsMerger_Program.zip \
+    && cd /app/MASICResultsMerge/ \
+    && unzip MASICResultsMerger_Program.zip \
+    && rm MASICResultsMerger_Program.zip
+
+# MzidMerger layer
+ENV MzidMerger_VERSION=v1.3.0
+RUN wget -P /app/MzidMerger/ https://github.com/PNNL-Comp-Mass-Spec/MzidMerger/releases/download/$MzidMerger_VERSION/MzidMerger.zip \
+    && cd /app/MzidMerger/ \
+    && unzip MzidMerger.zip \
+    && rm MzidMerger.zip
+
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
 ENV MONO_HOME=/usr/bin/mono
 ENV WINE_HOME=/usr/bin/wine
 
-# add python3.8 support.
-RUN sudo add-apt-repository ppa:deadsnakes/ppa -y
-RUN sudo apt-get update
-RUN sudo apt install python3.8 python3.8-distutils -y
-RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-RUN python3.8 get-pip.py
-# add dependencies
-RUN pip3.8 install six pandas openpyxl JSON-log-formatter
+# add python3.10 support.
+RUN sudo apt install wget build-essential libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev -y
+RUN wget -c https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tar.xz
+RUN tar -Jxf Python-3.10.0.tar.xz
+WORKDIR /data/Python-3.10.0/
+RUN ./configure --enable-optimizations
+RUN sudo make altinstall -j4
+RUN sudo update-alternatives --install /usr/bin/python python /usr/local/bin/python3.10 1
+RUN sudo update-alternatives --install /usr/bin/pip pip /usr/local/bin/pip3.10 1
+
+RUN pip install pandas openpyxl JSON-log-formatter
 
 # copy project
 COPY ./src /app/metaPro/src
@@ -207,7 +249,7 @@ COPY ./utility /app/metaPro/utility
 COPY ./setup.py /app/metaPro/setup.py
 
 RUN cd /app/metaPro/ \
-    && pip3.8 install -e .
+    && pip install -e .
 
 #clean unnecessary packages
 RUN  apt-get -y remove  curl \
@@ -216,3 +258,5 @@ RUN  apt-get -y remove  curl \
                         libcurl3 \
      &&  apt-get -y autoremove && apt-get clean
 WORKDIR /app
+
+

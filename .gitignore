@@ -65,10 +65,10 @@ devDocs/build/
 
 .idea/
 venv/
-storage/*
-storage/data/*
-storage/results/*
-storage/fastas/*
+#storage/*
+#storage/data/*
+#storage/results/*
+#storage/fastas/*
 
 src/metadata_collection/benchmark/*
 wdl/cromwell/*

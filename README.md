@@ -19,29 +19,43 @@ We identify the active organisms/species in a metagenome corresponding to a wet-
 ### How to run the workflow:
 
 - Python codebase:
-
+    
+  - `Virtual machine`:
     1. Make your input datasets ready- [as described here](src/prepare_input/prepare_input.md) 
        - Make your input `storage/` folder visible to workflow. [You need to provide path in docker-compose.yml](docker-compose.yml)
+         
          Note: 
            - I left `./storage/` already configured assuming you kept inputs in the project directory itself.
            - Typically, a Study(such as `stegen`) has more than 1 datasets(RAW files-MSMS spectra) and multiple fastas to search against.
-             This is information is must and a sample is provide [here](storage/mappings/EMSL48473_JGI1781_Stegen_DatasetToMetagenomeMapping_2021-01-25.xlsx)
+            This is information is must and a sample is provide [here](storage/mappings/EMSL48473_JGI1781_Stegen_DatasetToMetagenomeMapping_2021-01-25.xlsx)
              
     2. Configure workflow as per need. Typically, we run in following ways:
-        1. Fully-Tryptic with No modifications (recommended for large datasets such as Prosser Soil.)
-        2. Fully-Tryptic with modifications    
-        3. partially-tryptic with Modification( such as MetOx).
-        4. partially-tryptic No Modification.
-         Notes: - User need to tweek [configuration file](conf.env). To reproduce results achieved for FICUS dataset studies(`Hess`, `Stegen`, `Blanchard`)
-                - we provided [parameter files](storage/parameters) and a [pre-configured env file](conf.env) that could be use to run the workflow.
-    3. Must have installed [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) on your system.
+       1. Fully-Tryptic with No modifications (recommended for large datasets such as Prosser Soil.)
+       2. Fully-Tryptic with modifications    
+       3. partially-tryptic with Modification( such as MetOx).
+       4. partially-tryptic No Modification.
+         
+          Notes:
+    
+           - User need to tweek [configuration file](metaPro-config.env). To reproduce results achieved for FICUS dataset studies(`Hess`, `Stegen`, `Blanchard`)
+           - we provided [parameter files](storage/parameters) and a [pre-configured env file](conf.env) that could be use to run the workflow.
+    4. Must have installed [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) on your system.
        
-    4. To run workflow, From [project directory](./):
-        1. `make build_unified` to start services.
-           Notes: - (to take containers down and remove volumes: `docker-compose down -v`)
-        2. `make run_workflow` 
-           It will create a `storage/results` folder and create all the necessary files.
+    5. To run workflow, From [project directory](./):
+           1. `make build_unified` to start services.
+              Notes: - (to take containers down and remove volumes: `docker-compose down -v`)
+           2. `make run_workflow` 
+              It will create a `storage/results` folder and create all the necessary files.
 
+    
+  - HPC([Tahoma- high performance computing cluster at EMSL](https://www.emsl.pnnl.gov/MSC/UserGuide/tahoma/tahoma_overview.html)):
+      1. Pull image from dockerhub:
+         ```
+         singularity pull docker://microbiomedata/mepro:2.0.0
+         singularity sif list mepro_2.0.0.sif
+         singularity run docker://microbiomedata/mepro:2.0.0
+         ```
+      2. 
 <hr>
 
 - WDL support codebase:
@@ -60,6 +74,7 @@ We identify the active organisms/species in a metagenome corresponding to a wet-
                 1. `make run_wdl`
              2. if shifter support to run on cori:
                 1. `make run_wdl_on_cori`
+
 
 [More about workflow...](docs/index.rst)
 

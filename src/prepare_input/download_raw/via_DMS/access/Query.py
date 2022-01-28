@@ -1,11 +1,12 @@
 class Query:
-    '''
+    """
     SQL queries to access data from DMS
-    '''
-    #-------------------------------------------------------- Type A
+    """
+
+    # -------------------------------------------------------- Type A
     # Get the MSGF+ Jobs, plus Dataset_IDs
     # sometime MASIC Jobs aren't added in the datapackage by the user, so always safe to get MASIC information from DATASET_MASIC query!
-    DATASET_MSFG=""" SELECT A.Dataset_ID,
+    DATASET_MSFG = """ SELECT A.Dataset_ID,
                                    A.MSGFPlusJob,
                                    B.MasicJob
                             FROM ( SELECT Dataset_ID,
@@ -27,7 +28,7 @@ class Query:
                 WHERE JobNum IN ({})"""
 
     # Find the newest MASIC job for a list of dataset IDs
-    DATASET_MASIC= """  SELECT Dataset_ID, Max(Job) As NewestMasicJob
+    DATASET_MASIC = """  SELECT Dataset_ID, Max(Job) As NewestMasicJob
                         FROM V_Analysis_Job_List_Report_2
                         WHERE Dataset_ID In ({})
                               And Tool Like 'masic%'
@@ -38,7 +39,7 @@ class Query:
                         FROM V_Analysis_Job_Detail_Report_2
                         WHERE JobNum IN ({})"""
 
-    #--------------------------------------------------------Type B
+    # --------------------------------------------------------Type B
     # Given a list of dataset_IDs, determine MSGFplusjobs
     DATASET = """   SELECT Dataset_ID, Job As MSGFPlusJob, [Results Folder Path] As MSGFplus_loc
                     FROM V_Analysis_Job_List_Report_2
@@ -55,7 +56,7 @@ class Query:
     #       And Tool Like 'msgf%'
     # Group by Dataset_ID
     # """
-    #-------------------------------------------------------- Type C
+    # -------------------------------------------------------- Type C
     # Given a list of MSGFplus jobs, determine the dataset_IDs
     MSGF = """SELECT Dataset_ID, Job As MSGFPlusJob,[Results Folder Path] As MSGFplus_loc 
                 FROM V_Analysis_Job_List_Report_2
