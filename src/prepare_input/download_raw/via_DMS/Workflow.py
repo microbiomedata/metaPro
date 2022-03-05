@@ -1,9 +1,6 @@
-from src.data_access.via_DMS.Input import Input
-from src.data_access.via_DMS.QueryBuilder import QueryBuilder
-from src.data_access.via_DMS.FileOperations import FileOperations
-from src.merge.DatasetsMerger import DatasetsMerger
-from src.analysis.FicusAnalysis import FicusAnalysis
-from src.analysis.InternalAnalysis import InternalAnalysis
+from access.Input import Input
+from access.QueryBuilder import QueryBuilder
+from access.FileOperations import FileOperations
 
 import os
 import fnmatch
@@ -11,7 +8,6 @@ from utility.utils import logger
 
 
 class Workflow:
-    """Automate the Meta-proteomics workflow"""
 
     def __init__(
         self,
@@ -39,8 +35,8 @@ class Workflow:
             # internalAnalysis(on_file)
         elif analysis_type == "ficus":
             print("Run Ficus analysis on {}".format(on_file))
-            fa = FicusAnalysis(on_file, self.Storage)
-            fa.create_DatasetOutputTable()
+            # fa = FicusAnalysis(on_file, self.Storage)
+            # fa.create_DatasetOutputTable()
         else:  # "both"
             print("Run Internal & Ficus analysis on {}".format(on_file))
             # internalAnalysis(on_file)
@@ -65,9 +61,9 @@ class Workflow:
                         # stop += 1
 
     def start_merging(self, folder):
-        merge = DatasetsMerger(folder, self.CombineDatasets)
-        result_path = merge.merge_all_jobs_in_UserInput()
-        return result_path
+        # merge = DatasetsMerger(folder, self.CombineDatasets)
+        # result_path = merge.merge_all_jobs_in_UserInput()
+        pass
 
     def download_data(self, user_obj):
         """
@@ -114,18 +110,7 @@ class Workflow:
             pass
         else:
             user_obj.other_input(self.InputType, self.UserInput)
-            ## 1.
             logger.info("1. Start Download relevant datasets from specified source.")
             data_parent_folder = self.download_data(user_obj)
             logger.info(msg="Input Data located at  @:{}".format(data_parent_folder))
-            # ## 2.
-            # logger.info(msg="2. Start Aggregation of analysis tools{MSGF+, MASIC} results")
-            # result_path= self.start_merging(data_parent_folder)
-            # logger.info(msg="Merged jobs located at @:{}".format(result_path))
-            # ## 3.
-            # logger.info(msg="3. Generation of experimental report.")
-            # self.start_downStreamAnalysis(result_path)
-            # logger.info(msg="Generated reports      @:{}".format(result_path))
-
-        logger.info(msg="```````````````")
-        logger.info(msg="Finished running Meta-proteomics pipeline!")
+        logger.info(msg="End downloading raw!")

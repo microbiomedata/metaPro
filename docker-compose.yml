@@ -7,11 +7,11 @@ services:
     container_name: analysisJobContainer
     networks:
       - default
-#    ports:
-#      - 8085:8082
+    ports:
+      - 8085:8082
     volumes:
-      - shared-data1:/app/storage
-      - log-data1:/app/log
+      - shared-data:/app/storage
+      - log-data:/app/log
     environment:
       STAGE: dev
     env_file:
@@ -28,8 +28,8 @@ services:
     ports:
       - 8083:8082
     volumes:
-      - shared-data1:/app/storage
-      - log-data1:/app/log
+      - shared-data:/app/storage
+      - log-data:/app/log
     environment:
       STAGE: dev
     env_file:
@@ -46,8 +46,8 @@ services:
     ports:
       - 8084:8082
     volumes:
-      - shared-data1:/app/storage
-      - log-data1:/app/log
+      - shared-data:/app/storage
+      - log-data:/app/log
     environment:
       STAGE: dev
 
@@ -69,13 +69,13 @@ services:
       - ./metaPro-config.env
 
 volumes:
-  shared-data1:
+  shared-data:
     driver: local
     driver_opts:
       o: bind
       type: none
-      device: /mnt/anubhav_NMDC_proposal/storage/
-  log-data1:
+      device: /mnt/NMDC_proposal/storage
+  log-data:
     driver: local
     driver_opts:
       o: bind

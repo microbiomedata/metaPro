@@ -4,8 +4,6 @@ from jsonschema import validate
 import jsonschema
 import requests
 
-
-
 def check_data_object(d):
     """Validate the metadata urls.
 
@@ -74,10 +72,7 @@ def using_jsonschema(schema, json_file):
             print("Can't load json file.")
             raise
         try:
-            # for obj in data_objects:
-
             validate(instance=data_objects, schema=nmdc_schema)
-            # break
         except jsonschema.exceptions.ValidationError as err:
             print(err)
             err = "JSON data is InValid"
@@ -98,21 +93,21 @@ if __name__ == "__main__":
     # activity_json_file = "storage/results/stegen/stegen_MetaProteomicAnalysis_activity.json"
     # data_obj_json_file = "storage/results/stegen/stegen_emsl_analysis_data_objects.json"
 
-    activity_json_file = "mpdocs/temp/stegen_MetaProteomicAnalysis_activity.json"
-    data_obj_json_file = "mpdocs/temp/stegen_emsl_analysis_data_objects.json"
+    activity_json_file = "/Users/anub229/Downloads/test/metaPro/mpdocs/stegen_MetaProteomicAnalysis_activity.json"
+    # data_obj_json_file = "mpdocs/temp/stegen_emsl_analysis_data_objects.json"
 
     # schema = "./metaPro/docs/nmdc.schema.json"
-    schema = "docs/nmdc.schema.json"
-    evaluate_file = data_obj_json_file
+    schema = "/Users/anub229/Downloads/test/metaPro/docs/nmdc.schema.json"
+    # evaluate_file = data_obj_json_file
 
     # nmdc schema validation
     print("activity_json schema validation")
     using_fastjsonschema(schema, activity_json_file)
-    print("data_obj_json schema validation")
-    using_fastjsonschema(schema, data_obj_json_file)
+    # print("data_obj_json schema validation")
+    # using_fastjsonschema(schema, data_obj_json_file)
      # # using_jsonschema(schema, evaluate_file)
     print('<<>>' * 50)
     # urls correctness validation
-    print("data_obj_json Url correctness")
-    validate_file(data_obj_json_file)
+    # print("data_obj_json Url correctness")
+    # validate_file(data_obj_json_file)
 

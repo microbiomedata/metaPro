@@ -143,7 +143,7 @@ Outputs
                              int: first_hit_protein_count(# of proteins observed assuming single peptide-to-protein relationships)
                              int: mean_peptide_count(Unique peptide sequences matching to each identified protein.)
 
-[more about the NMDC schema](https://github.com/microbiomedata/nmdc-schema/blob/main/jsonschema/nmdc.schema.json)
+`more about the NMDC schema <https://github.com/microbiomedata/nmdc-schema/blob/main/jsonschema/nmdc.schema.json>`__
 
 - data_out_table
 

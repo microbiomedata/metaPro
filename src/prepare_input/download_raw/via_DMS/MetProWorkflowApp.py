@@ -1,4 +1,4 @@
-from src.Workflow import Workflow
+from Workflow import Workflow
 from utility.utils import str2bool
 
 from argparse import RawTextHelpFormatter, ArgumentParser

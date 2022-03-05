@@ -113,16 +113,16 @@ class FileOperations:
         :param df: row corresponding to a dataset
         :return:
         """
-        self.create_dir(
-            self.parent_folder + "/" + "DMS_MSGFjobs" + "/" + str(df["MSGFPlusJob"])
-        )
+        # self.create_dir(
+        #     self.parent_folder + "/" + "DMS_MSGFjobs" + "/" + str(df["MSGFPlusJob"])
+        # )
         path_or_url = str(df["MSGFplus_loc"])
-        if not path_or_url.startswith("http"):
-            self.parse_fileserverpath_to_web_url(path_or_url)
-            self.download_over_http()
-        else:
-            self.url = path_or_url
-            self.download_over_http()
+        # if not path_or_url.startswith("http"):
+        #     self.parse_fileserverpath_to_web_url(path_or_url)
+        #     self.download_over_http()
+        # else:
+        #     self.url = path_or_url
+        #     self.download_over_http()
         return path_or_url
 
     def download_masic_jobs(self, df):
@@ -208,7 +208,7 @@ class FileOperations:
         self.parent_folder = self.started_from + "/" + str(self.row["Dataset_ID"])
         self.create_dir(self.parent_folder)
         path_or_url = self.download_msgf_jobs(self.row)
-        self.download_masic_jobs(self.row)
+        # self.download_masic_jobs(self.row)
         self.download_raw_files(self.row, path_or_url)
 
     @stats
@@ -219,8 +219,8 @@ class FileOperations:
         # TODO: Check if .raw files exisits in subdirs!: if not os.path.exists(self.started_from):
         # FIXME: Enabling above stmt, doesn't allow to download datasets when they aren't on the disk!
         os.chdir(self.started_from)
-        logger.info(msg="get_files()  @:".format(os.getcwd()))
-        self.download_fasta_param_files()
+        # logger.info(msg="get_files()  @:".format(os.getcwd()))
+        # self.download_fasta_param_files()
         self.Input.apply(lambda x: self.use_df(x), axis=1)
         logger.info(msg="````````")
         logger.info(msg="Finished downloading data at loc:{}".format(self.started_from))

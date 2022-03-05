@@ -1,6 +1,6 @@
 import os
 import json
-from datetime import datetime
+import datetime
 import time
 import tracemalloc
 import copy
@@ -362,7 +362,7 @@ class ProcessingTools:
             LOGGED_ANALYSIS_JOB[dataset_id].append(job_object)
 
         # log starttime
-        started_at_time = datetime.utcnow().strftime("%Y_%m_%d-%I_%M_%S_%p")
+        started_at_time = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc).isoformat() #datetime.utcnow().strftime("%Y_%m_%d-%I_%M_%S_%p")
         for job in LOGGED_ANALYSIS_JOB[dataset_id]:
             if job["job_name"] == job_name:
                 if "started_at_time" not in job:
@@ -379,7 +379,7 @@ class ProcessingTools:
         self.analysis_job(dataset_id, faa_file_loc, raw_file_loc)
 
         # log endtime
-        ended_at_time = datetime.utcnow().strftime("%Y_%m_%d-%I_%M_%S_%p")
+        ended_at_time = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc).isoformat() #datetime.utcnow().strftime("%Y_%m_%d-%I_%M_%S_%p")
         for job in LOGGED_ANALYSIS_JOB[dataset_id]:
             if job["job_name"] == job_name:
                 if "ended_at_time" not in job:

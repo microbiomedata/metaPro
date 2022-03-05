@@ -1,6 +1,4 @@
 from os import environ
-
-
 class Config:
     # Set the database credentials in the environment.
     db_user = environ.get("DATABASE_USERNAME")

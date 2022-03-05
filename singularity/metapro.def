@@ -1,0 +1,16 @@
+Bootstrap: docker
+From: microbiomedata/mepro:2.0.0
+
+%files
+    mywine /usr/local/bin/mywine
+
+%environment
+    export STUDY=spruce
+    export MAPPING_FILENAME=Spruce_analysis_mapping_2022-01-27.xlsx
+    export CONTAMINANT_FILENAME=Tryp_Pig_Bov.fasta
+    export QVALUE_THRESHOLD=0.05
+    export MASIC_PARAM_FILENAME=LTQ-FT_10ppm_2014-08-06.xml
+    export MSGFPLUS_PARAM_FILENAME=MSGFPlus_Tryp_NoMods_20ppmParTol.txt
+
+%runscript
+    python3.8 metaPro/src/analysis_jobs/run_analysis_job.py

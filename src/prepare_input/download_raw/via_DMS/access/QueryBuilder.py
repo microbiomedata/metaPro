@@ -1,6 +1,6 @@
-from src.data_access.via_DMS.DMSDatabase import DMSDatabase
-from src.data_access.via_DMS.secure import Config
-from src.data_access.via_DMS.Query import Query
+from access.DMSDatabase import DMSDatabase
+from access.secure import Config
+from access.Query import Query
 
 import pandas as pd
 import os
