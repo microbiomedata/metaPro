@@ -128,7 +128,6 @@ task masicresultmerge {
         cp $sic_stats_file_loc ../execution/
         mv ~{dataset_name}_syn.txt ~{dataset_name}_msgfplus_syn.txt
         mv ~{dataset_name}_SICstats.txt ~{dataset_name}_SICStats.txt
-
         mono /app/MASICResultsMerge/MASICResultsMerger.exe \
         ~{dataset_name}_msgfplus_syn.txt
     }
@@ -137,6 +136,47 @@ task masicresultmerge {
     }
     runtime {
         docker: 'microbiomedata/metapro-masicresultsmerge:v2.0.7800'
+    }
+}
+task fastaFileSplitter {
+    input{
+        File    fasta_file_loc
+        Int     target_size_mb = 100
+    }
+    command {
+        mono /app/FastaFileSplitter/FastaFileSplitter.exe \
+            /I:~{fasta_file_loc} \
+            /MB:~{target_size_mb} \
+            /O:~{'.'}
+    }
+    output {
+        Array[File]   outfiles = glob("*.fasta")
+    }
+    runtime {
+        docker: 'microbiomedata/metapro-fastafilesplitter:v1.1.7887'
+    }
+}
+task mzidMerger {
+    input{
+        Array[File] mzid_files
+        String output_file_name
+    }
+    command<<<
+        fps=( ~{sep=' ' mzid_files } )
+        for i in "${!fps[@]}"
+        do
+            ln ${fps[$i]} `basename ${fps[$i]}`
+        done
+        mono /app/MzidMerger/net472/MzidMerger.exe \
+            -inDir:~{'.'} \
+            -filter:"*.mzid" \
+            -out:~{output_file_name}
+    >>>
+    output {
+        File   outfile = output_file_name
+    }
+    runtime {
+        docker: 'microbiomedata/metapro-mzidmerger:v1.3.0'
     }
 }
 
@@ -151,7 +191,6 @@ workflow job_analysis{
         File   MSGFPLUS_PARAM_FILENAME
         File   CONTAMINANT_FILENAME
     }
-
     call masic {
         input:
             raw_file    = raw_file_loc,
@@ -163,17 +202,55 @@ workflow job_analysis{
             raw_file     = raw_file_loc,
             dataset_name = dataset_name
     }
-    call msgfplus {
-        input:
-            mzml_file               = msconvert.outfile,
-            contaminated_fasta_file = faa_file_loc,
-            msgfplus_params         = MSGFPLUS_PARAM_FILENAME,
-            dataset_name            = dataset_name,
-            annotation_name         = annotation_name
+    if(size(faa_file_loc, 'GB') > 1)
+    {
+        call fastaFileSplitter {
+            input:
+                fasta_file_loc              = faa_file_loc
+        }
+        scatter(split_fasta_file in fastaFileSplitter.outfiles)
+        {
+            # Number output MS-GF+ .mzid files similarly to input FASTAs for recordkeeping
+            String faa_file_basename = basename(faa_file_loc, ".faa")
+            String numbered_dataset_name = sub(split_fasta_file, faa_file_basename, dataset_name)
+            String dataset_basename = basename(numbered_dataset_name, ".fasta")
+
+            call msgfplus as msgfplussplit{
+                input:
+                    mzml_file               = msconvert.outfile,
+                    contaminated_fasta_file = split_fasta_file,
+                    msgfplus_params         = MSGFPLUS_PARAM_FILENAME,
+                    dataset_name            = dataset_basename,
+                    annotation_name         = annotation_name
+            }
+        }
+        call mzidMerger {
+            input:
+                mzid_files = msgfplussplit.outfile,
+                output_file_name = "~{dataset_name}.mzid"
+        }
+
+        File? msgfplus_split_and_merged = mzidMerger.outfile
     }
+    if(size(faa_file_loc, 'GB') <= 1)
+    {
+        call msgfplus{
+            input:
+                mzml_file               = msconvert.outfile,
+                contaminated_fasta_file = faa_file_loc,
+                msgfplus_params         = MSGFPLUS_PARAM_FILENAME,
+                dataset_name            = dataset_name,
+                annotation_name         = annotation_name
+        }
+
+        File? msgfplus_not_split = msgfplus.outfile
+        File? rev_cat_fasta_not_split = msgfplus.rev_cat_fasta
+    }
+    Array[File?] msgfplus_mzid = [msgfplus_not_split, msgfplus_split_and_merged]
+
     call mzidtotsvconverter {
         input:
-            mzid_file    = msgfplus.outfile,
+            mzid_file    = select_first(msgfplus_mzid),
             dataset_name = dataset_name
     }
     call peptidehitresultsprocrunner {
@@ -182,7 +259,7 @@ workflow job_analysis{
 #            msgfplus_modef_params  = "",
 #            mass_correction_params = "",
             msgfplus_params        = MSGFPLUS_PARAM_FILENAME,
-            revcatfasta_file       = msgfplus.rev_cat_fasta,
+            revcatfasta_file       = faa_file_loc,
             dataset_name           = dataset_name
     }
     call masicresultmerge {
