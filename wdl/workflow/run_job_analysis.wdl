@@ -44,6 +44,7 @@ task msgfplus {
         File   msgfplus_params
         String dataset_name
         String annotation_name
+        String revcat_name = basename(sub(contaminated_fasta_file, ".fasta", ".revCat.fasta"))
     }
     command {
         java -Xmx32G -jar /app/msgf/MSGFPlus.jar \
@@ -54,12 +55,12 @@ task msgfplus {
         -thread 16 \
         -verbose 1
         echo '>>> moving revCat.fasta file in execution folder.'
-        rev_cat_fasta_loc=$(find .. -type f -regex ".*~{annotation_name}_proteins.revCat.fasta")
+        rev_cat_fasta_loc=$(find .. -type f -regex ".*~{revcat_name}")
         cp $rev_cat_fasta_loc ../execution/
     }
     output {
         File   outfile       = "${dataset_name}.mzid"
-        File   rev_cat_fasta = "${annotation_name}_proteins.revCat.fasta"
+        File   rev_cat_fasta = revcat_name
     }
     runtime {
         docker: 'microbiomedata/metapro-msgfplus:v2021.03.22'
@@ -141,7 +142,7 @@ task masicresultmerge {
 task fastaFileSplitter {
     input{
         File    fasta_file_loc
-        Int     target_size_mb = 100
+        Int     target_size_mb = 50
     }
     command {
         mono /app/FastaFileSplitter/FastaFileSplitter.exe \
@@ -156,10 +157,12 @@ task fastaFileSplitter {
         docker: 'microbiomedata/metapro-fastafilesplitter:v1.1.7887'
     }
 }
-task mzidMerger {
+task msgfplusresultsmerge {
     input{
         Array[File] mzid_files
-        String output_file_name
+        Array[File] fasta_files
+        String output_mzid_file_name
+        String output_fasta_file_name
     }
     command<<<
         fps=( ~{sep=' ' mzid_files } )
@@ -170,10 +173,12 @@ task mzidMerger {
         mono /app/MzidMerger/net472/MzidMerger.exe \
             -inDir:~{'.'} \
             -filter:"*.mzid" \
-            -out:~{output_file_name}
+            -out:~{output_mzid_file_name}
+        cat ~{sep=' ' fasta_files } >> ~{output_fasta_file_name}
     >>>
     output {
-        File   outfile = output_file_name
+        File    outfile_mzid = output_mzid_file_name
+        File    outfile_fasta = output_fasta_file_name 
     }
     runtime {
         docker: 'microbiomedata/metapro-mzidmerger:v1.3.0'
@@ -224,13 +229,16 @@ workflow job_analysis{
                     annotation_name         = annotation_name
             }
         }
-        call mzidMerger {
+        call msgfplusresultsmerge {
             input:
                 mzid_files = msgfplussplit.outfile,
-                output_file_name = "~{dataset_name}.mzid"
+                fasta_files = msgfplussplit.rev_cat_fasta,
+                output_mzid_file_name = "~{dataset_name}.mzid",
+                output_fasta_file_name = basename(faa_file_loc, ".faa") + ".revCat.fasta"
         }
 
-        File? msgfplus_split_and_merged = mzidMerger.outfile
+        File? msgfplus_split_and_merged = msgfplusresultsmerge.outfile_mzid
+        File? rev_cat_fasta_split_and_merged = msgfplusresultsmerge.outfile_fasta
     }
     if(size(faa_file_loc, 'GB') <= 1)
     {
