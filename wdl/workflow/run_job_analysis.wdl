@@ -184,6 +184,19 @@ task msgfplusresultsmerge {
         docker: 'microbiomedata/metapro-mzidmerger:v1.3.0'
     }
 }
+task concatcontaminate {
+    input{
+        File faa_file
+        File contaminate_file
+        String output_filename = basename(faa_file)
+    }
+    command<<<
+        cat ~{faa_file} ~{contaminate_file} > ~{output_filename}
+    >>>
+    output {
+        File    outfile = output_filename
+    }
+}
 
 workflow job_analysis{
     input{
@@ -196,6 +209,11 @@ workflow job_analysis{
         File   MSGFPLUS_PARAM_FILENAME
         File   CONTAMINANT_FILENAME
     }
+    call concatcontaminate {
+        input:
+            faa_file        = faa_file_loc,
+            contaminate_file= CONTAMINANT_FILENAME
+    }
     call masic {
         input:
             raw_file    = raw_file_loc,
@@ -207,11 +225,11 @@ workflow job_analysis{
             raw_file     = raw_file_loc,
             dataset_name = dataset_name
     }
-    if(size(faa_file_loc, 'GB') > 1)
+    if(size(concatcontaminate.outfile, 'GB') > 1)
     {
         call fastaFileSplitter {
             input:
-                fasta_file_loc              = faa_file_loc
+                fasta_file_loc              = concatcontaminate.outfile
         }
         scatter(split_fasta_file in fastaFileSplitter.outfiles)
         {
@@ -240,12 +258,12 @@ workflow job_analysis{
         File? msgfplus_split_and_merged = msgfplusresultsmerge.outfile_mzid
         File? rev_cat_fasta_split_and_merged = msgfplusresultsmerge.outfile_fasta
     }
-    if(size(faa_file_loc, 'GB') <= 1)
+    if(size(concatcontaminate.outfile, 'GB') <= 1)
     {
         call msgfplus{
             input:
                 mzml_file               = msconvert.outfile,
-                contaminated_fasta_file = faa_file_loc,
+                contaminated_fasta_file = concatcontaminate.outfile,
                 msgfplus_params         = MSGFPLUS_PARAM_FILENAME,
                 dataset_name            = dataset_name,
                 annotation_name         = annotation_name
@@ -254,11 +272,12 @@ workflow job_analysis{
         File? msgfplus_not_split = msgfplus.outfile
         File? rev_cat_fasta_not_split = msgfplus.rev_cat_fasta
     }
-    Array[File?] msgfplus_mzid = [msgfplus_not_split, msgfplus_split_and_merged]
+    Array[File?] msgfplus_mzids          = [msgfplus_not_split, msgfplus_split_and_merged]
+    Array[File?] msgfplus_revCata_fastas = [rev_cat_fasta_not_split, rev_cat_fasta_split_and_merged]
 
     call mzidtotsvconverter {
         input:
-            mzid_file    = select_first(msgfplus_mzid),
+            mzid_file    = select_first(msgfplus_mzids),
             dataset_name = dataset_name
     }
     call peptidehitresultsprocrunner {
@@ -267,7 +286,7 @@ workflow job_analysis{
 #            msgfplus_modef_params  = "",
 #            mass_correction_params = "",
             msgfplus_params        = MSGFPLUS_PARAM_FILENAME,
-            revcatfasta_file       = faa_file_loc,
+            revcatfasta_file       = select_first(msgfplus_revCata_fastas),
             dataset_name           = dataset_name
     }
     call masicresultmerge {
