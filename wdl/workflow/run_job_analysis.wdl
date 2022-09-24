@@ -142,12 +142,12 @@ task masicresultmerge {
 task fastaFileSplitter {
     input{
         File    fasta_file_loc
-        Int     target_size_mb = 50
+        Int     split_count
     }
     command {
         mono /app/FastaFileSplitter/FastaFileSplitter.exe \
             /I:~{fasta_file_loc} \
-            /MB:~{target_size_mb} \
+            /N:~{split_count} \
             /O:~{'.'}
     }
     output {
@@ -208,6 +208,8 @@ workflow job_analysis{
         File   MASIC_PARAM_FILENAME
         File   MSGFPLUS_PARAM_FILENAME
         File   CONTAMINANT_FILENAME
+        Int    FASTA_SPLIT_ON_SIZE_MB
+        Int    FASTA_SPLIT_COUNT
     }
     call concatcontaminate {
         input:
@@ -225,11 +227,12 @@ workflow job_analysis{
             raw_file     = raw_file_loc,
             dataset_name = dataset_name
     }
-    if(size(concatcontaminate.outfile, 'GB') > 1)
+    if(size(concatcontaminate.outfile, 'MB') > FASTA_SPLIT_ON_SIZE_MB)
     {
         call fastaFileSplitter {
             input:
-                fasta_file_loc              = concatcontaminate.outfile
+                fasta_file_loc  = concatcontaminate.outfile,
+                split_count  = FASTA_SPLIT_COUNT
         }
         scatter(split_fasta_file in fastaFileSplitter.outfiles)
         {
@@ -258,7 +261,7 @@ workflow job_analysis{
         File? msgfplus_split_and_merged = msgfplusresultsmerge.outfile_mzid
         File? rev_cat_fasta_split_and_merged = msgfplusresultsmerge.outfile_fasta
     }
-    if(size(concatcontaminate.outfile, 'GB') <= 1)
+    if(size(concatcontaminate.outfile, 'MB') <= FASTA_SPLIT_ON_SIZE_MB)
     {
         call msgfplus{
             input:

@@ -13,6 +13,8 @@ workflow metapro {
         File MSGFPLUS_PARAM_FILE_LOC
         File CONTAMINANT_FILE_LOC
         String STUDY
+        Int FASTA_SPLIT_ON_SIZE_MB
+        Int FASTA_SPLIT_COUNT
     }
 
     scatter (myobj in mapper_list) {
@@ -26,7 +28,9 @@ workflow metapro {
                 QVALUE_THRESHOLD        = QVALUE_THRESHOLD,
                 MASIC_PARAM_FILENAME    = MASIC_PARAM_FILE_LOC,
                 MSGFPLUS_PARAM_FILENAME = MSGFPLUS_PARAM_FILE_LOC,
-                CONTAMINANT_FILENAME    = CONTAMINANT_FILE_LOC
+                CONTAMINANT_FILENAME    = CONTAMINANT_FILE_LOC,
+                FASTA_SPLIT_ON_SIZE_MB  = FASTA_SPLIT_ON_SIZE_MB,
+                FASTA_SPLIT_COUNT       = FASTA_SPLIT_COUNT
         }
         call generate_reports.report_gen {
             input:
