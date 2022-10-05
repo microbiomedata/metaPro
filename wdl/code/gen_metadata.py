@@ -9,6 +9,7 @@ import csv
 import json
 import fastjsonschema
 import copy
+import sys
 
 
 class GenMetadata:
@@ -58,16 +59,6 @@ class GenMetadata:
                 return False
             return True
 
-    def register_job_in_emsl_to_jgi(self, job_key, job_value, emsl_to_jgi_copy):
-
-        locations = emsl_to_jgi_copy[self.dataset_id]["genome_directory"][
-            self.genome_directory
-        ]
-        if job_key not in locations:
-            locations[job_key] = job_value
-        else:
-            print(f"{job_key} already present in {self.genome_directory}")
-
     def write_to_json_file(self, filenames):
         """
 
@@ -78,7 +69,7 @@ class GenMetadata:
         data_obj_count = self.data_obj_coll.count_documents({})
         print(f" activity_coll#:{activity_count}, data_obj_coll#:{data_obj_count}")
         with open(filenames[0], "w") as fptr1, open(filenames[1], "w") as fptr2:
-
+            fptr1.write("""{ "metaproteomics_analysis_activity_set" : """)
             fptr1.write("[\n")
             for idx, activity_doc in enumerate(self.activity_coll.find()):
                 activity_doc.pop("_id")
@@ -86,7 +77,9 @@ class GenMetadata:
                 if idx < activity_count - 1:
                     fptr1.write(",\n")
             fptr1.write("\n]")
+            fptr1.write("}")
 
+            fptr2.write("""{"data_object_set":""")
             fptr2.write("[\n")
             for idx, do_doc in enumerate(self.data_obj_coll.find()):
                 do_doc.pop("_id")
@@ -94,6 +87,7 @@ class GenMetadata:
                 if idx < data_obj_count - 1:
                     fptr2.write(",\n")
             fptr2.write("\n]")
+            fptr2.write("}")
 
     def make_connection(self, db_name, coll_names):
         """
@@ -122,14 +116,14 @@ class GenMetadata:
         else:
             return ""
 
-    def gen_id(self, nersc_seq_id):
+    def gen_id(self):
         """
         - Generate unique ID foreach dataset in the _activity.json
         """
         txt = "{}\n{}\n{}\n".format(
             str(self.dataset_id),
             str(self.genome_directory),
-            str(nersc_seq_id),
+            # str(nersc_seq_id),
             str(self.started_at_time),
             str(self.ended_at_time),
         )
@@ -171,7 +165,7 @@ class GenMetadata:
                 self.quant_bucket.append(quant_dict)
         pass
 
-    def prepare_file_data_object_(self, file_path, file_name, description):
+    def prepare_file_data_object_(self, file_path, file_name, description, activity_id):
         """
         - Makes entry in _emsl_analysis_data_objects.json
         - Contains information about Pipeline's analysis results E.g.
@@ -187,10 +181,24 @@ class GenMetadata:
             self.data_object["name"] = file_name
             self.data_object["description"] = description
             self.data_object["file_size_bytes"] = os.stat(file_path).st_size
+            self.data_object["md5_checksum"] = checksum
             self.data_object["type"] = os.environ.get("TYPE")
+
+            if "MSGFjobs_MASIC_resultant" in file_name:
+                self.data_object["data_object_type"] = "Unfiltered Metaproteomics Results"
+            if "Peptide_Report" in file_name:
+                self.data_object["data_object_type"] = "Peptide Report"
+            if "Protein_Report" in file_name:
+                self.data_object["data_object_type"] = "Protein Report"
+            if "QC_metrics" in file_name:
+                self.data_object["data_object_type"] = "Metaproteomics Workflow Statistics"
+
             self.data_object["url"] = (
                 "https://nmdcdemo.emsl.pnnl.gov/proteomics/" + file_name
             )
+
+            self.data_object["was_generated_by"] = activity_id
+
             if self.data_obj_coll.count_documents({"id": file_id}, limit=1) == 0:
                 self.data_obj_coll.insert_one(self.data_object)
                 self.data_object.clear()
@@ -200,7 +208,7 @@ class GenMetadata:
         else:
             print("Found HASH empty for {}".format(file_name))
 
-    def create_has_output(self):
+    def create_has_output(self,  activity_id):
         """
         Files:
             MSGFjobs_MASIC_resultant.tsv
@@ -216,34 +224,38 @@ class GenMetadata:
             self.prepare_file_data_object_(
                 self.resultant_file,
                 os.path.basename(self.resultant_file),
-                "Aggregation of analysis tools{MSGFplus, MASIC} results",
+                "Aggregation of analysis tools{MSGFplus, MASIC} results", 
+                activity_id
             )
         )
         has_output.append(
             self.prepare_file_data_object_(
                 self.peptide_report,
                 os.path.basename(self.peptide_report),
-                "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR",
+                "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR", 
+                activity_id
             )
         )
         has_output.append(
             self.prepare_file_data_object_(
                 self.protein_report,
                 os.path.basename(self.protein_report),
-                "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR",
+                "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR", 
+                activity_id
             )
         )
         has_output.append(
             self.prepare_file_data_object_(
                 self.qc_metric_report,
                 os.path.basename(self.qc_metric_report),
-                "Overall statistics from MSGF+ search results filtered to ~5% FDR",
+                "Overall statistics from MSGF+ search results filtered to ~5% FDR", 
+                activity_id
             )
         )
         self.activity["has_output"] = has_output
         pass
 
-    def create_has_input(self, emsl_to_jgi_copy):
+    def create_has_input(self):
         """
         "has_input":
               - created for .RAW file pointer to Bill's JSON
@@ -264,9 +276,6 @@ class GenMetadata:
         if fasta_checksum:
             # print("{} : {}".format(fasta_checksum, self.fasta_file))
             # add to metadata.
-            self.register_job_in_emsl_to_jgi(
-                "faa_file_checksum", fasta_checksum, emsl_to_jgi_copy
-            )
             has_input.append("nmdc:" + fasta_checksum)
             self.activity["has_input"] = has_input
         else:
@@ -285,7 +294,7 @@ class GenMetadata:
         self.activity["has_peptide_quantifications"] = self.quant_bucket
         pass
 
-    def prepare_activity(self, nersc_seq_id, emsl_to_jgi_copy):
+    def prepare_activity(self):
         """
         - Makes entry in _MetaProteomicAnalysis_activity.json
         - Foreach dataset, a pointer:
@@ -294,7 +303,7 @@ class GenMetadata:
 
         """
 
-        activity_id = self.gen_id(nersc_seq_id)
+        activity_id = self.gen_id()
         self.activity["id"] = activity_id
         self.activity["name"] = ":".join(
             ["Metaproteome", self.dataset_id, self.genome_directory]
@@ -306,8 +315,8 @@ class GenMetadata:
         self.activity["execution_resource"] = os.environ.get("EXECUTION_RESOURCE")
         self.activity["git_url"] = os.environ.get("GIT_URL")
 
-        self.create_has_input(emsl_to_jgi_copy)
-        self.create_has_output()
+        self.create_has_input()
+        self.create_has_output(activity_id)
 
         # add to database!
         if self.activity_coll.count_documents({"id": activity_id}, limit=1) == 0:
@@ -346,6 +355,8 @@ class GenMetadata:
 
 if __name__ == "__main__":
 
+    mapper_file = sys.argv[1]
+    
     meta_file = GenMetadata()
     # setup the cursors
     coll_names = [
@@ -356,56 +367,27 @@ if __name__ == "__main__":
 
     # 1. Make collection and populate them.
     with open(mapper_file, "r+") as json_file:
-        emsl_to_jgi = json.load(json_file)
-        emsl_to_jgi_copy = copy.deepcopy(emsl_to_jgi)
-        contaminant_file = emsl_to_jgi["contaminant_file_loc"]
+        mapper_json = json.load(json_file)
         # run for each dataset
-        for dataset_id, values in emsl_to_jgi.items():
-            if dataset_id not in [
-                "contaminant_file_loc",
-                "analysis_activity_file_loc",
-                "data_objects_file_loc",
-                "STUDY",
-                "tools_used",
-            ]:
-                # dataset search against a fasta file
-                for genome_directory, locations in values["genome_directory"].items():
-                    print(f"Prepare activity {dataset_id} : {genome_directory}")
-                    meta_file.set_keys(
-                        dataset_id,
-                        genome_directory,
-                        os.path.basename(locations["txt_faa_file_loc"]),
-                        locations["resultant_file_loc"],
-                        locations["faa_file_loc"],
-                        contaminant_file,
-                        locations["peptide_report_loc"],
-                        locations["protein_report_loc"],
-                        locations["qc_metric_report_loc"],
-                        locations["started_at_time"],
-                        locations["ended_at_time"],
-                    )
+        for mapping in mapper_json:
+            meta_file.set_keys(
+                mapping["dataset_id"],
+                mapping["genome_directory"],
+                os.path.basename(mapping["txt_faa_file"]),
+                mapping["resultant_file"],
+                mapping["faa_file"],
+                mapping["contaminate_file"],
+                mapping["peptide_report_file"],
+                mapping["protein_report_file"],
+                mapping["qc_metric_report_file"],
+                mapping["started_at_time"],
+                mapping["ended_at_time"],
+            )
 
-                    nersc_seq_id = locations["nersc_seq_id"]
-                    meta_file.prepare_activity(nersc_seq_id, emsl_to_jgi_copy)
+            meta_file.prepare_activity()
 
-                    # 2. dump collections in json files
-                    activity_file = os.path.join(
-                        result_loc,
-                        f"{os.environ.get('STUDY')}_MetaProteomicAnalysis_activity.json",
-                    )
-                    data_obj_file = os.path.join(
-                        result_loc,
-                        f"{os.environ.get('STUDY')}_emsl_analysis_data_objects.json",
-                    )
-                    meta_file.write_to_json_file([activity_file, data_obj_file])
-                    # add meta-data information.
-                    emsl_to_jgi_copy["analysis_activity_file_loc"] = activity_file
-                    emsl_to_jgi_copy["data_objects_file_loc"] = data_obj_file
-                    emsl_to_jgi_copy["contaminant_file_checksum"] = meta_file.get_md5(
-                        contaminant_file
-                    )
-
-        json_file.seek(0)  # move back to BOF.
-        json_file.truncate()
-        json_file.write(json.dumps(emsl_to_jgi_copy, default=str, indent=4))
+        # 2. dump collections in json files
+        activity_file = f"{os.environ.get('STUDY')}_MetaProteomicAnalysis_activity.json"
+        data_obj_file = f"{os.environ.get('STUDY')}_emsl_analysis_data_objects.json"
+        meta_file.write_to_json_file([activity_file, data_obj_file])
     pass

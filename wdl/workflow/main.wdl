@@ -18,7 +18,6 @@ workflow metapro {
     }
 
     scatter (myobj in mapper_list) {
-
         call run_analysis.job_analysis {
             input:
                 dataset_name            = myobj['dataset_name'],
@@ -34,27 +33,37 @@ workflow metapro {
         }
         call generate_reports.report_gen {
             input:
-                faa_txt_file      = myobj['faa_file_loc'],
+                faa_txt_file      = job_analysis.faa_with_contaminates,
                 gff_file          = myobj['gff_file_loc'],
                 resultant_file    = job_analysis.resultant_file,
                 Dataset_id        = myobj['dataset_id'],
                 genome_directory  = myobj['genome_dir'],
                 q_value_threshold = QVALUE_THRESHOLD,
-                annotation_name   = myobj['annotation_name']
-
+                annotation_name   = myobj['annotation_name'],
+                dataset_name      = myobj['dataset_name']
         }
 
-        call collect_metadata.gen_metadata {
-            input:
-                study=STUDY,
-                resultant_file = job_analysis.resultant_file,
-                peptide_file   = report_gen.peptide_file,
-                protein_file   = report_gen.protein_file,
-                qc_metric_file = report_gen.qc_metric_file,
-
-                start_time     = job_analysis.start_time,
-                end_time       = job_analysis.end_time
+        Result result = {
+            "resultant_file": job_analysis.resultant_file,
+            "peptide_report_file": report_gen.peptide_file,
+            "protein_report_file": report_gen.protein_file,
+            "qc_metric_report_file": report_gen.qc_metric_file,
+            "faa_file": myobj['faa_file_loc'],
+            "contaminate_file": CONTAMINANT_FILE_LOC,
+            "txt_faa_file": report_gen.txt_faa_file,
+            "genome_directory": myobj['genome_dir'],
+            "dataset_id": myobj['dataset_id'],
+            "start_time": job_analysis.start_time,
+            "end_time": job_analysis.end_time
         }
+    }
 
+    Array[Result?] results_maybe = result
+    Array[Result] results = select_all(results_maybe)
+
+    call collect_metadata.gen_metadata {
+        input:
+            study       = STUDY,
+            results     = results
     }
 }

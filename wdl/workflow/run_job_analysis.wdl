@@ -174,6 +174,7 @@ task msgfplusresultsmerge {
             -inDir:~{'.'} \
             -filter:"*.mzid" \
             -out:~{output_mzid_file_name}
+            -keepOnlyBestResults
         cat ~{sep=' ' fasta_files } >> ~{output_fasta_file_name}
     >>>
     output {
@@ -301,6 +302,7 @@ workflow job_analysis{
 
     output {
         File   resultant_file = masicresultmerge.outfile
+        File   faa_with_contaminates = concatcontaminate.outfile
         String start_time= ""
         String end_time=""
      }
