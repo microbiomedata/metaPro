@@ -8,6 +8,7 @@ task ficus_analysis {
         String Dataset_id
         String genome_directory
         String q_value_threshold
+        String dataset_name
     }
     command {
        python /app/post-processing/ficus_analysis.py \
@@ -16,7 +17,8 @@ task ficus_analysis {
         ~{resultant_file} \
         ~{Dataset_id} \
         ~{genome_directory} \
-        ~{q_value_threshold}
+        ~{q_value_threshold} \
+        ~{dataset_name}
     }
     output {
         File   peptide_file   = "${Dataset_id}_${genome_directory}_Peptide_Report.tsv"
@@ -55,6 +57,7 @@ workflow report_gen{
         String genome_directory
         String annotation_name
         String q_value_threshold
+        String dataset_name
     }
 
     call proteinDigestionSimulator {
@@ -69,12 +72,14 @@ workflow report_gen{
             resultant_file    = resultant_file,
             Dataset_id        = Dataset_id,
             genome_directory  = genome_directory,
-            q_value_threshold = q_value_threshold
+            q_value_threshold = q_value_threshold,
+            dataset_name      = dataset_name
     }
     output {
         File   peptide_file   = ficus_analysis.peptide_file
         File   protein_file   = ficus_analysis.protein_file
         File   qc_metric_file = ficus_analysis.qc_metric_file
+        File   txt_faa_file   = proteinDigestionSimulator.outfile
      }
 
 }

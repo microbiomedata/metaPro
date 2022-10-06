@@ -149,23 +149,26 @@ push-all-images:
 	#@docker image tag wdl_peptidehitresultsprocrunner:latest microbiomedata/metapro-peptidehitresultsprocrunner:$(PHRP_VERSION)
 	@docker push microbiomedata/metapro-peptidehitresultsprocrunner:$(PHRP_VERSION)
 
-	#@docker image tag wdl_metadatacollection:latest microbiomedata/metapro-metadatacollection:2.0.0
-	@docker push  microbiomedata/metapro-metadatacollection:2.0.0
+	#@docker image tag wdl_metadatacollection:latest microbiomedata/metapro-metadatacollection:2.0.1
+	@docker push  microbiomedata/metapro-metadatacollection:2.0.1
 
-	#@docker image tag wdl_post-processing:latest microbiomedata/metapro-post-processing:2.0.0
-	@docker push microbiomedata/metapro-post-processing:2.0.0
+	#@docker image tag wdl_post-processing:latest microbiomedata/metapro-post-processing:2.0.1
+	@docker push microbiomedata/metapro-post-processing:2.0.1
 
 #-------------
 
-	#@docker image tag wdl_metadatacollection:latest microbiomedata/metapro-metadatacollection:2.0.0
-	@docker push  microbiomedata/metapro-metadatacollection:2.0.0
+	#@docker image tag wdl_metadatacollection:latest microbiomedata/metapro-metadatacollection:2.0.1
+	@docker push  microbiomedata/metapro-metadatacollection:2.0.1
 
-	#@docker image tag wdl_post-processing:latest microbiomedata/metapro-post-processing:2.0.0
-	@docker push microbiomedata/metapro-post-processing:2.0.0
+	#@docker image tag wdl_post-processing:latest microbiomedata/metapro-post-processing:2.0.1
+	@docker push microbiomedata/metapro-post-processing:2.0.1
 
 #-------------
 build_unified:
 	docker-compose up --build
+build_unified_fast:
+	docker-compose build --parallel
+	docker-compose up
 run_workflow:
 	bash run_task.sh
 #-------------

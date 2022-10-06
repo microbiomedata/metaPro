@@ -12,7 +12,7 @@ images=(microbiomedata/metapro-msconvert:latest \
         microbiomedata/metapro-validatefastafile:$VALIDATE_FASTA_FILE_VERSION \
         microbiomedata/metapro-fastafilesplitter:$Fasta_File_Splitter_VERSION \
         microbiomedata/metapro-post-processing:2.0.0 \
-        microbiomedata/metapro-metadatacollection:2.0.0 )
+        microbiomedata/metapro-metadatacollection:2.0.1 )
 
 for image in ${images[*]} ; do
     docker pull $image;

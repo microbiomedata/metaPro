@@ -14,7 +14,7 @@ RUN export LDFLAGS="-L/usr/local/opt/openssl/lib"
 
 RUN pip install pandas
 # swagger-UI is optional
-RUN pip install six pandas openpyxl
+RUN pip install six pandas openpyxl pymongo fastjsonschema
 
 # copy project
 COPY . /app/metadata_collection

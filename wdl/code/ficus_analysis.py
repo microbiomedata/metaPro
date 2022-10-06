@@ -26,6 +26,7 @@ class DataOutputtable:
         qvalue_threshold,
         dataset_id,
         genome_name,
+        dataset_name
     ):
 
         self.dataset_id = dataset_id
@@ -34,6 +35,7 @@ class DataOutputtable:
         # read annotation file.
         self.gff_file = gff_file
         self.annotation = gffpd.read_gff3(gff_file)
+        self.dataset_name = dataset_name
         self.resultant_df = pd.read_csv(
             resultant_file, sep="\t", float_precision="round_trip"
         )
@@ -470,11 +472,13 @@ class DataOutputtable:
 
     def query_13(self):
         temp_df = self.resultant_df.copy()
-        temp_df['Dataset_x'] = 'default value'
+        # temp_df['Dataset_x'] = 'default value'
         filtered = self.get_FiltPeps_gen(temp_df)[
-            ["Dataset_x", "PeptideSequence", "QValue"]
+            ["PeptideSequence", "QValue"]
+            # ["Dataset_x", "PeptideSequence", "QValue"]
         ]
-        groupby_columns = ["Dataset_x", "PeptideSequence"]
+        groupby_columns = ["PeptideSequence"]
+        # groupby_columns = ["Dataset_x", "PeptideSequence"]
         filtered["min(QValue)"] = filtered.groupby(groupby_columns)["QValue"].transform(
             "min"
         )
@@ -507,10 +511,12 @@ class DataOutputtable:
         )
 
         cols_to_rename = {
-            "Dataset_x": "DatasetName",
+            # "Dataset_x": "DatasetName",
             "sum(StatMomentsArea)": "sum(MASICAbundance)",
         }
         merged_3.rename(columns=cols_to_rename, inplace=True)
+
+        merged_3["DatasetName"] = self.dataset_name
 
         self._DataOutputtable_xlsx(
             merged_3[
@@ -901,9 +907,10 @@ if __name__ == "__main__":
     fasta_txt_file = sys.argv[1]
     gff_file = sys.argv[2]
     resultant_file = sys.argv[3]
-    dataset_name= sys.argv[4]
+    dataset_id= sys.argv[4]
     genome_directory= sys.argv[5]
     QVALUE_THRESHOLD= sys.argv[6]
+    dataset_name= sys.argv[7]
 
     print(f"{fasta_txt_file}\n{gff_file}\n{resultant_file}\n{dataset_id}\n{genome_directory}\n{QVALUE_THRESHOLD}\n")
 
@@ -914,6 +921,7 @@ if __name__ == "__main__":
         QVALUE_THRESHOLD,
         dataset_id,
         genome_directory,
+        dataset_name
     )
 
     (
