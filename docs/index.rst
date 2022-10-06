@@ -165,9 +165,9 @@ QA assessment of pipeline
 NMDC Pipeline was validated against metaproteomic processing workflow developed in the Environmental and Molecular Sciences Laboratory
 
 QA criteria
-- 95% peptide ID level overlap between DMS (EMSL current standard) and NMDC MetaP pipeline output
-- 98% protein ID level overlap between DMS (EMSL current standard) and NMDC MetaP pipeline output
-- Correlation of log(2) abundances between the two approaches of 0.97 (Pearson correlations)
+	- 95% peptide ID level overlap between DMS (EMSL current standard) and NMDC MetaP pipeline output
+	- 98% protein ID level overlap between DMS (EMSL current standard) and NMDC MetaP pipeline output
+	- Correlation of log(2) abundances between the two approaches of 0.97 (Pearson correlations)
 Pipeline reproducibility
 - run the pipeline 5 times to see ensure reproducible output 
 	- 95% peptide
