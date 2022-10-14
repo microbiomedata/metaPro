@@ -380,8 +380,8 @@ if __name__ == "__main__":
                 mapping["peptide_report_file"],
                 mapping["protein_report_file"],
                 mapping["qc_metric_report_file"],
-                mapping["started_at_time"],
-                mapping["ended_at_time"],
+                mapping["start_time"],
+                mapping["end_time"],
             )
 
             meta_file.prepare_activity()
