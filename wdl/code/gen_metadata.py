@@ -354,14 +354,14 @@ class GenMetadata:
 
 
 if __name__ == "__main__":
-
     mapper_file = sys.argv[1]
-    
+    study = sys.argv[2]
+
     meta_file = GenMetadata()
     # setup the cursors
     coll_names = [
-        f"{os.environ.get('STUDY')}_MetaProteomicAnalysis_activity",
-        f"{os.environ.get('STUDY')}_emsl_analysis_data_objects",
+        f"{study}_MetaProteomicAnalysis_activity",
+        f"{study}_emsl_analysis_data_objects",
     ]
     meta_file.make_connection(os.environ.get("MONGO_INITDB_DATABASE"), coll_names)
 
@@ -380,14 +380,14 @@ if __name__ == "__main__":
                 mapping["peptide_report_file"],
                 mapping["protein_report_file"],
                 mapping["qc_metric_report_file"],
-                mapping["started_at_time"],
-                mapping["ended_at_time"],
+                mapping["start_time"],
+                mapping["end_time"],
             )
 
             meta_file.prepare_activity()
 
         # 2. dump collections in json files
-        activity_file = f"{os.environ.get('STUDY')}_MetaProteomicAnalysis_activity.json"
-        data_obj_file = f"{os.environ.get('STUDY')}_emsl_analysis_data_objects.json"
+        activity_file = f"{study}_MetaProteomicAnalysis_activity.json"
+        data_obj_file = f"{study}_emsl_analysis_data_objects.json"
         meta_file.write_to_json_file([activity_file, data_obj_file])
     pass

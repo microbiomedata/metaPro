@@ -838,7 +838,7 @@ class DataOutputtable:
             Peptide_Report_df.PeptideSequence.drop_duplicates().count()
         )
         BestProtein_count = Peptide_Report_df.BestProtein.drop_duplicates().count()
-        mean_peptide_count = (unique_peptide_seq_count / BestProtein_count) * 100
+        mean_peptide_count = (unique_peptide_seq_count / BestProtein_count)
 
         qc_metrics = pd.DataFrame(
             {
