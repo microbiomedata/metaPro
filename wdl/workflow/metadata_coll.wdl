@@ -21,7 +21,7 @@ task collect{
     }
     command {
         python /app/metadata_collection/code/gen_metadata.py \
-            ${write_json(results)}
+            ~{write_json(results)} ~{study}
     }
     output {
         File   activity    = "${study}_MetaProteomicAnalysis_activity.json"
