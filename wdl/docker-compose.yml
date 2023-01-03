@@ -1,8 +1,11 @@
 version: '3.7'
 services:
+  image: $MSCONVERT_TAG
   msconvert:
     image: microbiomedata/metapro-msconvert:latest
     build:
+      args:
+        PROTEOWIZARD_VERSION: ${PROTEOWIZARD_VERSION}
       context: ./
       dockerfile: docker/run_analysis/msconvert
     container_name: raw-to-mzml

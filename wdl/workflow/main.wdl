@@ -5,6 +5,11 @@ import "report_gen.wdl" as generate_reports
 import "metadata_coll.wdl" as collect_metadata
 
 workflow metapro {
+    Float fasta_split_on_size_mb = 1000.0
+    Int fasta_split_count = 22
+    String pipeline_type = "nmdc:MetaProteomicAnalysis"
+    String execution_resource = ""
+    String git_url = "https://github.com/microbiomedata/metaPro/releases/tag/2.0.0"
 
     input{
         Array[Object] mapper_list
@@ -13,8 +18,6 @@ workflow metapro {
         File MSGFPLUS_PARAM_FILE_LOC
         File CONTAMINANT_FILE_LOC
         String STUDY
-        Int FASTA_SPLIT_ON_SIZE_MB
-        Int FASTA_SPLIT_COUNT
     }
 
     scatter (myobj in mapper_list) {
@@ -28,8 +31,8 @@ workflow metapro {
                 MASIC_PARAM_FILENAME    = MASIC_PARAM_FILE_LOC,
                 MSGFPLUS_PARAM_FILENAME = MSGFPLUS_PARAM_FILE_LOC,
                 CONTAMINANT_FILENAME    = CONTAMINANT_FILE_LOC,
-                FASTA_SPLIT_ON_SIZE_MB  = FASTA_SPLIT_ON_SIZE_MB,
-                FASTA_SPLIT_COUNT       = FASTA_SPLIT_COUNT
+                FASTA_SPLIT_ON_SIZE_MB  = fasta_split_on_size_mb,
+                FASTA_SPLIT_COUNT       = fasta_split_count
         }
         call generate_reports.report_gen {
             input:
@@ -64,6 +67,9 @@ workflow metapro {
     call collect_metadata.gen_metadata {
         input:
             study       = STUDY,
-            results     = results
+            results     = results,
+            pipeline_type = pipeline_type
+            execution_resource = execution_resource,
+            git_url = git_url
     }
 }

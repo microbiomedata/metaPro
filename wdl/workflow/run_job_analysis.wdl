@@ -34,7 +34,7 @@ task msconvert {
         File   outfile = "${dataset_name}.mzML"
     }
     runtime {
-        docker: 'microbiomedata/metapro-msconvert:latest'
+        docker: 'microbiomedata/metapro-msconvert:v3.0.21258'
     }
 }
 task msgfplus {
