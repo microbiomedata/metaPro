@@ -16,7 +16,12 @@ class GenMetadata:
     """
     Generate metadata for the pipeline!
     """
-    def __init__(self):
+    def __init__(self, pipeline_type, execution_resource, git_url, type):
+
+        self.pipeline_type = pipeline_type
+        self.execution_resource = execution_resource
+        self.git_url = git_url
+        self.type = type
 
         self.dataset_id = None
         self.genome_directory = None
@@ -182,7 +187,7 @@ class GenMetadata:
             self.data_object["description"] = description
             self.data_object["file_size_bytes"] = os.stat(file_path).st_size
             self.data_object["md5_checksum"] = checksum
-            self.data_object["type"] = os.environ.get("TYPE")
+            self.data_object["type"] = self.type
 
             if "MSGFjobs_MASIC_resultant" in file_name:
                 self.data_object["data_object_type"] = "Unfiltered Metaproteomics Results"
@@ -311,9 +316,9 @@ class GenMetadata:
         self.activity["was_informed_by"] = ":".join(["emsl", self.dataset_id])
         self.activity["started_at_time"] = self.started_at_time
         self.activity["ended_at_time"] = self.ended_at_time
-        self.activity["type"] = os.environ.get("PIPELINE_TYPE")
-        self.activity["execution_resource"] = os.environ.get("EXECUTION_RESOURCE")
-        self.activity["git_url"] = os.environ.get("GIT_URL")
+        self.activity["type"] = self.pipeline_type
+        self.activity["execution_resource"] = self.execution_resource
+        self.activity["git_url"] = self.git_url
 
         self.create_has_input()
         self.create_has_output(activity_id)
@@ -356,6 +361,10 @@ class GenMetadata:
 if __name__ == "__main__":
     mapper_file = sys.argv[1]
     study = sys.argv[2]
+    pipeline_type = sys.argv[3]
+    execution_resource = sys.argv[4]
+    git_url = sys.argv[5]
+    type = sys.argv[6]
 
     meta_file = GenMetadata()
     # setup the cursors

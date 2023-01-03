@@ -12,6 +12,9 @@ struct Result {
     String dataset_id
     String start_time
     String end_time
+    String pipeline_type
+    String execution_resource
+    String git_url
 }
 
 task collect{
@@ -21,7 +24,12 @@ task collect{
     }
     command {
         python /app/metadata_collection/code/gen_metadata.py \
-            ~{write_json(results)} ~{study}
+            ~{write_json(results)} \
+            ~{study} \
+            ~{pipeline_type} \
+            ~{execution_resource} \
+            ~{git_url} \
+            "nmdc:DataObject"
     }
     output {
         File   activity    = "${study}_MetaProteomicAnalysis_activity.json"

@@ -1,4 +1,4 @@
-FROM proteowizard/pwiz-skyline-i-agree-to-the-vendor-licenses
+FROM proteowizard/pwiz-skyline-i-agree-to-the-vendor-licenses:467ca4388fcae59a37d1f1453fa2ad8bd0bf3a409869616954069f9c1ca70638
 
 # ENTRYPOINT ["wine", "msconvert"]
 # CMD ["--help"]

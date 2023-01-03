@@ -28,13 +28,13 @@ task msconvert {
         wine msconvert \
         ~{raw_file} \
         --zlib \
-        --filter 'peakPicking true 2-'
+        --filter 'peakPicking true 1-'
     }
     output {
         File   outfile = "${dataset_name}.mzML"
     }
     runtime {
-        docker: 'microbiomedata/metapro-msconvert:latest'
+        docker: 'microbiomedata/metapro-msconvert:v3.0.21258'
     }
 }
 task msgfplus {
@@ -63,7 +63,7 @@ task msgfplus {
         File   rev_cat_fasta = revcat_name
     }
     runtime {
-        docker: 'microbiomedata/metapro-msgfplus:v2021.03.22'
+        docker: 'microbiomedata/metapro-msgfplus:v2022.04.18'
     }
 }
 task mzidtotsvconverter{
@@ -228,15 +228,20 @@ workflow job_analysis{
             raw_file     = raw_file_loc,
             dataset_name = dataset_name
     }
-    if(size(concatcontaminate.outfile, 'MB') > FASTA_SPLIT_ON_SIZE_MB)
+    if(size(faa_file_loc, 'MB') > FASTA_SPLIT_ON_SIZE_MB)
     {
         call fastaFileSplitter {
             input:
-                fasta_file_loc  = concatcontaminate.outfile,
+                fasta_file_loc  = faa_file_loc,
                 split_count  = FASTA_SPLIT_COUNT
         }
         scatter(split_fasta_file in fastaFileSplitter.outfiles)
         {
+            call concatcontaminate as concatcontaminatesplit {
+                input:
+                    faa_file        = split_fasta_file,
+                    contaminate_file= CONTAMINANT_FILENAME
+            }
             # Number output MS-GF+ .mzid files similarly to input FASTAs for recordkeeping
             String faa_file_basename = basename(faa_file_loc, ".faa")
             String numbered_dataset_name = sub(split_fasta_file, faa_file_basename, dataset_name)
@@ -245,7 +250,7 @@ workflow job_analysis{
             call msgfplus as msgfplussplit{
                 input:
                     mzml_file               = msconvert.outfile,
-                    contaminated_fasta_file = split_fasta_file,
+                    contaminated_fasta_file = concatcontaminatesplit.outfile,
                     msgfplus_params         = MSGFPLUS_PARAM_FILENAME,
                     dataset_name            = dataset_basename,
                     annotation_name         = annotation_name
@@ -262,7 +267,7 @@ workflow job_analysis{
         File? msgfplus_split_and_merged = msgfplusresultsmerge.outfile_mzid
         File? rev_cat_fasta_split_and_merged = msgfplusresultsmerge.outfile_fasta
     }
-    if(size(concatcontaminate.outfile, 'MB') <= FASTA_SPLIT_ON_SIZE_MB)
+    if(size(faa_file_loc, 'MB') <= FASTA_SPLIT_ON_SIZE_MB)
     {
         call msgfplus{
             input:
