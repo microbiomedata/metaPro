@@ -43,7 +43,8 @@ workflow metapro {
                 genome_directory  = myobj['genome_dir'],
                 q_value_threshold = QVALUE_THRESHOLD,
                 annotation_name   = myobj['annotation_name'],
-                dataset_name      = myobj['dataset_name']
+                dataset_name      = myobj['dataset_name'],
+                first_hits_file   = job_analysis.first_hits_file
         }
 
         Result result = {
