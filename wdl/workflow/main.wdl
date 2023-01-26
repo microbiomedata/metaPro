@@ -8,7 +8,6 @@ workflow metapro {
     Float fasta_split_on_size_mb = 1000.0
     Int fasta_split_count = 22
     String pipeline_type = "nmdc:MetaProteomicAnalysis"
-    String execution_resource = ""
     String git_url = "https://github.com/microbiomedata/metaPro/releases/tag/2.0.0"
 
     input{
@@ -18,6 +17,7 @@ workflow metapro {
         File MSGFPLUS_PARAM_FILE_LOC
         File CONTAMINANT_FILE_LOC
         String STUDY
+        String EXECUTION_RESOURCE
     }
 
     scatter (myobj in mapper_list) {
@@ -70,7 +70,7 @@ workflow metapro {
             study       = STUDY,
             results     = results,
             pipeline_type = pipeline_type
-            execution_resource = execution_resource,
+            execution_resource = EXECUTION_RESOURCE,
             git_url = git_url
     }
 }
