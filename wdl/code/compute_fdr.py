@@ -2,10 +2,10 @@ import argparse
 import csv
 from decimal import *
 from typing import List, TypedDict
-from timeit import default_timer
 from collections import namedtuple
 from functools import partial
 import json
+import sys
 
 FdrResult = namedtuple('FdrResult', 'SpecEValue FDR')
 
@@ -144,8 +144,6 @@ class FdrDownIterate(FdrSearchStrategy):
             spec_e_tmp -= self.spec_e_inc 
             fdr_tmp = self.fdr1(spec_e_tmp)
 
-            print(f"{spec_e_tmp} {fdr_tmp}")
-
             if self.fdr > fdr_tmp:
                 break
 
@@ -158,13 +156,13 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--file', type=str, help='First Hits file to process')
     parser.add_argument('--fdr', type=str, help='')
-    parser.add_argument('--spec_e_coeff', type=str, help='')
-    parser.add_argument('--spec_e_exp', type=str, help='')
-    parser.add_argument('--spec_e_inc_coeff', type=str, help='')
-    parser.add_argument('--spec_e_inc_exp', type=str, help='')
+    parser.add_argument('--spececoeff', type=str, help='')
+    parser.add_argument('--speceexp', type=str, help='')
+    parser.add_argument('--spece', type=str, help='')
+    parser.add_argument('--speceinc', type=str, help='')
     parser.add_argument('--precision', type=int, help='Floating point precision', required=False)
-    parser.add_argument('--iter', action='store_true')
-    parser.add_argument('--single', action='store_true')
+    parser.add_argument('--iter', action='store_true', help='Iteratively finds and prints SpecEValue for given FDR')
+    parser.add_argument('--single', action='store_true', help='Prints FDR for given SpecEValue')
     # parser.add_argument('--log', action='store_true')
     parser.add_argument('--out', type=str, help='', default='out.json')
 
@@ -183,33 +181,29 @@ if __name__ == "__main__":
 
     rows = get_dat(args.file)
     result = None
-    
-    t_start = default_timer()
+    to_write = None
+
     if args.single:
-        spec_e_value = Decimal(args.spec_e_coeff) * (Decimal(10) ** Decimal(args.spec_e_exp))
+        spec_e_value = Decimal(args.spece)
 
         fdr_imm = FdrImmediate(rows, spec_e_value)
         result = fdr_imm.find_values()
+        to_write = result.FDR
     elif args.iter:
-        spec_e_value = Decimal(args.spec_e_coeff) * (Decimal(10) ** Decimal(args.spec_e_exp))
-        spec_e_value_inc = Decimal(args.spec_e_inc_coeff) * (Decimal(10) ** Decimal(args.spec_e_inc_exp))
+        spec_e_value = Decimal(args.spece)
+        spec_e_value_inc = Decimal(args.speceinc)
         fdr = Decimal(args.fdr)
 
         fdr_iterate = FdrDownIterate(rows, spec_e_value, fdr, spec_e_value_inc)
         result = fdr_iterate.find_values()
-    # elif args.log:
-    #     spec_e_value = Decimal(args.spec_e_coeff) * (Decimal(10) ** Decimal(args.spec_e_exp))
-    #     fdr = Decimal(args.fdr)
+        to_write = result.SpecEValue
 
-    #     fdr_log = FdrLog(rows, fdr, Decimal(args.spec_e_coeff), Decimal(args.spec_e_exp))
-    #     result = fdr_log.find_values()
-    t_end = default_timer()
+    sys.stdout.write(str(to_write))
 
-    print(f'Time to process: {t_end - t_start}s')
-
-    with open(args.out, 'w+') as fp:       
+    with open(args.out, 'w+') as fp:  
         out_dat = {
             "FDR": float(result.FDR),
             "SpecEValue": float(result.SpecEValue),
         }
-        json.dump(out_dat, fp)
+        dat = json.dumps(out_dat)     
+        fp.write(dat)
