@@ -111,6 +111,7 @@ task peptidehitresultsprocrunner {
     }
     output {
         File   outfile = "${dataset_name}_syn.txt"
+        File   first_hits_file = "${dataset_name}_fht.txt"
     }
     runtime {
         docker: 'microbiomedata/metapro-peptidehitresultsprocrunner:v3.0.7842'
@@ -308,6 +309,7 @@ workflow job_analysis{
     output {
         File   resultant_file = masicresultmerge.outfile
         File   faa_with_contaminates = concatcontaminate.outfile
+        File   first_hits_file = peptidehitresultsprocrunner.first_hits_file
         String start_time= ""
         String end_time=""
      }

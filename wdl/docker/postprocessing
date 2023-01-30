@@ -18,4 +18,5 @@ RUN pip install six pandas openpyxl gffpandas
 
 # copy project
 COPY code/ficus_analysis.py  /app/post-processing/ficus_analysis.py
+COPY code/compute_fdr.py  /app/post-processing/compute_fdr.py
 
