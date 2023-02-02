@@ -21,7 +21,7 @@ class FdrSearchStrategy():
         return len(list(filter(partial(self.__select, spec_e_value = spec_e_value), data_list)))
 
     def fdr1(self, spec_e_value: Decimal) -> Decimal:
-       fdr = ((Decimal(self.__count_filtered(self.decoys, spec_e_value)) * 2) / self.__count_filtered(self.data, spec_e_value)) * 100
+       fdr = ((Decimal(self.__count_filtered(self.decoys, spec_e_value)) * 2) / self.__count_filtered(self.data, spec_e_value))
        return fdr
 
     def find_values(self) -> FdrResult:
