@@ -1,6 +1,13 @@
 # pull official base image
 FROM python:3.6-stretch
 
+RUN apt-get update \
+    && apt-get install \
+    --no-install-recommends \ 
+    --yes  \
+    jq \
+    && apt-get clean
+
 # set work directory
 WORKDIR /app/post-processing
 
