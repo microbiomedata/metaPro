@@ -69,7 +69,7 @@ workflow metapro {
         input:
             study       = STUDY,
             results     = results,
-            pipeline_type = pipeline_type
+            pipeline_type = pipeline_type,
             execution_resource = EXECUTION_RESOURCE,
             git_url = git_url
     }

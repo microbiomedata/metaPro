@@ -12,22 +12,22 @@ struct Result {
     String dataset_id
     String start_time
     String end_time
-    String pipeline_type
-    String execution_resource
-    String git_url
 }
 
 task collect{
     input{
         String study
         Array[Result] results
+        String pipeline_type
+        String execution_resource
+        String git_url
     }
     command {
         python /app/metadata_collection/code/gen_metadata.py \
             ~{write_json(results)} \
-            ~{study} \
+            "~{study}" \
             ~{pipeline_type} \
-            ~{execution_resource} \
+            "~{execution_resource}" \
             ~{git_url} \
             "nmdc:DataObject"
     }
@@ -36,18 +36,24 @@ task collect{
         File   data_object = "${study}_emsl_analysis_data_objects.json"
     }
     runtime {
-        docker: 'microbiomedata/metapro-metadatacollection:2.0.1'
+        docker: 'microbiomedata/metapro-metadatacollection:2.1.0'
     }
 }
 workflow gen_metadata{
     input{
         String study
         Array[Result] results
+        String pipeline_type
+        String execution_resource
+        String git_url
     }
     call collect {
         input:
             study          = study,
-            results        = results
+            results        = results,
+            pipeline_type  = pipeline_type, 
+            execution_resource = execution_resource,
+            git_url = git_url
     }
     output {
         File   activity    = collect.activity
