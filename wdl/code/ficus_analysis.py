@@ -1,6 +1,7 @@
 import pandas as pd
 import warnings
 import sys
+import json
 
 warnings.filterwarnings("ignore")
 
@@ -23,7 +24,7 @@ class DataOutputtable:
         gff_file,
         resultant_file,
         fasta_txt_file,
-        qvalue_threshold,
+        spec_e_value,
         dataset_id,
         genome_name,
         dataset_name
@@ -31,7 +32,7 @@ class DataOutputtable:
 
         self.dataset_id = dataset_id
         self.genome_name = genome_name
-        self.QValue_threshold = float(qvalue_threshold)
+        self.spec_e_value = float(spec_e_value)
         # read annotation file.
         self.gff_file = gff_file
         self.annotation = gffpd.read_gff3(gff_file)
@@ -68,7 +69,7 @@ class DataOutputtable:
         # df.to_excel(self.writer, sheet_name=sheet_name, index=False)
 
     def FiltPeps(self, df):
-        qvalue_filtered_df = df[df["QValue"] <= self.QValue_threshold]
+        qvalue_filtered_df = df[df["MSGFDB_SpecEValue"] <= self.spec_e_value]
         non_decoy_filtered_df = qvalue_filtered_df[
             ~qvalue_filtered_df["Protein"].str.startswith("XXX")
         ]
@@ -832,7 +833,6 @@ class DataOutputtable:
         return Table12
 
     def query_24(self):
-
         Peptide_Report_df = self.peptide_report.copy()
         unique_peptide_seq_count = (
             Peptide_Report_df.PeptideSequence.drop_duplicates().count()
@@ -909,16 +909,16 @@ if __name__ == "__main__":
     resultant_file = sys.argv[3]
     dataset_id= sys.argv[4]
     genome_directory= sys.argv[5]
-    QVALUE_THRESHOLD= sys.argv[6]
+    spec_e_value= sys.argv[6]
     dataset_name= sys.argv[7]
 
-    print(f"{fasta_txt_file}\n{gff_file}\n{resultant_file}\n{dataset_id}\n{genome_directory}\n{QVALUE_THRESHOLD}\n")
+    print(f"{fasta_txt_file}\n{gff_file}\n{resultant_file}\n{dataset_id}\n{genome_directory}\n{spec_e_value}\n")
 
     data_obj = DataOutputtable(
         gff_file,
         resultant_file,
         fasta_txt_file,
-        QVALUE_THRESHOLD,
+        spec_e_value,
         dataset_id,
         genome_directory,
         dataset_name
@@ -931,6 +931,6 @@ if __name__ == "__main__":
     ) = data_obj.gen_reports()
 
     # write dfs to file.
-    peptide_report.to_csv(f"{dataset_id}_{genome_directory}_Peptide_Report.tsv", sep="\t")
-    protein_report.to_csv(f"{dataset_id}_{genome_directory}_Protein_Report.tsv", sep="\t")
-    qc_metrics_report.to_csv( f"{dataset_id}_{genome_directory}_QC_metrics.tsv", sep="\t")
+    peptide_report.to_csv(f"{dataset_id}_{genome_directory}_Peptide_Report.tsv", sep="\t", index=False)
+    protein_report.to_csv(f"{dataset_id}_{genome_directory}_Protein_Report.tsv", sep="\t", index=False)
+    qc_metrics_report.to_csv( f"{dataset_id}_{genome_directory}_QC_metrics.tsv", sep="\t", index=False)
