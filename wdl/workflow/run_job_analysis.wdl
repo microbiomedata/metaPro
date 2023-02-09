@@ -16,7 +16,7 @@ task masic {
         File   outfile = "${dataset_name}_SICstats.txt"
     }
     runtime {
-        docker: 'microbiomedata/metapro-masic:v3.2.7762'
+        docker: 'microbiomedata/metapro-masic:v3.2.7901'
     }
 }
 task msconvert {
@@ -137,7 +137,7 @@ task masicresultmerge {
         File   outfile = "${dataset_name}_msgfplus_syn_PlusSICStats.txt"
     }
     runtime {
-        docker: 'microbiomedata/metapro-masicresultsmerge:v2.0.7800'
+        docker: 'microbiomedata/metapro-masicresultsmerge:v2.0.7983'
     }
 }
 task fastaFileSplitter {
@@ -174,7 +174,7 @@ task msgfplusresultsmerge {
         mono /app/MzidMerger/net472/MzidMerger.exe \
             -inDir:~{'.'} \
             -filter:"*.mzid" \
-            -out:~{output_mzid_file_name}
+            -out:~{output_mzid_file_name} \
             -keepOnlyBestResults
         cat ~{sep=' ' fasta_files } >> ~{output_fasta_file_name}
     >>>

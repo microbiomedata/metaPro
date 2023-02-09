@@ -5,20 +5,28 @@ task ficus_analysis {
         File   faa_txt_file
         File   gff_file
         File   resultant_file
+        File   first_hits_file
         String Dataset_id
         String genome_directory
         String q_value_threshold
         String dataset_name
     }
     command {
-       python /app/post-processing/ficus_analysis.py \
-        ~{faa_txt_file} \
-        ~{gff_file} \
-        ~{resultant_file} \
-        ~{Dataset_id} \
-        ~{genome_directory} \
-        ~{q_value_threshold} \
-        ~{dataset_name}
+        python /app/post-processing/compute_fdr.py \
+            --file=~{first_hits_file}   \
+            --fdr=~{q_value_threshold}  \
+            --spece=1.0e-10 \
+            --speceinc=1.0e-13  \
+            --iter
+        specEValue=$(cat out.json | jq ".SpecEValue")
+        python /app/post-processing/ficus_analysis.py \
+            ~{faa_txt_file} \
+            ~{gff_file} \
+            ~{resultant_file} \
+            ~{Dataset_id} \
+            ~{genome_directory} \
+            $specEValue \
+            ~{dataset_name}
     }
     output {
         File   peptide_file   = "${Dataset_id}_${genome_directory}_Peptide_Report.tsv"
@@ -26,7 +34,7 @@ task ficus_analysis {
         File   qc_metric_file = "${Dataset_id}_${genome_directory}_QC_metrics.tsv"
     }
     runtime {
-        docker: 'microbiomedata/metapro-post-processing:2.0.0'
+        docker: 'microbiomedata/metapro-post-processing:2.1.0'
     }
 }
 task proteinDigestionSimulator {
@@ -53,6 +61,7 @@ workflow report_gen{
         File   faa_txt_file
         File   gff_file
         File   resultant_file
+        File   first_hits_file
         String Dataset_id
         String genome_directory
         String annotation_name
@@ -70,6 +79,7 @@ workflow report_gen{
             faa_txt_file      = proteinDigestionSimulator.outfile,
             gff_file          = gff_file,
             resultant_file    = resultant_file,
+            first_hits_file   = first_hits_file,
             Dataset_id        = Dataset_id,
             genome_directory  = genome_directory,
             q_value_threshold = q_value_threshold,
