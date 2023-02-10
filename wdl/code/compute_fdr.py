@@ -1,7 +1,6 @@
 import argparse
 import csv
 from decimal import *
-from typing import List, TypedDict
 from collections import namedtuple
 from functools import partial
 import json
@@ -9,31 +8,27 @@ import sys
 
 FdrResult = namedtuple('FdrResult', 'SpecEValue FDR')
 
-class DataRow(TypedDict):
-    Protein: str
-    MSGFDB_SpecEValue: Decimal
-
 class FdrSearchStrategy():
-    def __init__(self, data: List[DataRow]):
+    def __init__(self, data):
         self.data = data
         self.decoys = list(filter(lambda data_row: data_row['Protein'].startswith('XXX'), self.data))
         super().__init__()
 
-    def __select(self, data_row: DataRow, spec_e_value: Decimal):
+    def __select(self, data_row, spec_e_value: Decimal):
         return data_row['MSGFDB_SpecEValue'] <= spec_e_value
 
-    def __count_filtered(self, data_list: List[DataRow], spec_e_value: Decimal):
+    def __count_filtered(self, data_list, spec_e_value: Decimal):
         return len(list(filter(partial(self.__select, spec_e_value = spec_e_value), data_list)))
 
     def fdr1(self, spec_e_value: Decimal) -> Decimal:
-       fdr = ((Decimal(self.__count_filtered(self.decoys, spec_e_value)) * 2) / self.__count_filtered(self.data, spec_e_value)) * 100
+       fdr = ((Decimal(self.__count_filtered(self.decoys, spec_e_value)) * 2) / self.__count_filtered(self.data, spec_e_value))
        return fdr
 
     def find_values(self) -> FdrResult:
         pass
 
 class FdrImmediate(FdrSearchStrategy):
-    def __init__(self, data: List[DataRow], spec_e_value: Decimal):
+    def __init__(self, data, spec_e_value: Decimal):
         self.spec_e_value = spec_e_value
         super().__init__(data)
 
@@ -44,7 +39,7 @@ class FdrImmediate(FdrSearchStrategy):
 
 
 class FdrLog(FdrSearchStrategy):
-    def __init__(self, data: List[DataRow], target_fdr: Decimal, spec_e_value_coeff: Decimal, spec_e_value_exp: Decimal):
+    def __init__(self, data, target_fdr: Decimal, spec_e_value_coeff: Decimal, spec_e_value_exp: Decimal):
         self.spec_e_value_coeff = spec_e_value_coeff
         self.spec_e_value_exp = spec_e_value_exp
         self.fdr_target = target_fdr
@@ -127,7 +122,7 @@ class FdrLog(FdrSearchStrategy):
         
         
 class FdrDownIterate(FdrSearchStrategy):
-    def __init__(self, data: List[DataRow], spec_e_value: Decimal, fdr: Decimal, spec_e_inc: Decimal):
+    def __init__(self, data, spec_e_value: Decimal, fdr: Decimal, spec_e_inc: Decimal):
         self.spec_e_value = spec_e_value
         self.fdr = fdr
         self.spec_e_inc = spec_e_inc
@@ -168,7 +163,7 @@ def get_args():
 
     return parser.parse_args()
 
-def get_dat(filepath: str) -> List[DataRow]:
+def get_dat(filepath: str):
     with open(filepath) as data_file:
         reader = csv.DictReader(data_file, delimiter='\t')
 

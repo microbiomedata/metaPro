@@ -16,12 +16,12 @@ class GenMetadata:
     """
     Generate metadata for the pipeline!
     """
-    def __init__(self, pipeline_type, execution_resource, git_url, type):
+    def __init__(self, pipeline_type, execution_resource, git_url, analysis_type):
 
         self.pipeline_type = pipeline_type
         self.execution_resource = execution_resource
         self.git_url = git_url
-        self.type = type
+        self.type = analysis_type
 
         self.dataset_id = None
         self.genome_directory = None
@@ -364,9 +364,10 @@ if __name__ == "__main__":
     pipeline_type = sys.argv[3]
     execution_resource = sys.argv[4]
     git_url = sys.argv[5]
-    type = sys.argv[6]
+    analysis_type = sys.argv[6]
 
-    meta_file = GenMetadata()
+    meta_file = GenMetadata(pipeline_type=pipeline_type, execution_resource=execution_resource, git_url=git_url, analysis_type=analysis_type)
+    
     # setup the cursors
     coll_names = [
         f"{study}_MetaProteomicAnalysis_activity",

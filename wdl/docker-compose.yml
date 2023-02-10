@@ -1,8 +1,7 @@
 version: '3.7'
 services:
-  image: $MSCONVERT_TAG
   msconvert:
-    image: microbiomedata/metapro-msconvert:latest
+    image: $MSCONVERT_TAG
     build:
       args:
         PROTEOWIZARD_VERSION: ${PROTEOWIZARD_VERSION}
@@ -192,6 +191,20 @@ services:
       - ../metaPro-config.env
       - .env
     tty: true
+
+  # mongo-db:
+  #   restart: always
+  #   image: mongo:latest
+  #   container_name: mongoDbContainer
+  #   networks:
+  #     - default
+  #   # volumes:
+  #   #   - db-volume:/data/db
+  #   ports:
+  #     - 27017:27017
+  #   env_file:
+  #     - ../metaPro-config.env
+  #     - .env
 
 volumes:
   shared-data:
