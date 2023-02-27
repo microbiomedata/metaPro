@@ -5,7 +5,7 @@ import "report_gen.wdl" as generate_reports
 import "metadata_coll.wdl" as collect_metadata
 
 workflow metapro {
-    Float fasta_split_on_size_mb = 1000.0
+    Int fasta_split_on_size_mb = 1000
     Int fasta_split_count = 22
     String pipeline_type = "nmdc:MetaProteomicAnalysis"
     String git_url = "https://github.com/microbiomedata/metaPro/releases/tag/2.0.0"
