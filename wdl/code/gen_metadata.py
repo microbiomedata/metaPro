@@ -2,7 +2,6 @@ import os
 import hashlib
 import fnmatch
 import json
-import pandas as pd
 from datetime import datetime
 from pymongo import MongoClient
 import csv
@@ -10,18 +9,22 @@ import json
 import fastjsonschema
 import copy
 import sys
-
+from linkml_runtime.dumpers import json_dumper
+from nmdc_schema.nmdc import Database, MetaproteomicsAnalysisActivity, DataObject, ProteinQuantification, PeptideQuantification
+from nmdc_schema.nmdc_data import get_nmdc_jsonschema_string
+import json
 
 class GenMetadata:
     """
     Generate metadata for the pipeline!
     """
-    def __init__(self, pipeline_type, execution_resource, git_url, analysis_type):
+    def __init__(self, pipeline_type, execution_resource, git_url, analysis_type, results_url):
 
         self.pipeline_type = pipeline_type
         self.execution_resource = execution_resource
         self.git_url = git_url
         self.type = analysis_type
+        self.results_url = results_url
 
         self.dataset_id = None
         self.genome_directory = None
@@ -35,13 +38,15 @@ class GenMetadata:
         self.started_at_time = None
         self.ended_at_time = None
 
-        self.activity = {}
-        self.data_object = {}
-        self.uri = os.environ.get("MONGO_URI")
-        self.activity_coll = None
-        self.data_obj_coll = None
-        self.new = []
-        self.quant_bucket = []
+        # self.uri = os.environ.get("MONGO_URI") # not needed using Schema package       
+
+        self.activity = {}          # not needed using Schema package
+        self.data_object = {}       # not needed using Schema package
+        
+        self.activity_coll = None   # not needed using Schema package
+        self.data_obj_coll = None   # not needed using Schema package
+        self.new = []               # not needed using Schema package
+        self.quant_bucket = []      # not needed using Schema package
 
     def validate_json(self, json_data):
         try:
@@ -50,7 +55,7 @@ class GenMetadata:
             return False
         return True
 
-    def validate_metadata_schema(self, flag, json_data):
+    def validate_metadata(self, flag, json_data):
         if flag == "activity":
             try:
                 self.activity_schema_validator(json_data)
@@ -151,6 +156,25 @@ class GenMetadata:
                 quant_dict["protein_sum_masic_abundance"] = line[14]
                 self.quant_bucket.append(quant_dict)
 
+    def get_ProteinQuantification(self):
+        protein_arr = []
+
+        with open(self.protein_report, encoding="utf-8-sig") as tsvfile:
+            tsvreader = csv.reader(tsvfile, delimiter="\t")
+            header = next(tsvreader)
+            BestProtein = header[3]
+
+            for line in tsvreader:
+                protein_quantification = ProteinQuantification(
+                    peptide_sequence_count = line[2],
+                    best_protein = "nmdc:" + line[3].replace(" ", ""),
+                    all_proteins = ["nmdc:" + protein.replace(" ", "") for protein in line[10].split(",")],
+                    protein_spectral_count = line[13],
+                    protein_sum_masic_abundance = line[14],
+                )
+
+                protein_arr.append(protein_quantification)
+
     def prepare_PeptideQuantification(self):
         # print('>>',self.peptide_report)
         with open(self.peptide_report, encoding="utf-8-sig") as tsvfile:
@@ -168,9 +192,28 @@ class GenMetadata:
                 quant_dict["peptide_spectral_count"] = line[13]
                 quant_dict["peptide_sum_masic_abundance"] = line[14]
                 self.quant_bucket.append(quant_dict)
-        pass
 
-    def prepare_file_data_object_(self, file_path, file_name, description, activity_id):
+    def get_PeptideQuantification(self):
+        peptide_quantifications_arr = []
+
+        with open(self.peptide_report, encoding="utf-8-sig") as tsvfile:
+            tsvreader = csv.reader(tsvfile, delimiter="\t")
+            header = next(tsvreader)
+            for line in tsvreader:
+                peptide_quantification = PeptideQuantification(
+                peptide_sequence = line[2],
+                best_protein = "nmdc:" + line[3].replace(" ", ""),
+                all_proteins = ["nmdc:" + protein.replace(" ", "") for protein in line[10].split(",")],
+                min_q_value = line[12],
+                peptide_spectral_count = line[13],
+                peptide_sum_masic_abundance = int(float(line[14]))
+                )
+
+                peptide_quantifications_arr.append(peptide_quantification)
+        
+        return peptide_quantifications_arr
+
+    def prepare_file_data_object(self, file_path, file_name, description, activity_id):
         """
         - Makes entry in _emsl_analysis_data_objects.json
         - Contains information about Pipeline's analysis results E.g.
@@ -213,7 +256,82 @@ class GenMetadata:
         else:
             print("Found HASH empty for {}".format(file_name))
 
-    def create_has_output(self,  activity_id):
+    def get_file_data_object(self, file_path, file_name, description, activity_id):
+        """
+        - Makes entry in _emsl_analysis_data_objects.json
+        - Contains information about Pipeline's analysis results E.g.
+            1. resultant.tsv
+            2. data_out_table.tsv
+        """
+        checksum = self.get_md5(file_path)
+        file_id = "nmdc:" + checksum
+        
+        data_object = DataObject(
+            id=file_id,
+            name=file_name,
+            description=description,
+            file_size_bytes=os.stat(file_path).st_size,
+            md5_checksum=checksum,
+            type=self.type
+        )
+
+        if "MSGFjobs_MASIC_resultant" in file_name:
+            data_object.data_object_type = "Unfiltered Metaproteomics Results"
+        if "Peptide_Report" in file_name:
+            data_object.data_object_type = "Peptide Report"
+        if "Protein_Report" in file_name:
+            data_object.data_object_type = "Protein Report"
+        if "QC_metrics" in file_name:
+            data_object.data_object_type = "Metaproteomics Workflow Statistics"
+
+        data_object.url = (
+            self.results_url + file_name
+        )
+
+        data_object.was_generated_by = activity_id
+
+        return data_object
+
+
+    def get_data_objects(self, activity_id):
+        data_objects = []
+
+        data_objects.append(
+            self.get_file_data_object(
+                self.resultant_file,
+                os.path.basename(self.resultant_file),
+                "Aggregation of analysis tools{MSGFplus, MASIC} results", 
+                activity_id
+            )
+        )
+        data_objects.append(
+            self.get_file_data_object(
+                self.peptide_report,
+                os.path.basename(self.peptide_report),
+                "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR", 
+                activity_id
+            )
+        )
+        data_objects.append(
+            self.get_file_data_object(
+                self.protein_report,
+                os.path.basename(self.protein_report),
+                "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR", 
+                activity_id
+            )
+        )
+        data_objects.append(
+            self.get_file_data_object(
+                self.qc_metric_report,
+                os.path.basename(self.qc_metric_report),
+                "Overall statistics from MSGF+ search results filtered to ~5% FDR", 
+                activity_id
+            )
+        )
+
+        return data_objects
+
+    def create_has_output(self, activity_id):
         """
         Files:
             MSGFjobs_MASIC_resultant.tsv
@@ -259,6 +377,30 @@ class GenMetadata:
         )
         self.activity["has_output"] = has_output
         pass
+
+    def get_has_input(self):
+        has_input = []
+
+        # add .RAW
+        raw_file_name = "emsl:output_" + self.dataset_id
+        has_input.append(raw_file_name)
+        
+        fasta_checksum = self.get_md5(self.fasta_file)
+        if fasta_checksum:
+            # add to metadata.
+            has_input.append("nmdc:" + fasta_checksum)
+        else:
+            print("Found HASH empty for {}".format(self.fasta_file))
+
+        # add EMSL contaminants
+        contaminant_checksum = self.get_md5(self.contaminant_file)
+        if contaminant_checksum:
+            has_input.append("nmdc:" + contaminant_checksum)
+        else:
+            print("Found HASH empty for {}".format(self.fasta_file))
+        
+        return has_input
+
 
     def create_has_input(self):
         """
@@ -331,6 +473,30 @@ class GenMetadata:
             print("data object already present.")
         pass
 
+    def get_metaproteomics_analysis_activity(self):
+
+        activity_id = self.gen_id()
+
+        has_input_arr = self.get_has_input()
+        has_output_arr = False
+
+        mp_analysis_activity_obj = MetaproteomicsAnalysisActivity(
+            id=activity_id,
+            execution_resource=self.execution_resource,
+            git_url=self.git_url,
+            name=":".join(["Metaproteome", self.dataset_id, self.genome_directory]),
+            was_informed_by=":".join(["emsl", self.dataset_id]),
+            type=self.pipeline_type,
+            has_output=has_output_arr,
+            has_input=has_input_arr,
+            started_at_time="2002-09-24-06:00",
+            ended_at_time="2002-09-24-06:00"
+            )
+
+        mp_analysis_activity_obj.has_peptide_quantifications = self.get_PeptideQuantification()
+
+        return mp_analysis_activity_obj
+
     def set_keys(
         self,
         dataset_id,
@@ -357,6 +523,11 @@ class GenMetadata:
         self.started_at_time = started_at_time
         self.ended_at_time = ended_at_time
 
+def write_json_file_from_database(db, filename):
+    schema = get_nmdc_jsonschema_string()
+    
+    json_dumper.dumps(db, contexts=schema, )
+
 
 if __name__ == "__main__":
     mapper_file = sys.argv[1]
@@ -365,21 +536,30 @@ if __name__ == "__main__":
     execution_resource = sys.argv[4]
     git_url = sys.argv[5]
     analysis_type = sys.argv[6]
+    results_url = sys.argv[7]
 
-    meta_file = GenMetadata(pipeline_type=pipeline_type, execution_resource=execution_resource, git_url=git_url, analysis_type=analysis_type)
-    
-    # setup the cursors
-    coll_names = [
-        f"{study}_MetaProteomicAnalysis_activity",
-        f"{study}_emsl_analysis_data_objects",
-    ]
-    meta_file.make_connection(os.environ.get("MONGO_INITDB_DATABASE"), coll_names)
+    if results_url[len(results_url) - 1] != "/":
+        results_url = results_url + "/"
+
+    # An array of DataObject
+    data_objects_arr = []
+    # An array of ""
+    metaproteomics_analysis_activity_arr = []
 
     # 1. Make collection and populate them.
     with open(mapper_file, "r+") as json_file:
         mapper_json = json.load(json_file)
-        # run for each dataset
+
         for mapping in mapper_json:
+
+            meta_file = GenMetadata(
+                pipeline_type=pipeline_type,
+                execution_resource=execution_resource,
+                git_url=git_url,
+                analysis_type=analysis_type,
+                results_url=results_url
+                )
+
             meta_file.set_keys(
                 mapping["dataset_id"],
                 mapping["genome_directory"],
@@ -394,10 +574,26 @@ if __name__ == "__main__":
                 mapping["end_time"],
             )
 
-            meta_file.prepare_activity()
+            metaproteomics_analysis_activity = meta_file.get_metaproteomics_analysis_activity()
+            data_objects = meta_file.get_data_objects(meta_file.gen_id())
+
+            metaproteomics_analysis_activity_arr.append(metaproteomics_analysis_activity)
+            data_objects_arr.extend(data_objects)
+            
 
         # 2. dump collections in json files
+        schema = get_nmdc_jsonschema_string()
         activity_file = f"{study}_MetaProteomicAnalysis_activity.json"
-        data_obj_file = f"{study}_emsl_analysis_data_objects.json"
-        meta_file.write_to_json_file([activity_file, data_obj_file])
-    pass
+        data_obj_file = f"{study}_analysis_data_objects.json"
+
+        activity_db = Database()
+        activity_db.metaproteomics_analysis_activity_set = metaproteomics_analysis_activity_arr
+
+        data_obj_db = Database()
+        data_obj_db.data_object_set = data_objects_arr
+
+        json_dumper.dump(activity_db, contexts=schema, inject_type=False, to_file=activity_file)
+        json_dumper.dump(data_obj_db, contexts=schema, inject_type=False, to_file=data_obj_file)
+
+
+
