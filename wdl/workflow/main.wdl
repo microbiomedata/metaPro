@@ -18,6 +18,7 @@ workflow metapro {
         File CONTAMINANT_FILE_LOC
         String STUDY
         String EXECUTION_RESOURCE
+        String DATA_URL
     }
 
     scatter (myobj in mapper_list) {
@@ -71,6 +72,7 @@ workflow metapro {
             results     = results,
             pipeline_type = pipeline_type,
             execution_resource = EXECUTION_RESOURCE,
-            git_url = git_url
+            git_url = git_url,
+            data_url = DATA_URL
     }
 }

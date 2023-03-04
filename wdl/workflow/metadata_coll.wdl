@@ -21,6 +21,7 @@ task collect{
         String pipeline_type
         String execution_resource
         String git_url
+        String data_url
     }
     command {
         python /app/metadata_collection/code/gen_metadata.py \
@@ -29,14 +30,15 @@ task collect{
             ~{pipeline_type} \
             "~{execution_resource}" \
             ~{git_url} \
-            "nmdc:DataObject"
+            "nmdc:DataObject" \
+            ~{data_url}
     }
     output {
         File   activity    = "${study}_MetaProteomicAnalysis_activity.json"
-        File   data_object = "${study}_emsl_analysis_data_objects.json"
+        File   data_object = "${study}_analysis_data_objects.json"
     }
     runtime {
-        docker: 'microbiomedata/metapro-metadatacollection:2.1.0'
+        docker: 'microbiomedata/metapro-metadatacollection:1.1.0'
     }
 }
 workflow gen_metadata{
@@ -46,6 +48,7 @@ workflow gen_metadata{
         String pipeline_type
         String execution_resource
         String git_url
+        String data_url
     }
     call collect {
         input:
@@ -53,7 +56,8 @@ workflow gen_metadata{
             results        = results,
             pipeline_type  = pipeline_type, 
             execution_resource = execution_resource,
-            git_url = git_url
+            git_url = git_url,
+            data_url = data_url
     }
     output {
         File   activity    = collect.activity
