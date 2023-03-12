@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.6-stretch
+FROM python:3.9-slim
 
 # set work directory
 WORKDIR /app/metadata_collection
@@ -12,7 +12,7 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install --upgrade pip
 RUN export LDFLAGS="-L/usr/local/opt/openssl/lib"
 
-RUN pip install pandas
+RUN pip install nmdc-schema linkml
 # swagger-UI is optional
 RUN pip install six pandas openpyxl pymongo fastjsonschema
 

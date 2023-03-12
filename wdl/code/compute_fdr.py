@@ -132,8 +132,8 @@ class FdrDownIterate(FdrSearchStrategy):
         fdr_tmp = self.fdr
         spec_e_tmp = self.spec_e_value
  
-        spec_e_cur = None
-        fdr_cur = None
+        spec_e_last = fdr_tmp
+        fdr_last = spec_e_tmp
 
         while True:
             spec_e_tmp -= self.spec_e_inc 
@@ -142,10 +142,10 @@ class FdrDownIterate(FdrSearchStrategy):
             if self.fdr > fdr_tmp:
                 break
 
-            spec_e_cur = spec_e_tmp
-            fdr_cur = fdr_tmp
+            spec_e_last = spec_e_tmp
+            fdr_last = fdr_tmp
 
-        return FdrResult(spec_e_cur, fdr_cur)
+        return FdrResult(spec_e_last, fdr_last)
 
 def get_args():
     parser = argparse.ArgumentParser()

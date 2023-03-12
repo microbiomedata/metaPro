@@ -34,7 +34,7 @@ task ficus_analysis {
         File   qc_metric_file = "${Dataset_id}_${genome_directory}_QC_metrics.tsv"
     }
     runtime {
-        docker: 'microbiomedata/metapro-post-processing:2.1.0'
+        docker: 'microbiomedata/metapro-post-processing:1.1.0'
     }
 }
 task proteinDigestionSimulator {
