@@ -166,11 +166,11 @@ class GenMetadata:
 
             for line in tsvreader:
                 protein_quantification = ProteinQuantification(
-                    peptide_sequence_count = line[2],
-                    best_protein = "nmdc:" + line[3].replace(" ", ""),
-                    all_proteins = ["nmdc:" + protein.replace(" ", "") for protein in line[10].split(",")],
-                    protein_spectral_count = line[13],
-                    protein_sum_masic_abundance = line[14],
+                    peptide_sequence_count = line[1],
+                    best_protein = "nmdc:" + line[2].replace(" ", ""),
+                    all_proteins = ["nmdc:" + protein.replace(" ", "") for protein in line[9].split(",")],
+                    protein_spectral_count = line[12],
+                    protein_sum_masic_abundance = line[13],
                 )
 
                 protein_arr.append(protein_quantification)
@@ -201,12 +201,12 @@ class GenMetadata:
             header = next(tsvreader)
             for line in tsvreader:
                 peptide_quantification = PeptideQuantification(
-                peptide_sequence = line[2],
-                best_protein = "nmdc:" + line[3].replace(" ", ""),
-                all_proteins = ["nmdc:" + protein.replace(" ", "") for protein in line[10].split(",")],
-                min_q_value = line[12],
-                peptide_spectral_count = line[13],
-                peptide_sum_masic_abundance = int(float(line[14]))
+                peptide_sequence = line[1],
+                best_protein = "nmdc:" + line[2].replace(" ", ""),
+                all_proteins = ["nmdc:" + protein.replace(" ", "") for protein in line[9].split(",")],
+                min_q_value = line[11],
+                peptide_spectral_count = line[12],
+                peptide_sum_masic_abundance = int(float(line[13]))
                 )
 
                 peptide_quantifications_arr.append(peptide_quantification)
