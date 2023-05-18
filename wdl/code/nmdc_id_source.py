@@ -17,7 +17,7 @@ class NmdcIdSource():
         self._token = None
         self._expires_in_mins = None
         self._init_timestamp = None
-        self._client = oauthlib.oauth2.BackendApplicationClient(client_id=self.client_id)
+        self._client = oauthlib.oauth2.BackendApplicationClient(client_id=self._client_id)
         self._oauth = requests_oauthlib.OAuth2Session(client=self._client)
 
     def _save_token(self, token):
