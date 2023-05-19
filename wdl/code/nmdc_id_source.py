@@ -35,7 +35,7 @@ class NmdcIdSource():
         @functools.wraps(method)
         def check_and_refresh(self, *args, **kwargs):
             if self._init_timestamp == None or ((datetime.now() - self._init_timestamp).total_seconds() / 60 > (self._expires_in_mins - self._buffer_time_mins)):
-                self._token = self._oauth.fetch_token(token_url=self._nmdr_token_url,
+                self._token = self._oauth.fetch_token(token_url=self._nmdc_token_url,
                                                     client_id=self._client_id,
                                                     client_secret=self._client_secret)
                 self._init_timestamp = datetime.now()
