@@ -231,6 +231,8 @@ workflow job_analysis{
     }
     if(size(faa_file_loc, 'MB') > FASTA_SPLIT_ON_SIZE_MB)
     {
+        Boolean? did_split = true
+
         call fastaFileSplitter {
             input:
                 fasta_file_loc  = faa_file_loc,
@@ -312,6 +314,7 @@ workflow job_analysis{
         File   first_hits_file = peptidehitresultsprocrunner.first_hits_file
         String start_time= ""
         String end_time=""
+        Boolean did_split = select_first([did_split, false])
      }
 
 }

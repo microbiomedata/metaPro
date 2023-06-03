@@ -10,23 +10,29 @@ task ficus_analysis {
         String genome_directory
         String q_value_threshold
         String dataset_name
+        Boolean did_split
     }
     command {
-        python /app/post-processing/compute_fdr.py \
-            --file=~{first_hits_file}   \
-            --fdr=~{q_value_threshold}  \
-            --spece=1.0e-10 \
-            --speceinc=1.0e-13  \
-            --iter
-        specEValue=$(cat out.json | jq ".SpecEValue")
+        if [ ${did_split} == true ]; then
+            python /app/post-processing/compute_fdr.py \
+                --file=${first_hits_file}   \
+                --fdr=${q_value_threshold}  \
+                --spece=1.0e-10 \
+                --speceinc=1.0e-13  \
+                --iter
+            threshold=$(cat out.json | jq ".SpecEValue")
+        else
+            threshold=${q_value_threshold}
+        fi
         python /app/post-processing/ficus_analysis.py \
-            ~{faa_txt_file} \
-            ~{gff_file} \
-            ~{resultant_file} \
-            ~{Dataset_id} \
-            ~{genome_directory} \
-            $specEValue \
-            ~{dataset_name}
+            ${faa_txt_file} \
+            ${gff_file} \
+            ${resultant_file} \
+            ${Dataset_id} \
+            ${genome_directory} \
+            $threshold \
+            ${dataset_name} \
+            ${did_split}
     }
     output {
         File   peptide_file   = "${Dataset_id}_${genome_directory}_Peptide_Report.tsv"
@@ -67,6 +73,7 @@ workflow report_gen{
         String annotation_name
         String q_value_threshold
         String dataset_name
+        Boolean did_split
     }
 
     call proteinDigestionSimulator {
@@ -83,7 +90,8 @@ workflow report_gen{
             Dataset_id        = Dataset_id,
             genome_directory  = genome_directory,
             q_value_threshold = q_value_threshold,
-            dataset_name      = dataset_name
+            dataset_name      = dataset_name,
+            did_split         = did_split
     }
     output {
         File   peptide_file   = ficus_analysis.peptide_file

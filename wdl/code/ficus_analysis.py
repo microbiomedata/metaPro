@@ -24,15 +24,16 @@ class DataOutputtable:
         gff_file,
         resultant_file,
         fasta_txt_file,
-        spec_e_value,
+        threshold,
         dataset_id,
         genome_name,
-        dataset_name
+        dataset_name,
+        did_split_analysis
     ):
 
         self.dataset_id = dataset_id
         self.genome_name = genome_name
-        self.spec_e_value = float(spec_e_value)
+        self.threshold = float(threshold)
         # read annotation file.
         self.gff_file = gff_file
         self.annotation = gffpd.read_gff3(gff_file)
@@ -40,7 +41,7 @@ class DataOutputtable:
         self.resultant_df = pd.read_csv(
             resultant_file, sep="\t", float_precision="round_trip"
         )
-
+        self.did_split_analysis = did_split_analysis
         col_of_interest = ["ProteinName", "Sequence"]
         self.fasta_df = pd.read_csv(fasta_txt_file, sep="\t")[col_of_interest]
         cols_to_rename = {"ProteinName": "Protein"}
@@ -69,7 +70,8 @@ class DataOutputtable:
         # df.to_excel(self.writer, sheet_name=sheet_name, index=False)
 
     def FiltPeps(self, df):
-        qvalue_filtered_df = df[df["MSGFDB_SpecEValue"] <= self.spec_e_value]
+
+        qvalue_filtered_df = df[df["MSGFDB_SpecEValue"] <= self.threshold] if self.did_split_analysis else df[df["QValue"] <= self.threshold]
         non_decoy_filtered_df = qvalue_filtered_df[
             ~qvalue_filtered_df["Protein"].str.startswith("XXX")
         ]
@@ -909,19 +911,24 @@ if __name__ == "__main__":
     resultant_file = sys.argv[3]
     dataset_id= sys.argv[4]
     genome_directory= sys.argv[5]
-    spec_e_value= sys.argv[6]
+    threshold= sys.argv[6]
     dataset_name= sys.argv[7]
+    is_split_analysis= sys.argv[8]
 
-    print(f"{fasta_txt_file}\n{gff_file}\n{resultant_file}\n{dataset_id}\n{genome_directory}\n{spec_e_value}\n")
+    print(f"{fasta_txt_file}\n{gff_file}\n{resultant_file}\n{dataset_id}\n{genome_directory}\n{threshold}\n")
+
+    # Convert string to bool
+    is_split_analysis = True if is_split_analysis.rstrip().lower() == "true" else False
 
     data_obj = DataOutputtable(
         gff_file,
         resultant_file,
         fasta_txt_file,
-        spec_e_value,
+        threshold,
         dataset_id,
         genome_directory,
-        dataset_name
+        dataset_name,
+        is_split_analysis
     )
 
     (
