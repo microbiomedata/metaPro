@@ -262,8 +262,7 @@ if __name__ == "__main__":
     metaproteomics_analysis_activity_arr = []
 
     # Minting source
-    # TODO grab client_id and client_secret from env
-    id_source = NmdcIdSource("", "")
+    id_source = NmdcIdSource(os.environ['CLIENT_ID'], os.environ['CLIENT_SECRET'])
 
     # 1. Make collection and populate them.
     with open(mapper_file, "r+") as json_file:
