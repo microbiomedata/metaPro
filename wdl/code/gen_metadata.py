@@ -4,6 +4,7 @@ import csv
 import sys
 import hashlib
 
+from urllib.parse import urljoin
 from datetime import datetime
 from linkml_runtime.dumpers import json_dumper
 from nmdc_schema.nmdc import Database, MetaproteomicsAnalysisActivity, DataObject, ProteinQuantification, PeptideQuantification
@@ -116,10 +117,7 @@ class GenMetadata:
         if "QC_metrics" in file_name:
             data_object.data_object_type = "Metaproteomics Workflow Statistics"
 
-        data_object.url = (
-            self.results_url + file_name
-        )
-
+        data_object.url = urljoin(self.results_url, file_name)
         data_object.was_generated_by = self.activity_id
 
         return data_object
@@ -255,8 +253,8 @@ if __name__ == "__main__":
     git_url = sys.argv[4]
     results_url = sys.argv[5]
 
-    if results_url[len(results_url) - 1] != "/":
-        results_url = results_url + "/"
+    if results_url[-1] != '/':
+        results_url = results_url + '/'
 
     # An array of DataObject
     data_objects_arr = []
