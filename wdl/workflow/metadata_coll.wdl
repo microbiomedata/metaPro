@@ -27,10 +27,8 @@ task collect{
         python /app/metadata_collection/code/gen_metadata.py \
             ~{write_json(results)} \
             "~{study}" \
-            ~{pipeline_type} \
             "~{execution_resource}" \
             ~{git_url} \
-            "nmdc:DataObject" \
             ~{data_url}
     }
     output {

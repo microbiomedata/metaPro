@@ -4,11 +4,13 @@ import csv
 import sys
 import hashlib
 
+from urllib.parse import urljoin
 from datetime import datetime
 from linkml_runtime.dumpers import json_dumper
 from nmdc_schema.nmdc import Database, MetaproteomicsAnalysisActivity, DataObject, ProteinQuantification, PeptideQuantification
 from nmdc_schema.nmdc_data import get_nmdc_jsonschema_string
 from nmdc_id_source import NmdcIdSource
+from typing import List
 
 
 class GenMetadata:
@@ -60,8 +62,8 @@ class GenMetadata:
             for line in tsvreader:
                 protein_quantification = ProteinQuantification(
                     peptide_sequence_count = line[1],
-                    best_protein = "nmdc:" + line[2].replace(" ", ""),
-                    all_proteins = ["nmdc:" + protein.replace(" ", "") for protein in line[9].split(",")],
+                    best_protein = line[2].replace(" ", ""),
+                    all_proteins = [protein.replace(" ", "") for protein in line[9].split(",")],
                     protein_spectral_count = line[12],
                     protein_sum_masic_abundance = line[13],
                 )
@@ -77,8 +79,8 @@ class GenMetadata:
             for line in tsvreader:
                 peptide_quantification = PeptideQuantification(
                 peptide_sequence = line[1],
-                best_protein = "nmdc:" + line[2].replace(" ", ""),
-                all_proteins = ["nmdc:" + protein.replace(" ", "") for protein in line[9].split(",")],
+                best_protein = line[2].replace(" ", ""),
+                all_proteins = [protein.replace(" ", "") for protein in line[9].split(",")],
                 min_q_value = line[11],
                 peptide_spectral_count = line[12],
                 peptide_sum_masic_abundance = int(float(line[13]))
@@ -116,16 +118,13 @@ class GenMetadata:
         if "QC_metrics" in file_name:
             data_object.data_object_type = "Metaproteomics Workflow Statistics"
 
-        data_object.url = (
-            self.results_url + file_name
-        )
-
+        data_object.url = urljoin(self.results_url, file_name)
         data_object.was_generated_by = self.activity_id
 
         return data_object
 
 
-    def get_data_objects(self):
+    def get_data_objects(self) -> List[DataObject]:
 
         data_objects = []
 
@@ -133,7 +132,7 @@ class GenMetadata:
             self.get_file_data_object(
                 self.resultant_file,
                 os.path.basename(self.resultant_file),
-                "Aggregation of analysis tools{MSGFplus, MASIC} results", 
+                "Aggregation of analysis tools {MSGFplus, MASIC} results", 
                 self.activity_id
             )
         )
@@ -167,11 +166,11 @@ class GenMetadata:
 
         return data_objects
 
-    def get_has_input(self) -> list:
+    def get_has_input(self) -> List[str]:
         has_input = []
 
         # add .RAW
-        raw_file_name = "emsl:output_" + self.dataset_id
+        raw_file_name = self.dataset_id
         has_input.append(raw_file_name)
         
         fasta_checksum = self.get_md5(self.fasta_file)
@@ -190,9 +189,9 @@ class GenMetadata:
         
         return has_input
 
-    def get_metaproteomics_analysis_activity(self):
+    def get_metaproteomics_analysis_activity(self, data_objects: list[DataObject]) -> MetaproteomicsAnalysisActivity:
         has_input_arr = self.get_has_input()
-        has_output_arr = False
+        has_output_arr = [data_object.id for data_object in data_objects]
 
         mp_analysis_activity_obj = MetaproteomicsAnalysisActivity(
             id=self.activity_id,
@@ -247,11 +246,6 @@ class GenMetadata:
 
         return GenMetadata(analysis_type, execution_resource, git_url, results_url, id_source, activity_id)
 
-def write_json_file_from_database(db, filename):
-    schema = get_nmdc_jsonschema_string()
-    
-    json_dumper.dumps(db, contexts=schema, )
-
 
 if __name__ == "__main__":
     mapper_file = sys.argv[1]
@@ -260,17 +254,14 @@ if __name__ == "__main__":
     git_url = sys.argv[4]
     results_url = sys.argv[5]
 
-    if results_url[len(results_url) - 1] != "/":
-        results_url = results_url + "/"
+    if results_url[-1] != '/':
+        results_url = results_url + '/'
 
-    # An array of DataObject
-    data_objects_arr = []
-    # An array of ""
-    metaproteomics_analysis_activity_arr = []
+    data_objects_arr: List[DataObject] = []
+    metaproteomics_analysis_activity_arr: List[MetaproteomicsAnalysisActivity] = []
 
     # Minting source
-    # TODO grab client_id and client_secret from env
-    id_source = NmdcIdSource("", "")
+    id_source = NmdcIdSource(os.environ['CLIENT_ID'], os.environ['CLIENT_SECRET'])
 
     # 1. Make collection and populate them.
     with open(mapper_file, "r+") as json_file:
@@ -300,8 +291,8 @@ if __name__ == "__main__":
                 mapping["end_time"],
             )
 
-            metaproteomics_analysis_activity = meta_file.get_metaproteomics_analysis_activity()
             data_objects = meta_file.get_data_objects()
+            metaproteomics_analysis_activity = meta_file.get_metaproteomics_analysis_activity(data_objects)
 
             metaproteomics_analysis_activity_arr.append(metaproteomics_analysis_activity)
             data_objects_arr.extend(data_objects)
