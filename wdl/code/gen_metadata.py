@@ -10,6 +10,7 @@ from linkml_runtime.dumpers import json_dumper
 from nmdc_schema.nmdc import Database, MetaproteomicsAnalysisActivity, DataObject, ProteinQuantification, PeptideQuantification
 from nmdc_schema.nmdc_data import get_nmdc_jsonschema_string
 from nmdc_id_source import NmdcIdSource
+from typing import List
 
 
 class GenMetadata:
@@ -123,7 +124,7 @@ class GenMetadata:
         return data_object
 
 
-    def get_data_objects(self):
+    def get_data_objects(self) -> List[DataObject]:
 
         data_objects = []
 
@@ -165,7 +166,7 @@ class GenMetadata:
 
         return data_objects
 
-    def get_has_input(self) -> list:
+    def get_has_input(self) -> List[str]:
         has_input = []
 
         # add .RAW
@@ -188,9 +189,9 @@ class GenMetadata:
         
         return has_input
 
-    def get_metaproteomics_analysis_activity(self):
+    def get_metaproteomics_analysis_activity(self, data_objects: list[DataObject]) -> MetaproteomicsAnalysisActivity:
         has_input_arr = self.get_has_input()
-        has_output_arr = False
+        has_output_arr = [data_object.id for data_object in data_objects]
 
         mp_analysis_activity_obj = MetaproteomicsAnalysisActivity(
             id=self.activity_id,
@@ -256,10 +257,8 @@ if __name__ == "__main__":
     if results_url[-1] != '/':
         results_url = results_url + '/'
 
-    # An array of DataObject
-    data_objects_arr = []
-    # An array of ""
-    metaproteomics_analysis_activity_arr = []
+    data_objects_arr: List[DataObject] = []
+    metaproteomics_analysis_activity_arr: List[MetaproteomicsAnalysisActivity] = []
 
     # Minting source
     id_source = NmdcIdSource(os.environ['CLIENT_ID'], os.environ['CLIENT_SECRET'])
@@ -292,8 +291,8 @@ if __name__ == "__main__":
                 mapping["end_time"],
             )
 
-            metaproteomics_analysis_activity = meta_file.get_metaproteomics_analysis_activity()
             data_objects = meta_file.get_data_objects()
+            metaproteomics_analysis_activity = meta_file.get_metaproteomics_analysis_activity(data_objects)
 
             metaproteomics_analysis_activity_arr.append(metaproteomics_analysis_activity)
             data_objects_arr.extend(data_objects)
