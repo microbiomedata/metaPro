@@ -45,7 +45,8 @@ workflow metapro {
                 q_value_threshold = QVALUE_THRESHOLD,
                 annotation_name   = myobj['annotation_name'],
                 dataset_name      = myobj['dataset_name'],
-                first_hits_file   = job_analysis.first_hits_file
+                first_hits_file   = job_analysis.first_hits_file,
+                did_split         = job_analysis.did_split
         }
 
         Result result = {
