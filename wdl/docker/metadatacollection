@@ -12,7 +12,7 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install --upgrade pip
 RUN export LDFLAGS="-L/usr/local/opt/openssl/lib"
 
-RUN pip install nmdc-schema linkml
+RUN pip install nmdc-schema==7.6.0 linkml
 # swagger-UI is optional
 RUN pip install six pandas openpyxl pymongo fastjsonschema
 
