@@ -231,8 +231,6 @@ workflow job_analysis{
     }
     if(size(faa_file_loc, 'MB') > FASTA_SPLIT_ON_SIZE_MB)
     {
-        Boolean? did_split = true
-
         call fastaFileSplitter {
             input:
                 fasta_file_loc  = faa_file_loc,
@@ -269,6 +267,7 @@ workflow job_analysis{
 
         File? msgfplus_split_and_merged = msgfplusresultsmerge.outfile_mzid
         File? rev_cat_fasta_split_and_merged = msgfplusresultsmerge.outfile_fasta
+        Boolean? fasta_size_greater_than_split_size = true
     }
     if(size(faa_file_loc, 'MB') <= FASTA_SPLIT_ON_SIZE_MB)
     {
@@ -283,9 +282,15 @@ workflow job_analysis{
 
         File? msgfplus_not_split = msgfplus.outfile
         File? rev_cat_fasta_not_split = msgfplus.rev_cat_fasta
+        Boolean? fasta_size_less_than_or_equal_split_size = false
     }
+
+    # These arrays should have only a single valid value
     Array[File?] msgfplus_mzids          = [msgfplus_not_split, msgfplus_split_and_merged]
     Array[File?] msgfplus_revCata_fastas = [rev_cat_fasta_not_split, rev_cat_fasta_split_and_merged]
+
+    # The value of the single valid boolean indicates if we've taken the split FASTA processing route
+    Array[Boolean?] fasta_split_state    = [fasta_size_greater_than_split_size, fasta_size_less_than_or_equal_split_size]
 
     call mzidtotsvconverter {
         input:
@@ -314,7 +319,6 @@ workflow job_analysis{
         File   first_hits_file = peptidehitresultsprocrunner.first_hits_file
         String start_time= ""
         String end_time=""
-        Boolean did_split = select_first([did_split, false])
+        Boolean did_split = select_first(fasta_split_state)
      }
-
 }
