@@ -17,7 +17,11 @@ class GenMetadata:
     Generate metadata for the pipeline!
     """
     def __init__(self, analysis_type: str, execution_resource: str, git_url: str, results_url: str,
-                  id_source: NmdcIdSource, activity_id: str):
+                id_source: NmdcIdSource,
+                activity_id: str,
+                contaminate_file: str,
+                masic_param_file: str,
+                msgfplus_param_file: str):
 
         self.execution_resource = execution_resource
         self.git_url = git_url
@@ -25,13 +29,15 @@ class GenMetadata:
         self.results_url = results_url
         self.id_source = id_source
         self.activity_id = activity_id
+        self.contaminant_file = contaminate_file
+        self.masic_param_file = masic_param_file
+        self.msgfplus_param_file = msgfplus_param_file
 
         self.dataset_id = None
         self.genome_directory = None
         self.annotation_file_name = None
         self.resultant_file = None
         self.fasta_file = None
-        self.contaminant_file = None
         self.peptide_report = None
         self.protein_report = None
         self.qc_metric_report = None
@@ -105,7 +111,6 @@ class GenMetadata:
             was_generated_by=activity_id,
             data_object_type=type,
             url=urljoin(self.results_url, file_name),
-            was_generated_by=self.execution_resource,
         )
 
         return data_object
@@ -158,23 +163,12 @@ class GenMetadata:
         has_input = []
 
         # add .RAW
-        raw_file_name = self.dataset_id
-        has_input.append(raw_file_name)
+        # raw_file_name = self.dataset_id
+        # has_input.append(self.dataset_id)
         
-        fasta_checksum = self.get_md5(self.fasta_file)
-        if fasta_checksum:
-            # add to metadata.
-            has_input.append("nmdc:" + fasta_checksum)
-        else:
-            print("Found HASH empty for {}".format(self.fasta_file))
-
-        # add EMSL contaminants
-        contaminant_checksum = self.get_md5(self.contaminant_file)
-        if contaminant_checksum:
-            has_input.append("nmdc:" + contaminant_checksum)
-        else:
-            print("Found HASH empty for {}".format(self.fasta_file))
-        
+        # TODO need to determine how to associate curies with specific files e.g. input for both fileobject curie and filepath
+        # for now, just generate ids
+        has_input = self.id_source.get_ids("nmdc:DataObject", 5)
         return has_input
 
     def get_metaproteomics_analysis_activity(self, data_objects: list[DataObject]) -> MetaproteomicsAnalysisActivity:
@@ -205,7 +199,6 @@ class GenMetadata:
         annotation_file_name,
         resultant_file,
         fasta_file,
-        contaminant_file,
         peptide_report,
         protein_report,
         qc_metric_report,
@@ -217,7 +210,6 @@ class GenMetadata:
         self.annotation_file_name = annotation_file_name
         self.resultant_file = resultant_file
         self.fasta_file = fasta_file
-        self.contaminant_file = contaminant_file
         self.peptide_report = peptide_report
         self.protein_report = protein_report
         self.qc_metric_report = qc_metric_report
@@ -226,13 +218,19 @@ class GenMetadata:
 
     @staticmethod
     def create(analysis_type: str, execution_resource: str, git_url: str, results_url: str,
-                  id_source: NmdcIdSource) -> 'GenMetadata':
+                  id_source: NmdcIdSource,
+                  contaminate_file: str,
+                  masic_param_file: str,
+                  msgfplus_param_file: str) -> 'GenMetadata':
         '''
         Create a GenMetadata object with newly minted activity ID with OOP in mind.
         '''
         activity_id = id_source.get_ids(analysis_type, 1)[0]
 
-        return GenMetadata(analysis_type, execution_resource, git_url, results_url, id_source, activity_id)
+        return GenMetadata(analysis_type, execution_resource, git_url, results_url, id_source, activity_id,
+                           contaminate_file,
+                           masic_param_file,
+                           msgfplus_param_file)
 
 
 if __name__ == "__main__":
@@ -241,6 +239,9 @@ if __name__ == "__main__":
     execution_resource = sys.argv[3]
     git_url = sys.argv[4]
     results_url = sys.argv[5]
+    contaminate_file = sys.argv[6]
+    masic_param_file = sys.argv[7]
+    msgfplus_param_file = sys.argv[8]
 
     if results_url[-1] != '/':
         results_url = results_url + '/'
@@ -262,7 +263,10 @@ if __name__ == "__main__":
                 execution_resource=execution_resource,
                 git_url=git_url,
                 results_url=results_url,
-                id_source=id_source
+                id_source=id_source,
+                contaminate_file=contaminate_file,
+                masic_param_file=masic_param_file,
+                msgfplus_param_file=msgfplus_param_file
                 )
 
             meta_file.set_keys(
@@ -271,7 +275,6 @@ if __name__ == "__main__":
                 os.path.basename(mapping["txt_faa_file"]),
                 mapping["resultant_file"],
                 mapping["faa_file"],
-                mapping["contaminate_file"],
                 mapping["peptide_report_file"],
                 mapping["protein_report_file"],
                 mapping["qc_metric_report_file"],
