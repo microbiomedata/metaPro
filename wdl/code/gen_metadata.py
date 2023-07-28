@@ -7,11 +7,10 @@ import hashlib
 from urllib.parse import urljoin
 from datetime import datetime
 from linkml_runtime.dumpers import json_dumper
-from nmdc_schema.nmdc import Database, MetaproteomicsAnalysisActivity, DataObject, ProteinQuantification, PeptideQuantification
+from nmdc_schema.nmdc import Database, MetaproteomicsAnalysisActivity, DataObject, ProteinQuantification, PeptideQuantification, FileTypeEnum
 from nmdc_schema.nmdc_data import get_nmdc_jsonschema_string
 from nmdc_id_source import NmdcIdSource
 from typing import List
-
 
 class GenMetadata:
     """
@@ -90,12 +89,9 @@ class GenMetadata:
         
         return peptide_quantifications_arr
 
-    def get_file_data_object(self, file_path, file_name, description, activity_id):
+    def get_file_data_object(self, file_path: str, file_name: str, description: str, activity_id: str, type: str) -> DataObject:
         """
-        - Makes entry in _emsl_analysis_data_objects.json
-        - Contains information about Pipeline's analysis results E.g.
-            1. resultant.tsv
-            2. data_out_table.tsv
+        Populates and returns a DataObject object for a metaproteomics pipeline results file.
         """
 
         file_id = self.id_source.get_ids("nmdc:DataObject", 1)[0]
@@ -107,33 +103,22 @@ class GenMetadata:
             file_size_bytes=os.stat(file_path).st_size,
             md5_checksum=hashlib.md5(open(file_path,'rb').read()).hexdigest(),
             was_generated_by=activity_id,
+            data_object_type=type,
+            url=urljoin(self.results_url, file_name),
+            was_generated_by=self.execution_resource,
         )
-
-        if "MSGFjobs_MASIC_resultant" in file_name:
-            data_object.data_object_type = "Unfiltered Metaproteomics Results"
-        if "Peptide_Report" in file_name:
-            data_object.data_object_type = "Peptide Report"
-        if "Protein_Report" in file_name:
-            data_object.data_object_type = "Protein Report"
-        if "QC_metrics" in file_name:
-            data_object.data_object_type = "Metaproteomics Workflow Statistics"
-
-        data_object.url = urljoin(self.results_url, file_name)
-        data_object.was_generated_by = self.activity_id
 
         return data_object
 
-
     def get_data_objects(self) -> List[DataObject]:
-
         data_objects = []
-
         data_objects.append(
             self.get_file_data_object(
                 self.resultant_file,
                 os.path.basename(self.resultant_file),
                 "Aggregation of analysis tools {MSGFplus, MASIC} results", 
-                self.activity_id
+                self.activity_id,
+                "Unfiltered Metaproteomics Results"
             )
         )
 
@@ -142,7 +127,8 @@ class GenMetadata:
                 self.peptide_report,
                 os.path.basename(self.peptide_report),
                 "Aggregated peptides sequences from MSGF+ search results filtered to ~5% FDR", 
-                self.activity_id
+                self.activity_id,
+                "Peptide Report"
             )
         )
 
@@ -151,7 +137,8 @@ class GenMetadata:
                 self.protein_report,
                 os.path.basename(self.protein_report),
                 "Aggregated protein lists from MSGF+ search results filtered to ~5% FDR", 
-                self.activity_id
+                self.activity_id,
+                "Protein Report"
             )
         )
 
@@ -160,7 +147,8 @@ class GenMetadata:
                 self.qc_metric_report,
                 os.path.basename(self.qc_metric_report),
                 "Overall statistics from MSGF+ search results filtered to ~5% FDR", 
-                self.activity_id
+                self.activity_id,
+                "Metaproteomics Workflow Statistics"
             )
         )
 
