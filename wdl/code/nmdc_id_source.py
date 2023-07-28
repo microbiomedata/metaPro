@@ -12,7 +12,7 @@ class NmdcIdSource():
         self._client_id = client_id
         self._client_secret = client_secret
         self._nmdc_mint_url = "https://api.microbiomedata.org/pids/mint"
-        self._nmdr_token_url = "https://api.microbiomedata.org/token"
+        self._nmdc_token_url = "https://api.microbiomedata.org/token"
         self._buffer_time_mins = buffer_time_mins
         self._token = None
         self._expires_in_mins = None

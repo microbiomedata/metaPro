@@ -6,7 +6,6 @@ struct Result {
     File protein_report_file
     File qc_metric_report_file
     File faa_file
-    File contaminate_file
     File txt_faa_file
     String genome_directory
     String dataset_id
@@ -22,6 +21,9 @@ task collect{
         String execution_resource
         String git_url
         String data_url
+        File contaminate_file
+        File masic_param_file
+        File msgfplus_param_file
     }
     command {
         python /app/metadata_collection/code/gen_metadata.py \
@@ -29,7 +31,10 @@ task collect{
             "~{study}" \
             "~{execution_resource}" \
             ~{git_url} \
-            ~{data_url}
+            ~{data_url} \
+            ~{contaminate_file} \
+            ~{masic_param_file} \
+            ~{msgfplus_param_file}
     }
     output {
         File   activity    = "${study}_MetaProteomicAnalysis_activity.json"
@@ -47,15 +52,21 @@ workflow gen_metadata{
         String execution_resource
         String git_url
         String data_url
+        File contaminate_file
+        File masic_param_file
+        File msgfplus_param_file
     }
     call collect {
         input:
-            study          = study,
-            results        = results,
-            pipeline_type  = pipeline_type, 
+            study = study,
+            results = results,
+            pipeline_type = pipeline_type, 
             execution_resource = execution_resource,
             git_url = git_url,
-            data_url = data_url
+            data_url = data_url,
+            contaminate_file = contaminate_file,
+            masic_param_file = masic_param_file,
+            msgfplus_param_file = msgfplus_param_file
     }
     output {
         File   activity    = collect.activity

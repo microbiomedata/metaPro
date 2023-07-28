@@ -55,7 +55,6 @@ workflow metapro {
             "protein_report_file": report_gen.protein_file,
             "qc_metric_report_file": report_gen.qc_metric_file,
             "faa_file": myobj['faa_file_loc'],
-            "contaminate_file": CONTAMINANT_FILE_LOC,
             "txt_faa_file": report_gen.txt_faa_file,
             "genome_directory": myobj['genome_dir'],
             "dataset_id": myobj['dataset_id'],
@@ -74,6 +73,9 @@ workflow metapro {
             pipeline_type = pipeline_type,
             execution_resource = EXECUTION_RESOURCE,
             git_url = git_url,
-            data_url = DATA_URL
+            data_url = DATA_URL,
+            contaminate_file = CONTAMINANT_FILE_LOC,
+            masic_param_file = MASIC_PARAM_FILE_LOC,
+            msgfplus_param_file = MSGFPLUS_PARAM_FILE_LOC
     }
 }
