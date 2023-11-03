@@ -1,5 +1,6 @@
 { 
   "kaiko_run_test.kaiko_config":"/mnt/c/NMDC/storage/parameters/kaiko_defaults.yaml",
-  "kaiko_run_test.raw_file":"/mnt/c/NMDC/storage/598506/SpruceW_P19_15_22Jun17_Pippin_17-04-06.raw"
+  "kaiko_run_test.raw_file":"/mnt/c/NMDC/storage/598506/SpruceW_P19_15_22Jun17_Pippin_17-04-06.raw",
+  "kaiko_run_test.mgf_file":"/mnt/c/NMDC/storage/Biodiversity_A_cryptum_FeTSB_anaerobic_1_01Jun16_Pippin_16-03-39_unit_test_prop_0.005_seed_6969.mgf"
 }
   

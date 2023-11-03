@@ -7,8 +7,10 @@ task convertToMgf {
     }
     command {
         wine msconvert \
-        ~{raw_file} \
-        --mgf
+            ${raw_file} \
+            --zlib \
+            --filter "peakPicking vendor msLevel=1-" \
+            --mgf
     }
     output {
         File   outfile = "${mgf_file_name}.mgf"
@@ -21,62 +23,49 @@ task convertToMgf {
 task kaiko {
     input {
         File mgf_file
+        File kaiko_config
+        String kaiko_volume_dir
     }
-    command {
-        mgf=`basename "${mgf_file}"`
-        ln -s "${mgf_file}" "$mgf"
-        echo '{"denovo": {"mgf_dir": "."}}' > overrides.json
-        python run_kaiko_denovo.py \
-            --config=overrides.json
-    }
+    command <<<
+        execution_dir=$(pwd)
+        cd /Kaiko_pipeline
+        mgf=`basename ~{mgf_file}`
+        mkdir input
+        # ln -s ~{mgf_file} input/$mgf
+        mv ~{mgf_file} input/$mgf
+        ln -s ~{kaiko_volume_dir} Kaiko_volume
+        python Kaiko_pipeline_main.py \
+            --config=~{kaiko_config}
+        find Kaiko_output -name '*.fasta' -exec mv -t $execution_dir {} +
+        cd execution_dir
+    >>>
     output {
-        File outfile = "${faa_file}.faa"
+        File outfile = glob("*.fasta")[0]
     }
     runtime {
         docker: 'kaiko-py310:latest'
     }
 }
 
-# task generateFeaturesAnnotations {
-#     input {
-#         File   faa_file
-#     }
-#     command {
-
-#     }
-#     output {
-#         File   outfile = "${faa_file}.gff"
-#     }
-#     runtime {
-#         docker: ''
-#     }
-# }
-
-workflow report_gen{
-    input{
+workflow run {
+    String  kaiko_data_location="/refdata/Kaiko_volume/"
+    input {
         File   raw_file
-        # String dataset_name
         File   kaiko_config
     }
 
     call convertToMgf {
         input:
             raw_file = raw_file,
-            # dataset_name = dataset_name
     }
     call kaiko {
         input:
-            raw_file = raw_file
-            gff_file = gff_file,
+            mgf_file = convertToMgf.outfile,
+            kaiko_config = kaiko_config,
+            kaiko_volume_dir = kaiko_data_location
     }
-    # call generateFeaturesAnnotations {
-    #     input:
-    #         faa_file = kaiko.outfile
-    # }
 
     output {
         File   faa_file = kaiko.outfile
-        # File   gff_file = ficus_analysis.protein_file
      }
-
 }
