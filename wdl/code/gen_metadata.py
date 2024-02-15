@@ -13,6 +13,8 @@ from nmdc_id_source import NmdcIdSource, NmdcFakeIdSource
 from typing import List
 
 
+WORKFLOW_METADATA_VERSION = 1
+
 class GenMetadata:
     """
     Generate metadata for the pipeline!
@@ -236,7 +238,7 @@ class GenMetadata:
 
 
     @staticmethod
-    def create(analysis_type: str, execution_resource: str, git_url: str, results_url: str,
+    def create(execution_resource: str, git_url: str, results_url: str,
                   id_source: NmdcIdSource,
                   contaminate_file: str,
                   masic_param_file: str,
@@ -247,7 +249,10 @@ class GenMetadata:
         '''
         Create a GenMetadata object with newly minted activity ID with OOP in mind.
         '''
+        analysis_type = "nmdc:MetaproteomicsAnalysisActivity"
         activity_id = id_source.get_ids(analysis_type, 1)[0]
+        activity_id = activity_id + "." + str(WORKFLOW_METADATA_VERSION)
+        
         return GenMetadata(analysis_type, execution_resource, git_url, results_url, id_source, activity_id,
                            contaminate_file,
                            masic_param_file,
@@ -290,7 +295,6 @@ if __name__ == "__main__":
         for mapping in mapper_json:
 
             meta_file = GenMetadata.create(
-                "nmdc:MetaproteomicsAnalysisActivity",
                 execution_resource=execution_resource,
                 git_url=git_url,
                 results_url=results_url,
