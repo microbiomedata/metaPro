@@ -40,7 +40,7 @@ task ficus_analysis {
         File   qc_metric_file = "${Dataset_id}_${genome_directory}_QC_metrics.tsv"
     }
     runtime {
-        docker: 'microbiomedata/metapro-post-processing:1.1.0'
+        docker: 'microbiomedata/metapro-post-processing:1.2.0'
     }
 }
 task proteinDigestionSimulator {
@@ -55,7 +55,7 @@ task proteinDigestionSimulator {
         -O:~{'.'}
     }
     output {
-        File outfile = "${annotation_name}_proteins.txt"
+        File outfile = "${annotation_name}_proteins.txt" # TODO use faa_file and replace ext to find file
     }
     runtime {
         docker: "microbiomedata/metapro-proteindigestionsimulator:v2.3.7794"

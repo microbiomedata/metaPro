@@ -43,7 +43,6 @@ task msgfplus {
         File   contaminated_fasta_file
         File   msgfplus_params
         String dataset_name
-        String annotation_name
         String revcat_name = basename(sub(contaminated_fasta_file, ".fasta", ".revCat.fasta"))
     }
     command {
@@ -203,7 +202,6 @@ task concatcontaminate {
 workflow job_analysis{
     input{
         String dataset_name
-        String annotation_name
         File   raw_file_loc
         File   faa_file_loc
         String QVALUE_THRESHOLD
@@ -254,7 +252,6 @@ workflow job_analysis{
                     contaminated_fasta_file = concatcontaminatesplit.outfile,
                     msgfplus_params         = MSGFPLUS_PARAM_FILENAME,
                     dataset_name            = dataset_basename,
-                    annotation_name         = annotation_name
             }
         }
         call msgfplusresultsmerge {
@@ -277,7 +274,6 @@ workflow job_analysis{
                 contaminated_fasta_file = concatcontaminate.outfile,
                 msgfplus_params         = MSGFPLUS_PARAM_FILENAME,
                 dataset_name            = dataset_name,
-                annotation_name         = annotation_name
         }
 
         File? msgfplus_not_split = msgfplus.outfile
