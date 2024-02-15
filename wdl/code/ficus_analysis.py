@@ -917,8 +917,7 @@ if __name__ == "__main__":
 
     print(f"{fasta_txt_file}\n{gff_file}\n{resultant_file}\n{dataset_id}\n{genome_directory}\n{threshold}\n")
 
-    # Convert string to bool
-    is_split_analysis = True if is_split_analysis.rstrip().lower() == "true" else False
+    is_split_analysis = is_split_analysis.rstrip().lower() == "true"
 
     data_obj = DataOutputtable(
         gff_file,
