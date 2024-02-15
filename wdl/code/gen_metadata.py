@@ -9,8 +9,9 @@ from datetime import datetime
 from linkml_runtime.dumpers import json_dumper
 from nmdc_schema.nmdc import Database, MetaproteomicsAnalysisActivity, DataObject, ProteinQuantification, PeptideQuantification, FileTypeEnum
 from nmdc_schema.nmdc_data import get_nmdc_jsonschema_string
-from nmdc_id_source import NmdcIdSource
+from nmdc_id_source import NmdcIdSource, NmdcFakeIdSource
 from typing import List
+
 
 class GenMetadata:
     """
@@ -21,7 +22,10 @@ class GenMetadata:
                 activity_id: str,
                 contaminate_file: str,
                 masic_param_file: str,
-                msgfplus_param_file: str):
+                msgfplus_param_file: str,
+                masic_param_id: str,
+                msgf_param_id: str,
+                contam_id: str):
 
         self.execution_resource = execution_resource
         self.git_url = git_url
@@ -32,6 +36,9 @@ class GenMetadata:
         self.contaminant_file = contaminate_file
         self.masic_param_file = masic_param_file
         self.msgfplus_param_file = msgfplus_param_file
+        self.masic_param_id = masic_param_id
+        self.msgf_param_id = msgf_param_id
+        self.contam_id = contam_id
 
         self.dataset_id = None
         self.genome_directory = None
@@ -43,6 +50,8 @@ class GenMetadata:
         self.qc_metric_report = None
         self.started_at_time = None
         self.ended_at_time = None
+        self.fasta_id = None
+        self.gff_id = None
 
     def get_md5(self, file):
         """
@@ -108,7 +117,7 @@ class GenMetadata:
             description=description,
             file_size_bytes=os.stat(file_path).st_size,
             md5_checksum=hashlib.md5(open(file_path,'rb').read()).hexdigest(),
-            was_generated_by=activity_id,
+            was_generated_by=None,
             data_object_type=type,
             url=urljoin(self.results_url, file_name),
         )
@@ -160,15 +169,19 @@ class GenMetadata:
         return data_objects
 
     def get_has_input(self) -> List[str]:
-        has_input = []
+        '''
+            Returns the DataObject IDs for pipeline input files
+        '''
 
-        # add .RAW
-        # raw_file_name = self.dataset_id
-        # has_input.append(self.dataset_id)
+        has_input = [
+            self.dataset_id,
+            self.gff_id,
+            self.fasta_id,
+            self.msgf_param_id,
+            self.masic_param_id,
+            self.contam_id
+        ]
         
-        # TODO need to determine how to associate curies with specific files e.g. input for both fileobject curie and filepath
-        # for now, just generate ids
-        has_input = self.id_source.get_ids("nmdc:DataObject", 5)
         return has_input
 
     def get_metaproteomics_analysis_activity(self, data_objects: list[DataObject]) -> MetaproteomicsAnalysisActivity:
@@ -180,7 +193,8 @@ class GenMetadata:
             execution_resource=self.execution_resource,
             git_url=self.git_url,
             name=":".join(["Metaproteome", self.dataset_id, self.genome_directory]),
-            was_informed_by=":".join(["emsl", self.dataset_id]),
+            was_informed_by=self.genome_directory,
+            part_of=[self.genome_directory],
             type=self.type,
             has_output=has_output_arr,
             has_input=has_input_arr,
@@ -204,6 +218,8 @@ class GenMetadata:
         qc_metric_report,
         started_at_time,
         ended_at_time,
+        gff_id,
+        fasta_id,
     ):
         self.dataset_id = dataset_id
         self.genome_directory = genome_directory
@@ -215,22 +231,34 @@ class GenMetadata:
         self.qc_metric_report = qc_metric_report
         self.started_at_time = started_at_time
         self.ended_at_time = ended_at_time
+        self.gff_id = gff_id
+        self.fasta_id = fasta_id
+
 
     @staticmethod
     def create(analysis_type: str, execution_resource: str, git_url: str, results_url: str,
                   id_source: NmdcIdSource,
                   contaminate_file: str,
                   masic_param_file: str,
-                  msgfplus_param_file: str) -> 'GenMetadata':
+                  msgfplus_param_file: str,
+                  masic_param_id: str,
+                  msgf_param_id: str,
+                  contam_id: str) -> 'GenMetadata':
         '''
         Create a GenMetadata object with newly minted activity ID with OOP in mind.
         '''
         activity_id = id_source.get_ids(analysis_type, 1)[0]
-
         return GenMetadata(analysis_type, execution_resource, git_url, results_url, id_source, activity_id,
                            contaminate_file,
                            masic_param_file,
-                           msgfplus_param_file)
+                           msgfplus_param_file,
+                           masic_param_id,
+                           msgf_param_id,
+                           contam_id)
+
+
+def underscore_to_colon(curie: str):
+    return curie.replace('_', ':')
 
 
 if __name__ == "__main__":
@@ -242,6 +270,9 @@ if __name__ == "__main__":
     contaminate_file = sys.argv[6]
     masic_param_file = sys.argv[7]
     msgfplus_param_file = sys.argv[8]
+    masic_param_id = sys.argv[9]
+    msgf_param_id = sys.argv[10]
+    contam_id = sys.argv[11]
 
     if results_url[-1] != '/':
         results_url = results_url + '/'
@@ -266,12 +297,14 @@ if __name__ == "__main__":
                 id_source=id_source,
                 contaminate_file=contaminate_file,
                 masic_param_file=masic_param_file,
-                msgfplus_param_file=msgfplus_param_file
-                )
+                msgfplus_param_file=msgfplus_param_file,
+                masic_param_id=underscore_to_colon(masic_param_id),
+                msgf_param_id=underscore_to_colon(msgf_param_id),
+                contam_id=underscore_to_colon(contam_id))
 
             meta_file.set_keys(
-                mapping["dataset_id"],
-                mapping["genome_directory"],
+                underscore_to_colon(mapping["dataset_id"]),
+                underscore_to_colon(mapping["genome_directory"]),
                 os.path.basename(mapping["txt_faa_file"]),
                 mapping["resultant_file"],
                 mapping["faa_file"],
@@ -280,6 +313,8 @@ if __name__ == "__main__":
                 mapping["qc_metric_report_file"],
                 mapping["start_time"],
                 mapping["end_time"],
+                underscore_to_colon(mapping["gff_id"]),
+                underscore_to_colon(mapping["fasta_id"])
             )
 
             data_objects = meta_file.get_data_objects()
@@ -300,5 +335,7 @@ if __name__ == "__main__":
         data_obj_db = Database()
         data_obj_db.data_object_set = data_objects_arr
 
-        json_dumper.dump(activity_db, contexts=schema, inject_type=False, to_file=activity_file)
-        json_dumper.dump(data_obj_db, contexts=schema, inject_type=False, to_file=data_obj_file)
+        # json_dumper.dump(activity_db, contexts=schema, inject_type=False, to_file=activity_file)
+        # json_dumper.dump(data_obj_db, contexts=schema, inject_type=False, to_file=data_obj_file)        
+        json_dumper.dump(activity_db, inject_type=False, to_file=activity_file)
+        json_dumper.dump(data_obj_db, inject_type=False, to_file=data_obj_file)
