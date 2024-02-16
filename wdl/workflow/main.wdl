@@ -42,7 +42,7 @@ workflow metapro {
                 gff_file          = myobj['gff_file_loc'],
                 resultant_file    = job_analysis.resultant_file,
                 Dataset_id        = myobj['dataset_id'],
-                genome_directory  = myobj['genome_dir'],
+                faa_file_id       = myobj['faa_file_id'],
                 q_value_threshold = QVALUE_THRESHOLD,
                 annotation_name   = myobj['annotation_name'],
                 dataset_name      = myobj['dataset_name'],

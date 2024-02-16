@@ -26,13 +26,13 @@ class DataOutputtable:
         fasta_txt_file,
         threshold,
         dataset_id,
-        genome_name,
+        faa_id,
         dataset_name,
         did_split_analysis
     ):
 
         self.dataset_id = dataset_id
-        self.genome_name = genome_name
+        self.faa_id = faa_id
         self.threshold = float(threshold)
         # read annotation file.
         self.gff_file = gff_file
@@ -876,11 +876,11 @@ class DataOutputtable:
         return qc_metrics_df
 
     def gen_reports(self):
-        print(f"ReportGen start {self.dataset_id} : {self.genome_name}")
+        print(f"ReportGen start {self.dataset_id} : {self.faa_id}")
         self.peptide_report = self.create_peptide_report()
         protein_report = self.create_protein_report()
         qc_metrics_report = self.create_qc_metrics()
-        print(f"ReportGen end {self.dataset_id} : {self.genome_name}")
+        print(f"ReportGen end {self.dataset_id} : {self.faa_id}")
 
         # rename to adhere nmdc.schema.json
         cols_to_rename = {
@@ -910,12 +910,12 @@ if __name__ == "__main__":
     gff_file = sys.argv[2]
     resultant_file = sys.argv[3]
     dataset_id= sys.argv[4]
-    genome_directory= sys.argv[5]
+    faa_id = sys.argv[5]
     threshold= sys.argv[6]
     dataset_name= sys.argv[7]
     is_split_analysis= sys.argv[8]
 
-    print(f"{fasta_txt_file}\n{gff_file}\n{resultant_file}\n{dataset_id}\n{genome_directory}\n{threshold}\n")
+    print(f"{fasta_txt_file}\n{gff_file}\n{resultant_file}\n{dataset_id}\n{faa_id}\n{threshold}\n")
 
     is_split_analysis = is_split_analysis.rstrip().lower() == "true"
 
@@ -925,7 +925,7 @@ if __name__ == "__main__":
         fasta_txt_file,
         threshold,
         dataset_id,
-        genome_directory,
+        faa_id,
         dataset_name,
         is_split_analysis
     )
@@ -937,6 +937,6 @@ if __name__ == "__main__":
     ) = data_obj.gen_reports()
 
     # write dfs to file.
-    peptide_report.to_csv(f"{dataset_id}_{genome_directory}_Peptide_Report.tsv", sep="\t", index=False)
-    protein_report.to_csv(f"{dataset_id}_{genome_directory}_Protein_Report.tsv", sep="\t", index=False)
-    qc_metrics_report.to_csv( f"{dataset_id}_{genome_directory}_QC_metrics.tsv", sep="\t", index=False)
+    peptide_report.to_csv(f"{dataset_id}_{faa_id}_Peptide_Report.tsv", sep="\t", index=False)
+    protein_report.to_csv(f"{dataset_id}_{faa_id}_Protein_Report.tsv", sep="\t", index=False)
+    qc_metrics_report.to_csv( f"{dataset_id}_{faa_id}_QC_metrics.tsv", sep="\t", index=False)

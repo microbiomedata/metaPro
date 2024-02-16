@@ -7,7 +7,7 @@ task ficus_analysis {
         File   resultant_file
         File   first_hits_file
         String Dataset_id
-        String genome_directory
+        String faa_file_id
         String q_value_threshold
         String dataset_name
         Boolean did_split
@@ -29,15 +29,15 @@ task ficus_analysis {
             ${gff_file} \
             ${resultant_file} \
             ${Dataset_id} \
-            ${genome_directory} \
+            ${faa_file_id} \
             $threshold \
             ${dataset_name} \
             ${did_split}
     }
     output {
-        File   peptide_file   = "${Dataset_id}_${genome_directory}_Peptide_Report.tsv"
-        File   protein_file   = "${Dataset_id}_${genome_directory}_Protein_Report.tsv"
-        File   qc_metric_file = "${Dataset_id}_${genome_directory}_QC_metrics.tsv"
+        File   peptide_file   = "${Dataset_id}_${faa_file_id}_Peptide_Report.tsv"
+        File   protein_file   = "${Dataset_id}_${faa_file_id}_Protein_Report.tsv"
+        File   qc_metric_file = "${Dataset_id}_${faa_file_id}_QC_metrics.tsv"
     }
     runtime {
         docker: 'microbiomedata/metapro-post-processing:1.2.0'
@@ -69,7 +69,7 @@ workflow report_gen{
         File   resultant_file
         File   first_hits_file
         String Dataset_id
-        String genome_directory
+        String faa_file_id
         String annotation_name
         String q_value_threshold
         String dataset_name
@@ -88,7 +88,7 @@ workflow report_gen{
             resultant_file    = resultant_file,
             first_hits_file   = first_hits_file,
             Dataset_id        = Dataset_id,
-            genome_directory  = genome_directory,
+            faa_file_id       = faa_file_id,
             q_value_threshold = q_value_threshold,
             dataset_name      = dataset_name,
             did_split         = did_split
