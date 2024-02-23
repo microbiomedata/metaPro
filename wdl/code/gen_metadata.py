@@ -196,7 +196,6 @@ class GenMetadata:
             git_url=self.git_url,
             name=":".join(["Metaproteome", self.dataset_id, self.genome_directory]),
             was_informed_by=self.genome_directory,
-            part_of=[self.genome_directory],
             type=self.type,
             has_output=has_output_arr,
             has_input=has_input_arr,
@@ -252,7 +251,7 @@ class GenMetadata:
         analysis_type = "nmdc:MetaproteomicsAnalysisActivity"
         activity_id = id_source.get_ids(analysis_type, 1)[0]
         activity_id = activity_id + "." + str(WORKFLOW_METADATA_VERSION)
-        
+
         return GenMetadata(analysis_type, execution_resource, git_url, results_url, id_source, activity_id,
                            contaminate_file,
                            masic_param_file,
