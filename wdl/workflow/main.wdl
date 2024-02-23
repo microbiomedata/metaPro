@@ -34,7 +34,9 @@ workflow metapro {
                 MSGFPLUS_PARAM_FILENAME = MSGFPLUS_PARAM_FILE_LOC,
                 CONTAMINANT_FILENAME    = CONTAMINANT_FILE_LOC,
                 FASTA_SPLIT_ON_SIZE_MB  = fasta_split_on_size_mb,
-                FASTA_SPLIT_COUNT       = fasta_split_count
+                FASTA_SPLIT_COUNT       = fasta_split_count,
+                dataset_id              = myobj['dataset_id'],
+                faa_file_id             = myobj['faa_file_id']
         }
         call generate_reports.report_gen {
             input:

@@ -121,19 +121,21 @@ task masicresultmerge {
         File   sic_stats_file
         File   synopsis_file
         String dataset_name
+        String dataset_id
+        String faa_file_id
     }
     command {
         synopsis_file_loc=$(find .. -type f -regex ".*~{dataset_name}_syn.txt")
         cp $synopsis_file_loc ../execution/
         sic_stats_file_loc=$(find .. -type f -regex ".*~{dataset_name}_SICstats.txt")
         cp $sic_stats_file_loc ../execution/
-        mv ~{dataset_name}_syn.txt ~{dataset_name}_msgfplus_syn.txt
-        mv ~{dataset_name}_SICstats.txt ~{dataset_name}_SICStats.txt
+        mv ~{dataset_name}_syn.txt ~{dataset_id}_~{faa_file_id}_msgfplus_syn.txt
+        mv ~{dataset_name}_SICstats.txt ~{dataset_id}_~{faa_file_id}_SICStats.txt
         mono /app/MASICResultsMerge/MASICResultsMerger.exe \
-        ~{dataset_name}_msgfplus_syn.txt
+        ~{dataset_id}_~{faa_file_id}_msgfplus_syn.txt
     }
     output {
-        File   outfile = "${dataset_name}_msgfplus_syn_PlusSICStats.txt"
+        File   outfile = "${dataset_id}_${faa_file_id}_msgfplus_syn_PlusSICStats.txt"
     }
     runtime {
         docker: 'microbiomedata/metapro-masicresultsmerge:v2.0.7983'
@@ -210,6 +212,8 @@ workflow job_analysis{
         File   CONTAMINANT_FILENAME
         Int    FASTA_SPLIT_ON_SIZE_MB
         Int    FASTA_SPLIT_COUNT
+        String dataset_id
+        String faa_file_id
     }
     call concatcontaminate {
         input:
@@ -306,7 +310,9 @@ workflow job_analysis{
         input:
             sic_stats_file = masic.outfile,
             synopsis_file  = peptidehitresultsprocrunner.outfile,
-            dataset_name   = dataset_name
+            dataset_name   = dataset_name,
+            dataset_id     = dataset_id,
+            faa_file_id    = faa_file_id
     }
 
     output {
