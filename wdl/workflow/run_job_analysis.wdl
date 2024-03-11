@@ -43,7 +43,6 @@ task msgfplus {
         File   contaminated_fasta_file
         File   msgfplus_params
         String dataset_name
-        String annotation_name
         String revcat_name = basename(sub(contaminated_fasta_file, ".fasta", ".revCat.fasta"))
     }
     command {
@@ -122,19 +121,23 @@ task masicresultmerge {
         File   sic_stats_file
         File   synopsis_file
         String dataset_name
+        String dataset_id
+        String faa_file_id
     }
     command {
         synopsis_file_loc=$(find .. -type f -regex ".*~{dataset_name}_syn.txt")
         cp $synopsis_file_loc ../execution/
         sic_stats_file_loc=$(find .. -type f -regex ".*~{dataset_name}_SICstats.txt")
         cp $sic_stats_file_loc ../execution/
-        mv ~{dataset_name}_syn.txt ~{dataset_name}_msgfplus_syn.txt
-        mv ~{dataset_name}_SICstats.txt ~{dataset_name}_SICStats.txt
+        mv ~{dataset_name}_syn.txt ~{dataset_id}_~{faa_file_id}_msgfplus_syn.txt
+        mv ~{dataset_name}_SICstats.txt ~{dataset_id}_~{faa_file_id}_SICStats.txt
         mono /app/MASICResultsMerge/MASICResultsMerger.exe \
-        ~{dataset_name}_msgfplus_syn.txt
+        ~{dataset_id}_~{faa_file_id}_msgfplus_syn.txt
+        date --iso-8601=seconds > stop.txt
     }
     output {
-        File   outfile = "${dataset_name}_msgfplus_syn_PlusSICStats.txt"
+        File   outfile = "${dataset_id}_${faa_file_id}_msgfplus_syn_PlusSICStats.txt"
+        String stop = read_string("stop.txt")
     }
     runtime {
         docker: 'microbiomedata/metapro-masicresultsmerge:v2.0.7983'
@@ -193,17 +196,18 @@ task concatcontaminate {
         String output_filename = basename(faa_file)
     }
     command<<<
+        date --iso-8601=seconds > start.txt
         cat ~{faa_file} ~{contaminate_file} > ~{output_filename}
     >>>
     output {
         File    outfile = output_filename
+        String  start = read_string("start.txt")
     }
 }
 
 workflow job_analysis{
     input{
         String dataset_name
-        String annotation_name
         File   raw_file_loc
         File   faa_file_loc
         String QVALUE_THRESHOLD
@@ -212,6 +216,8 @@ workflow job_analysis{
         File   CONTAMINANT_FILENAME
         Int    FASTA_SPLIT_ON_SIZE_MB
         Int    FASTA_SPLIT_COUNT
+        String dataset_id
+        String faa_file_id
     }
     call concatcontaminate {
         input:
@@ -254,7 +260,6 @@ workflow job_analysis{
                     contaminated_fasta_file = concatcontaminatesplit.outfile,
                     msgfplus_params         = MSGFPLUS_PARAM_FILENAME,
                     dataset_name            = dataset_basename,
-                    annotation_name         = annotation_name
             }
         }
         call msgfplusresultsmerge {
@@ -277,7 +282,6 @@ workflow job_analysis{
                 contaminated_fasta_file = concatcontaminate.outfile,
                 msgfplus_params         = MSGFPLUS_PARAM_FILENAME,
                 dataset_name            = dataset_name,
-                annotation_name         = annotation_name
         }
 
         File? msgfplus_not_split = msgfplus.outfile
@@ -310,15 +314,17 @@ workflow job_analysis{
         input:
             sic_stats_file = masic.outfile,
             synopsis_file  = peptidehitresultsprocrunner.outfile,
-            dataset_name   = dataset_name
+            dataset_name   = dataset_name,
+            dataset_id     = dataset_id,
+            faa_file_id    = faa_file_id
     }
 
     output {
         File   resultant_file = masicresultmerge.outfile
         File   faa_with_contaminates = concatcontaminate.outfile
         File   first_hits_file = peptidehitresultsprocrunner.first_hits_file
-        String start_time= ""
-        String end_time=""
+        String start_time= concatcontaminate.start
+        String end_time=masicresultmerge.stop
         Boolean did_split = select_first(fasta_split_state)
      }
 }

@@ -7,15 +7,17 @@ import "metadata_coll.wdl" as collect_metadata
 workflow metapro {
     Int fasta_split_on_size_mb = 1000
     Int fasta_split_count = 22
-    String pipeline_type = "nmdc:MetaProteomicAnalysis"
     String git_url = "https://github.com/microbiomedata/metaPro/releases/tag/2.0.0"
 
     input{
         Array[Object] mapper_list
         String QVALUE_THRESHOLD
         File MASIC_PARAM_FILE_LOC
+        String MASIC_PARAM_FILE_ID
         File MSGFPLUS_PARAM_FILE_LOC
+        String MSGFPLUS_PARAM_FILE_ID
         File CONTAMINANT_FILE_LOC
+        String CONTAMINANT_FILE_ID
         String STUDY
         String EXECUTION_RESOURCE
         String DATA_URL
@@ -25,7 +27,6 @@ workflow metapro {
         call run_analysis.job_analysis {
             input:
                 dataset_name            = myobj['dataset_name'],
-                annotation_name         = myobj['annotation_name'],
                 raw_file_loc            = myobj['raw_file_loc'],
                 faa_file_loc            = myobj['faa_file_loc'],
                 QVALUE_THRESHOLD        = QVALUE_THRESHOLD,
@@ -33,7 +34,9 @@ workflow metapro {
                 MSGFPLUS_PARAM_FILENAME = MSGFPLUS_PARAM_FILE_LOC,
                 CONTAMINANT_FILENAME    = CONTAMINANT_FILE_LOC,
                 FASTA_SPLIT_ON_SIZE_MB  = fasta_split_on_size_mb,
-                FASTA_SPLIT_COUNT       = fasta_split_count
+                FASTA_SPLIT_COUNT       = fasta_split_count,
+                dataset_id              = myobj['dataset_id'],
+                faa_file_id             = myobj['faa_file_id']
         }
         call generate_reports.report_gen {
             input:
@@ -41,7 +44,7 @@ workflow metapro {
                 gff_file          = myobj['gff_file_loc'],
                 resultant_file    = job_analysis.resultant_file,
                 Dataset_id        = myobj['dataset_id'],
-                genome_directory  = myobj['genome_dir'],
+                faa_file_id       = myobj['faa_file_id'],
                 q_value_threshold = QVALUE_THRESHOLD,
                 annotation_name   = myobj['annotation_name'],
                 dataset_name      = myobj['dataset_name'],
@@ -59,7 +62,9 @@ workflow metapro {
             "genome_directory": myobj['genome_dir'],
             "dataset_id": myobj['dataset_id'],
             "start_time": job_analysis.start_time,
-            "end_time": job_analysis.end_time
+            "end_time": job_analysis.end_time,
+            "fasta_id": myobj['faa_file_id'],
+            "gff_id": myobj['gff_file_id']
         }
     }
 
@@ -70,12 +75,14 @@ workflow metapro {
         input:
             study       = STUDY,
             results     = results,
-            pipeline_type = pipeline_type,
             execution_resource = EXECUTION_RESOURCE,
             git_url = git_url,
             data_url = DATA_URL,
             contaminate_file = CONTAMINANT_FILE_LOC,
             masic_param_file = MASIC_PARAM_FILE_LOC,
-            msgfplus_param_file = MSGFPLUS_PARAM_FILE_LOC
+            msgfplus_param_file = MSGFPLUS_PARAM_FILE_LOC,
+            contaminant_file_id = CONTAMINANT_FILE_ID,
+            masic_param_id = MASIC_PARAM_FILE_ID,
+            msgfplus_param_id = MSGFPLUS_PARAM_FILE_ID
     }
 }

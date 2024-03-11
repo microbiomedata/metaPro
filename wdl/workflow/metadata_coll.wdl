@@ -11,19 +11,23 @@ struct Result {
     String dataset_id
     String start_time
     String end_time
+    String fasta_id
+    String gff_id
 }
 
 task collect{
     input{
         String study
         Array[Result] results
-        String pipeline_type
         String execution_resource
         String git_url
         String data_url
         File contaminate_file
         File masic_param_file
         File msgfplus_param_file
+        String contaminant_file_id
+        String masic_param_id
+        String msgfplus_param_id
     }
     command {
         python /app/metadata_collection/code/gen_metadata.py \
@@ -34,39 +38,46 @@ task collect{
             ~{data_url} \
             ~{contaminate_file} \
             ~{masic_param_file} \
-            ~{msgfplus_param_file}
+            ~{msgfplus_param_file} \
+            ~{masic_param_id} \
+            ~{msgfplus_param_id} \
+            ~{contaminant_file_id}
     }
     output {
         File   activity    = "${study}_MetaProteomicAnalysis_activity.json"
         File   data_object = "${study}_analysis_data_objects.json"
     }
     runtime {
-        docker: 'microbiomedata/metapro-metadatacollection:1.1.0'
+        docker: 'microbiomedata/metapro-metadatacollection:1.2.0'
     }
 }
 workflow gen_metadata{
     input{
         String study
         Array[Result] results
-        String pipeline_type
         String execution_resource
         String git_url
         String data_url
         File contaminate_file
         File masic_param_file
         File msgfplus_param_file
+        String contaminant_file_id
+        String masic_param_id
+        String msgfplus_param_id
     }
     call collect {
         input:
             study = study,
             results = results,
-            pipeline_type = pipeline_type, 
             execution_resource = execution_resource,
             git_url = git_url,
             data_url = data_url,
             contaminate_file = contaminate_file,
             masic_param_file = masic_param_file,
-            msgfplus_param_file = msgfplus_param_file
+            msgfplus_param_file = msgfplus_param_file,
+            contaminant_file_id = contaminant_file_id,
+            masic_param_id = masic_param_id,
+            msgfplus_param_id = msgfplus_param_id
     }
     output {
         File   activity    = collect.activity
