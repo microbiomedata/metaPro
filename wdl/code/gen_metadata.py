@@ -199,8 +199,8 @@ class GenMetadata:
             type=self.type,
             has_output=has_output_arr,
             has_input=has_input_arr,
-            started_at_time="2002-09-24-06:00",
-            ended_at_time="2002-09-24-06:00"
+            started_at_time=self.started_at_time,
+            ended_at_time=self.ended_at_time
             )
 
         mp_analysis_activity_obj.has_peptide_quantifications = self.get_PeptideQuantification()

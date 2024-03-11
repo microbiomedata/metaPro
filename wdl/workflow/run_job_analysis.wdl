@@ -133,9 +133,11 @@ task masicresultmerge {
         mv ~{dataset_name}_SICstats.txt ~{dataset_id}_~{faa_file_id}_SICStats.txt
         mono /app/MASICResultsMerge/MASICResultsMerger.exe \
         ~{dataset_id}_~{faa_file_id}_msgfplus_syn.txt
+        date --iso-8601=seconds > stop.txt
     }
     output {
         File   outfile = "${dataset_id}_${faa_file_id}_msgfplus_syn_PlusSICStats.txt"
+        String stop = read_string("stop.txt")
     }
     runtime {
         docker: 'microbiomedata/metapro-masicresultsmerge:v2.0.7983'
@@ -194,10 +196,12 @@ task concatcontaminate {
         String output_filename = basename(faa_file)
     }
     command<<<
+        date --iso-8601=seconds > start.txt
         cat ~{faa_file} ~{contaminate_file} > ~{output_filename}
     >>>
     output {
         File    outfile = output_filename
+        String  start = read_string("start.txt")
     }
 }
 
@@ -319,8 +323,8 @@ workflow job_analysis{
         File   resultant_file = masicresultmerge.outfile
         File   faa_with_contaminates = concatcontaminate.outfile
         File   first_hits_file = peptidehitresultsprocrunner.first_hits_file
-        String start_time= ""
-        String end_time=""
+        String start_time= concatcontaminate.start
+        String end_time=masicresultmerge.stop
         Boolean did_split = select_first(fasta_split_state)
      }
 }
