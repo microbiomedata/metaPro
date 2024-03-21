@@ -7,7 +7,8 @@ import "metadata_coll.wdl" as collect_metadata
 workflow metapro {
     Int fasta_split_on_size_mb = 1000
     Int fasta_split_count = 22
-    String git_url = "https://github.com/microbiomedata/metaPro/releases/tag/2.0.0"
+    String git_url = "https://github.com/microbiomedata/metaPro/releases/tag/v1.2.1"
+    String version = "v1.2.1"
 
     input{
         Array[Object] mapper_list
@@ -83,6 +84,7 @@ workflow metapro {
             msgfplus_param_file = MSGFPLUS_PARAM_FILE_LOC,
             contaminant_file_id = CONTAMINANT_FILE_ID,
             masic_param_id = MASIC_PARAM_FILE_ID,
-            msgfplus_param_id = MSGFPLUS_PARAM_FILE_ID
+            msgfplus_param_id = MSGFPLUS_PARAM_FILE_ID,
+            version = version
     }
 }
