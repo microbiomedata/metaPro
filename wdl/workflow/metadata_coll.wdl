@@ -50,7 +50,7 @@ task collect{
         File   data_object = "${study}_analysis_data_objects.json"
     }
     runtime {
-        docker: 'microbiomedata/metapro-metadatacollection:1.2.0'
+        docker: 'microbiomedata/metapro-metadatacollection:1.2.1'
     }
 }
 workflow gen_metadata{
