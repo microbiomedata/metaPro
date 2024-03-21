@@ -194,7 +194,7 @@ class GenMetadata:
             id=self.activity_id,
             execution_resource=self.execution_resource,
             git_url=self.git_url,
-            name=":".join(["Metaproteome", self.dataset_id, self.genome_directory]),
+            name=f"Metaproteomics Analysis Activity for {self.activity_id}",
             was_informed_by=self.genome_directory,
             type=self.type,
             has_output=has_output_arr,
