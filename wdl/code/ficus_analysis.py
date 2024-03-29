@@ -844,12 +844,12 @@ class DataOutputtable:
 
         qc_metrics = pd.DataFrame(
             {
-                "total_protein_count": self.query_20().total_protein_count,
                 "PSM_count": self.query_21().PSM_Count,
                 "PSM_identification_rate": self.query_23().PSM_identification_rate,
                 "unique_peptide_seq_count": unique_peptide_seq_count,
                 "BestProtein_count": BestProtein_count,
                 "mean_peptide_count": mean_peptide_count,
+                "total_protein_count": self.query_20().total_protein_count
             },
             index=[0],
         )
