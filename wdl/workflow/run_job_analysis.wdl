@@ -196,7 +196,7 @@ task concatcontaminate {
         String output_filename = basename(faa_file)
     }
     command<<<
-        date --iso-8601=seconds > start.txt
+        date -u --iso-8601=seconds > start.txt
         cat ~{faa_file} ~{contaminate_file} > ~{output_filename}
     >>>
     output {
