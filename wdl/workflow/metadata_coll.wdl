@@ -28,6 +28,7 @@ task collect{
         String contaminant_file_id
         String masic_param_id
         String msgfplus_param_id
+        String version
     }
     command {
         python /app/metadata_collection/code/gen_metadata.py \
@@ -41,14 +42,15 @@ task collect{
             ~{msgfplus_param_file} \
             ~{masic_param_id} \
             ~{msgfplus_param_id} \
-            ~{contaminant_file_id}
+            ~{contaminant_file_id} \
+            ~{version}
     }
     output {
         File   activity    = "${study}_MetaProteomicAnalysis_activity.json"
         File   data_object = "${study}_analysis_data_objects.json"
     }
     runtime {
-        docker: 'microbiomedata/metapro-metadatacollection:1.2.0'
+        docker: 'microbiomedata/metapro-metadatacollection:1.2.1'
     }
 }
 workflow gen_metadata{
@@ -64,6 +66,7 @@ workflow gen_metadata{
         String contaminant_file_id
         String masic_param_id
         String msgfplus_param_id
+        String version
     }
     call collect {
         input:
@@ -77,7 +80,8 @@ workflow gen_metadata{
             msgfplus_param_file = msgfplus_param_file,
             contaminant_file_id = contaminant_file_id,
             masic_param_id = masic_param_id,
-            msgfplus_param_id = msgfplus_param_id
+            msgfplus_param_id = msgfplus_param_id,
+            version = version
     }
     output {
         File   activity    = collect.activity

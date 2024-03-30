@@ -27,7 +27,8 @@ class GenMetadata:
                 msgfplus_param_file: str,
                 masic_param_id: str,
                 msgf_param_id: str,
-                contam_id: str):
+                contam_id: str,
+                version: str):
 
         self.execution_resource = execution_resource
         self.git_url = git_url
@@ -41,6 +42,7 @@ class GenMetadata:
         self.masic_param_id = masic_param_id
         self.msgf_param_id = msgf_param_id
         self.contam_id = contam_id
+        self.version = version
 
         self.dataset_id = None
         self.genome_directory = None
@@ -194,7 +196,8 @@ class GenMetadata:
             id=self.activity_id,
             execution_resource=self.execution_resource,
             git_url=self.git_url,
-            name=":".join(["Metaproteome", self.dataset_id, self.genome_directory]),
+            version=self.version,
+            name=f"Metaproteomics Analysis Activity for {self.activity_id}",
             was_informed_by=self.genome_directory,
             type=self.type,
             has_output=has_output_arr,
@@ -244,7 +247,8 @@ class GenMetadata:
                   msgfplus_param_file: str,
                   masic_param_id: str,
                   msgf_param_id: str,
-                  contam_id: str) -> 'GenMetadata':
+                  contam_id: str,
+                  version: str) -> 'GenMetadata':
         '''
         Create a GenMetadata object with newly minted activity ID with OOP in mind.
         '''
@@ -258,7 +262,8 @@ class GenMetadata:
                            msgfplus_param_file,
                            masic_param_id,
                            msgf_param_id,
-                           contam_id)
+                           contam_id,
+                           version)
 
 
 def underscore_to_colon(curie: str):
@@ -277,6 +282,7 @@ if __name__ == "__main__":
     masic_param_id = sys.argv[9]
     msgf_param_id = sys.argv[10]
     contam_id = sys.argv[11]
+    version = sys.argv[12]
 
     if results_url[-1] != '/':
         results_url = results_url + '/'
@@ -303,7 +309,8 @@ if __name__ == "__main__":
                 msgfplus_param_file=msgfplus_param_file,
                 masic_param_id=underscore_to_colon(masic_param_id),
                 msgf_param_id=underscore_to_colon(msgf_param_id),
-                contam_id=underscore_to_colon(contam_id))
+                contam_id=underscore_to_colon(contam_id),
+                version=version)
 
             meta_file.set_keys(
                 underscore_to_colon(mapping["dataset_id"]),
