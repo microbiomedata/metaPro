@@ -9,16 +9,17 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5748584.svg)](https://doi.org/10.5281/zenodo.5748584)
 ![GitHub issues](https://img.shields.io/github/issues-raw/microbiomedata/metaPro)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/microbiomedata/metaPro)
-![Lines of code](https://img.shields.io/tokei/lines/github/microbiomedata/metaPro)
 <hr>
 
 ## About
-Meta-proteomics workflow is an end-to-end data processing and analyzing pipeline for studying proteomes i.e studying [protein identification and characterization using MS/MS data](https://www.sciencedirect.com/science/article/pii/S1874391911002053).
+<!-- Meta-proteomics workflow is an end-to-end data processing and analyzing pipeline for studying proteomes i.e studying [protein identification and characterization using MS/MS data](https://www.sciencedirect.com/science/article/pii/S1874391911002053). -->
 
-We identify the active organisms/species in a metagenome corresponding to a wet-lab sample obtained from JGI after gene sequencing. Then the researchers at PNNL culture these samples and make it appropriate to study it as a protein sample. This protein sample may have a single protein or a complex mixture of proteins. Later, this sample is passed through a [mass spectrometry](https://nationalmaglab.org/user-facilities/icr/techniques/tandem-ms) instrument to obtain a proprietary data format .RAW file. This file contains MS/MS spectrum i.e mass analysis(mass-to-charge (*m/z*) ratios) for each peptide sequences identified in the sample. 
+The NMDC metaproteomics workflow is an end-to-end data processing pipeline for studying the proteomes of complex communities using data dependent LC-MS/MS data. The workflow matches the sequences from a metagenome annotation to fragmentation spectra MS2 data mass spectrometry data to identify peptide sequences which are fragments of proteins contained in a processed proteomic sample. The metagenome annotation can either come from genomic sequence that has been processed using the NMDC metagenomics pipeline for the more recent development that removes the paired NMDC metagenome requirement by utilizing a neural network model to identify peptide sequences de novo from the fragmentation spectra (MS2). This sequence information is then used to identify model organisms with genome sequences archived on UniProt. The matched organisms genomes are then concatenated to create a pseudo-metagenome for in-depth peptide identification. Relative abundance measurements are derived by taking the area under the LC elution curve for the peptide from the intact spectra (MS1).
+Metaproteomics analyses identify the active organisms/species in a microbial community through the identification and relative quantification of protein expression.
+
 ### How to run the workflow:
 
-- Python codebase:
+<!-- - Python codebase:
     
   - `Virtual machine`:
     1. Make your input datasets ready- [as described here](src/prepare_input/prepare_input.md) 
@@ -56,16 +57,17 @@ We identify the active organisms/species in a metagenome corresponding to a wet-
          singularity run docker://microbiomedata/mepro:2.0.0
          ```
       2. 
-<hr>
+<hr> -->
 
 - WDL support codebase:
 
-    1. prepare you input.json
+    <!-- 1. prepare you input.json
         `make prepare-your-input`
        Note: User need to generate the input.json file based on the 
              - mapping (dataset(raw) to annotations(.faa & .gff ))
              - actual files respective file locations. 
-             For you help, a [script](wdl/scripts/prepare_input.sh) has been provided.
+             For you help, a [script](wdl/scripts/prepare_input.sh) has been provided. -->
+
     2. run the WDL:
        Need an 
        - execution engine(tested with [cromwell-66](https://github.com/broadinstitute/cromwell/releases)) to run WDL 
