@@ -20,27 +20,33 @@ task convertToMgf {
     }
 }
 
+struct KaikoInputFiles {
+    File mgf_file
+    File kaiko_config 
+}
+
 task kaiko {
     input {
-        File mgf_file
-        File kaiko_config
+        KaikoInputFiles kaikoFiles
+        File mgf_file = kaikoFiles.mgf_file
+        File kaiko_config = kaikoFiles.kaiko_config
         String kaiko_volume_dir
     }
     command <<<
         execution_dir=$(pwd)
-        cd /Kaiko_pipeline
+        mkdir -p /data/input
+        mkdir /data/output
         mgf=`basename ~{mgf_file}`
-        mkdir input
-        # ln -s ~{mgf_file} input/$mgf
-        mv ~{mgf_file} input/$mgf
-        ln -s ~{kaiko_volume_dir} Kaiko_volume
-        python Kaiko_pipeline_main.py \
+        ln -s ~{mgf_file} /data/input/$mgf
+        python /Kaiko_metaproteome/Kaiko_pipeline_main.py \
             --config=~{kaiko_config}
-        find Kaiko_output -name '*.fasta' -exec mv -t $execution_dir {} +
+        find /data/output -name '*.fasta' -exec mv -t $execution_dir {} +
+        find /data/output -name '*.gff' -exec mv -t $execution_dir {} +
         cd execution_dir
     >>>
     output {
-        File outfile = glob("*.fasta")[0]
+        File outfile_fasta = glob("*.fasta")[0]
+        File outfile_gff = glob("*.gff")[0]
     }
     runtime {
         docker: 'kaiko-py310:latest'
@@ -52,20 +58,24 @@ workflow run {
     input {
         File   raw_file
         File   kaiko_config
+        # File   mgf_file
     }
 
     call convertToMgf {
         input:
             raw_file = raw_file,
     }
+    KaikoInputFiles inpt = {"mgf_file": convertToMgf.outfile, "kaiko_config": kaiko_config}
     call kaiko {
         input:
-            mgf_file = convertToMgf.outfile,
-            kaiko_config = kaiko_config,
+            # mgf_file = convertToMgf.outfile,
+            # kaiko_config = kaiko_config,
+            kaikoFiles = inpt,
             kaiko_volume_dir = kaiko_data_location
     }
 
     output {
-        File   faa_file = kaiko.outfile
+        File   faa_file = kaiko.outfile_fasta
+        File   gff_file = kaiko.outfile_gff
      }
 }
