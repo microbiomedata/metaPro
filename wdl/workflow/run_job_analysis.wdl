@@ -43,7 +43,7 @@ task msgfplus {
         File   contaminated_fasta_file
         File   msgfplus_params
         String dataset_name
-        String revcat_name = basename(sub(contaminated_fasta_file, ".fasta", ".revCat.fasta"))
+        String revcat_name = basename(sub(contaminated_fasta_file, "\\.fasta$", ".revCat.fasta"))
     }
     command {
         java -Xmx32G -jar /app/msgf/MSGFPlus.jar \
