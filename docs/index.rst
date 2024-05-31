@@ -1,4 +1,4 @@
-Metaproteomic Workflow (v2.0.0)
+Metaproteomic Workflow (v1.2.1)
 ==============================
 
 Summary
@@ -20,12 +20,12 @@ The metaproteomics workflow/pipeline is an end-to-end data processing workflow f
    -  `MS-GF+ <https://www.nature.com/articles/ncomms6277>`__ which
       performs peptide identification by scoring MS/MS spectra against
       peptides derived from a protein sequence database (FASTA files).
-      Individual peptide sequences are identified(mzML file), then the
+      Individual peptide sequences are identified (mzML file), then the
       set of peptide sequences is used to infer which proteins may have
       been present. It reads an open data format for MS/MS
-      identification i.e mzML files and searches again a protein
-      database(FASTA) to outputs a .mzId file which constitutes a set of
-      scored PSMs along with *E*-value estimates( i.e computes
+      identification, i.e., mzML files and searches again a protein
+      database (FASTA) to outputs a .mzId file which constitutes a set of
+      scored PSMs along with *E*-value estimates(i.e., computes
       *E*-values of PSMs and estimates FDRs)
    -  `MzidToTSVConverter <https://msgfplus.github.io/msgfplus/MzidToTsv.html>`__
       to converts MS-GF+ output (**.mzid**) into the tsv format
@@ -43,7 +43,7 @@ The metaproteomics workflow/pipeline is an end-to-end data processing workflow f
 
 -  **Analyzing component:**
 
-   -  MePro component of the workflow
+   -  MetaPro component of the workflow
 
       -  Reads in syn.txt files & calculated the best scoring peptides
          for each scan.
@@ -179,9 +179,10 @@ Version History
 ---------------
 
 - 1.0.0
-- 2.0.0
+- 1.2.0
+- 1.2.1
 
 Point of contact
 ----------------
 
-Package maintainer: Anubhav <anubhav@pnnl.gov>
+Package maintainer: Cameron <cameron.giberson@pnnl.gov>
