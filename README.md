@@ -25,12 +25,14 @@ Metaproteomics analyses identify the active organisms/species in a microbial com
 
     1. prepare you input.json
        Note: User need to generate the input.json file based on the 
-             - mapping (dataset(raw) to annotations(.faa & .gff ))
-             - actual files respective file locations. 
+         - Mapping (dataset, .raw, to annotations .faa & .gff) and filepath locations for required files.
+         - We provided [parameter files](storage/parameters) needed to run the workflow.
+         - An Example input.json file is provided in storage/, [here](storage/input.json).
 
     2. run the WDL:
-       - execution engine(tested with [cromwell-66](https://github.com/broadinstitute/cromwell/releases)) to run WDL 
-       - along with Java runtime(tested with `openjdk 12.0.1`)
+       - execution engine (tested with [cromwell-66](https://github.com/broadinstitute/cromwell/releases)) to run WDL
+       - The containers for the workflow are hosted in Dockerhub and referenced in the workflow. Alternatively, a compose script is provided to build the containers locally [here](wdl/docker-compose.yml)
+       - Java runtime (tested with `openjdk 12.0.1`)
              1. if docker support 
                 1. `make run_wdl`
              2. if shifter support to run on cori:
