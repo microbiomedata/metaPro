@@ -59,7 +59,6 @@ workflow run {
     input {
         File   raw_file
         File   kaiko_config
-        # File   mgf_file
     }
 
     call convertToMgf {
@@ -69,8 +68,6 @@ workflow run {
     KaikoInputFiles inpt = {"mgf_file": convertToMgf.outfile, "kaiko_config": kaiko_config}
     call kaiko {
         input:
-            # mgf_file = convertToMgf.outfile,
-            # kaiko_config = kaiko_config,
             kaikoFiles = inpt,
             kaiko_volume_dir = kaiko_data_location
     }
