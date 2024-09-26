@@ -38,11 +38,12 @@ task kaiko {
         mkdir /data/output
         mgf=`basename ~{mgf_file}`
         ln -s ~{mgf_file} /data/input/$mgf
-        python /Kaiko_metaproteome/Kaiko_pipeline_main.py \
+        cd /Kaiko_metaproteome
+        python Kaiko_pipeline_main.py \
             --config=~{kaiko_config}
         find /data/output -name '*.fasta' -exec mv -t $execution_dir {} +
         find /data/output -name '*.gff' -exec mv -t $execution_dir {} +
-        cd execution_dir
+        cd $execution_dir
     >>>
     output {
         File outfile_fasta = glob("*.fasta")[0]
