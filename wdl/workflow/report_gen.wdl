@@ -47,6 +47,7 @@ task proteinDigestionSimulator {
     input{
         File faa_file
         String annotation_name
+        String output_filename = sub(basename(faa_file), "\\.fasta$", ".txt")
     }
     command {
         mono /app/pds/ProteinDigestionSimulator.exe \
@@ -55,7 +56,7 @@ task proteinDigestionSimulator {
         -O:~{'.'}
     }
     output {
-        File outfile = "${annotation_name}_proteins.txt" # TODO use faa_file and replace ext to find file
+        File outfile = output_filename
     }
     runtime {
         docker: "microbiomedata/metapro-proteindigestionsimulator:v2.3.7794"
