@@ -1,6 +1,11 @@
 Metaproteomic Workflow (v1.2.1)
 ==============================
 
+.. image:: metap_workflow2024.svg
+   :scale: 25%
+   :alt: Metaproteomics workflow
+
+
 Summary
 -------
 The metaproteomics workflow/pipeline is an end-to-end data processing workflow for protein identification and characterization using MS/MS data. Briefly, mass spectrometry instrument generated data files(.RAW) are converted to mzML, an open data format, using MSConvert. Peptide identification is achieved using MSGF+ and the associated metagenomic information in the FASTA (protein sequences) file format. Intensity information for identified species is extracted using MASIC and combined with protein information.
