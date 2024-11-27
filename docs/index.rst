@@ -18,17 +18,17 @@ Workflow Availability
 The workflow from GitHub uses all the listed docker images to run all third-party tools.
 The workflow is available in GitHub: https://github.com/microbiomedata/metaPro. 
 The corresponding Docker images are available in DockerHub: 
-   https://hub.docker.com/r/microbiomedata/metapro-post-processing
-   https://hub.docker.com/r/microbiomedata/metapro-metadatacollection
-   https://hub.docker.com/r/microbiomedata/metapro-msconvert
-   https://hub.docker.com/r/microbiomedata/metapro-msgfplus
-   https://hub.docker.com/r/microbiomedata/metapro-proteindigestionsimulator
-   https://hub.docker.com/r/microbiomedata/metapro-peptidehitresultsprocrunner
-   https://hub.docker.com/r/microbiomedata/metapro-mzidmerger
-   https://hub.docker.com/r/microbiomedata/metapro-masicresultsmerge
-   https://hub.docker.com/r/microbiomedata/metapro-mzidtotsvconverter
-   https://hub.docker.com/r/microbiomedata/metapro-fastafilesplitter
-   https://hub.docker.com/r/microbiomedata/metapro-masic
+   - https://hub.docker.com/r/microbiomedata/metapro-post-processing
+   - https://hub.docker.com/r/microbiomedata/metapro-metadatacollection
+   - https://hub.docker.com/r/microbiomedata/metapro-msconvert
+   - https://hub.docker.com/r/microbiomedata/metapro-msgfplus
+   - https://hub.docker.com/r/microbiomedata/metapro-proteindigestionsimulator
+   - https://hub.docker.com/r/microbiomedata/metapro-peptidehitresultsprocrunner
+   - https://hub.docker.com/r/microbiomedata/metapro-mzidmerger
+   - https://hub.docker.com/r/microbiomedata/metapro-masicresultsmerge
+   - https://hub.docker.com/r/microbiomedata/metapro-mzidtotsvconverter
+   - https://hub.docker.com/r/microbiomedata/metapro-fastafilesplitter
+   - https://hub.docker.com/r/microbiomedata/metapro-masic
 
 
 Requirements for Execution
@@ -125,6 +125,7 @@ Version History
 - 1.2.1
 - 1.2.0
 - 1.0.0
+
 
 Point of contact
 ----------------
