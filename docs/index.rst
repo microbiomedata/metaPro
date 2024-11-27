@@ -74,15 +74,15 @@ Input
 A JSON file containing the following information:
 
 1. A mapper list "metapro.mapper_list" containing an array of JSON objects for mapping paths of .raw files, FASTA, GFF, and additional metadata
-   - a. "genome_dir": The NMDC Identifier for the parent omics processing record, used when generating NMDC metadata. This input will be renamed in the future.
-   - b. "dataset_name": The name of the mass spec data file without extension. This input will be removed in the future.
-   - c. "annotation_name": The FASTA file name without extension. This input will be removed in the future.
-   - d. "raw_file_loc": The local filepath to the mass spec data file.
-   - e. "dataset_id": The NMDC Identifier of the mass spec data file, used when generating NMDC metadata.
-   - f. "faa_file_loc": The local filepath to the FASTA file.
-   - g. "faa_file_id": The NMDC Identifier of the FASTA file, used when generating NMDC metadata.
-   - h. "gff_file_loc": The local filepath to the GFF file.
-   - i. "gff_file_id": The NMDC Identifier of the GFF file, used when generating NMDC metadata.
+   a. "genome_dir": The NMDC Identifier for the parent omics processing record, used when generating NMDC metadata. This input will be renamed in the future.
+   b. "dataset_name": The name of the mass spec data file without extension. This input will be removed in the future.
+   c. "annotation_name": The FASTA file name without extension. This input will be removed in the future.
+   d. "raw_file_loc": The local filepath to the mass spec data file.
+   e. "dataset_id": The NMDC Identifier of the mass spec data file, used when generating NMDC metadata.
+   f. "faa_file_loc": The local filepath to the FASTA file.
+   g. "faa_file_id": The NMDC Identifier of the FASTA file, used when generating NMDC metadata.
+   h. "gff_file_loc": The local filepath to the GFF file.
+   i. "gff_file_id": The NMDC Identifier of the GFF file, used when generating NMDC metadata.
 2. Path to a MS-GF+ parameter file, example `file <https://github.com/microbiomedata/metaPro/blob/master/storage/parameters/LTQ-FT_10ppm_2014-08-06.xml>`_
 3. Path to a MASIC parameter file, example `file <https://github.com/microbiomedata/metaPro/blob/master/storage/parameters/MSGFPlus_Tryp_NoMods_20ppmParTol.txt>`_
 4. Path to a contaminant FASTA file
