@@ -113,10 +113,10 @@ Output
 ------
 
 The workflow will produce four results files:
-   - *_Peptide_Report.tsv
-   - *_Protein_Report.tsv
-   - *_QC_metrics.tsv
-   - *_msgfplus_syn_PlusSICStats.txt
+   - <dataset_id_faa_file_id>_Peptide_Report.tsv
+   - <dataset_id_faa_file_id>_Protein_Report.tsv
+   - <dataset_id_faa_file_id>_QC_metrics.tsv
+   - <dataset_id_faa_file_id>_msgfplus_syn_PlusSICStats.txt
 
 
 Version History
