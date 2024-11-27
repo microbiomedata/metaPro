@@ -1,193 +1,132 @@
 Metaproteomic Workflow (v1.2.1)
-==============================
+========================================
 
 .. image:: metap_workflow2024.svg
    :scale: 25%
    :alt: Metaproteomics workflow
 
 
-Summary
+Workflow Overview
 -------
-The metaproteomics workflow/pipeline is an end-to-end data processing workflow for protein identification and characterization using MS/MS data. Briefly, mass spectrometry instrument generated data files(.RAW) are converted to mzML, an open data format, using MSConvert. Peptide identification is achieved using MSGF+ and the associated metagenomic information in the FASTA (protein sequences) file format. Intensity information for identified species is extracted using MASIC and combined with protein information.
+The NMDC metaproteomics workflow is an end-to-end data processing pipeline for studying the proteomes of complex communities using data dependent LC-MS/MS data. The workflow matches the sequences from a metagenome annotation to fragmentation spectra (MS2) in the mass spectrometry data to identify peptide sequences, which are fragments of proteins contained in a processed proteomic sample. The metagenome annotation can either come from genomic sequencing that has been processed using the NMDC metagenomics pipeline, or for the more recent development that removes the paired NMDC metagenome requirement, by utilizing a neural network model to identify peptide sequences de novo from the fragmentation spectra (MS2). This sequence information is then used to identify model organisms with genome sequences archived on UniProt. The matched organisms genomes are then concatenated to create a pseudo-metagenome for in-depth peptide identification. Relative abundance measurements are derived by taking the area under the LC elution curve for the peptide from the intact spectra (MS1).
+Metaproteomics analyses identify the active organisms/species in a microbial community through the identification and relative quantification of protein expression.
 
--  **Processing components:**
-
-   -  `msConvert <http://proteowizard.sourceforge.net/tools/msconvert.html>`__
-      : A command-line tool converting to/from various mass spectrometry
-      data formats including multiple proprietary formats. It
-      converts.RAW to `mzML <http://www.psidev.info/mzML>`__. Converting
-      to mzML which is an `open data
-      format <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3518119/>`__
-      makes easy for academic scientists to directly manipulate MS/MS
-      spectrum data. Open formats enable improved data sharing by
-      allowing the data to be read by a variety of software tools
-      without licensing restrictions
-   -  `MS-GF+ <https://www.nature.com/articles/ncomms6277>`__ which
-      performs peptide identification by scoring MS/MS spectra against
-      peptides derived from a protein sequence database (FASTA files).
-      Individual peptide sequences are identified (mzML file), then the
-      set of peptide sequences is used to infer which proteins may have
-      been present. It reads an open data format for MS/MS
-      identification, i.e., mzML files and searches again a protein
-      database (FASTA) to outputs a .mzId file which constitutes a set of
-      scored PSMs along with *E*-value estimates(i.e., computes
-      *E*-values of PSMs and estimates FDRs)
-   -  `MzidToTSVConverter <https://msgfplus.github.io/msgfplus/MzidToTsv.html>`__
-      to converts MS-GF+ output (**.mzid**) into the tsv format
-      (**.tsv**).
-   -  `PeptideHitResultsProcessor <https://omics.pnl.gov/software/peptide-hit-results-processor>`__,
-      converts tsv format (**.tsv**) to syn.txt file used for downstream
-      analyses.
-   -  `MASIC <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2487672/>`__
-      which extracts intensity information for the identified peptides.
-      It accurately measures peptide abundances and elution times in an
-      LC-MS/MS analysis. It reads .Raw files from Thermo Fisher mass
-      spectrometers and generates .SIC files i.e “selected ion
-      chromatograms” (SICs) for each species chosen for MS/MS
-      fragmentation.
-
--  **Analyzing component:**
-
-   -  MetaPro component of the workflow
-
-      -  Reads in syn.txt files & calculated the best scoring peptides
-         for each scan.
-      -  Even though, MSGF+ estimates False discovery rates(FDRs) in
-         some datasets MSGFplus tool when dealing with SPLIT
-         FASTAs(multiple FASTA for the same sample) doesn’t actually
-         account all of them due to which the QValue and PepQValue value
-         aren’t based on the entire FASTA file for that dataset.
-         Therefore, we’re recomputing QValue and PepQValue to improve
-         the FDR.
-      -  merges the outputs from MSGF+ and MASIC, and applies to filter
-         to control the false discovery rate. The output is a crosstab
-         format table with rows containing protein sequence information,
-         and columns with relative abundance measurements for proteins
-         identified in each sample analyzed.
-
-Workflow Diagram
-------------------
-
-.. image:: detailed_workflow_diagram.png
-
-Workflow Dependencies
----------------------
-
-Third party software
-~~~~~~~~~~~~~~~~~~~~
-.. code-block:: bash
-
-    |----------------------------|------------------------------------------|
-    | MSGFPlus                   | v20190628                                |
-    | Mzid-To-Tsv-Converter      | v1.3.3                                   |
-    | PeptideHitResultsProcessor | v1.5.7130                                |
-    | pwiz-bin-windows           | x86_64-vc141-release-3_0_20149_b73158966 |
-    | MASIC                      | v3.0.7235                                |
-    | sqlite-netFx-full-source   | 1.0.111.0                                |
 
 Workflow Availability
 ---------------------
 
-The workflow is available in GitHub:
-https://github.com/microbiomedata/metaPro
+The workflow from GitHub uses all the listed docker images to run all third-party tools.
+The workflow is available in GitHub: https://github.com/microbiomedata/metaPro. 
+The corresponding Docker images are available in DockerHub: 
+   https://hub.docker.com/r/microbiomedata/metapro-post-processing
+   https://hub.docker.com/r/microbiomedata/metapro-metadatacollection
+   https://hub.docker.com/r/microbiomedata/metapro-msconvert
+   https://hub.docker.com/r/microbiomedata/metapro-msgfplus
+   https://hub.docker.com/r/microbiomedata/metapro-proteindigestionsimulator
+   https://hub.docker.com/r/microbiomedata/metapro-peptidehitresultsprocrunner
+   https://hub.docker.com/r/microbiomedata/metapro-mzidmerger
+   https://hub.docker.com/r/microbiomedata/metapro-masicresultsmerge
+   https://hub.docker.com/r/microbiomedata/metapro-mzidtotsvconverter
+   https://hub.docker.com/r/microbiomedata/metapro-fastafilesplitter
+   https://hub.docker.com/r/microbiomedata/metapro-masic
 
-Inputs
-~~~~~~~~
-
-- `.raw`, `metagenome`, `parameter files : MSGFplus & MASIC`, `contaminant_file`
-
-Outputs
-~~~~~~~~
-
-1. Processing multiple datasets.
-
-.. code-block:: bash
-
-2. Processing single FICUS dataset.
-
-.. code-block:: bash
-
-
-    | Keys               | Values                                                                   |
-    |--------------------|--------------------------------------------------------------------------|
-    | id                 | str: "md5 hash of $github_url+$started_at_time+$ended_at_time"           |
-    | name               | str: "Metagenome:$proposal_extid_$sample_extid:$sequencing_project_extid |
-    | was_informed_by    | str: "GOLD_Project_ID"                                                   |
-    | started_at_time    | str: "metaPro start-time"                                                |
-    | ended_at_time      | str: "metaPro end-time"                                                  |
-    | type               | str: tag: "nmdc:metaPro"                                                 |
-    | execution_resource | str: infrastructure name to run metaPro                                  |
-    | git_url            | str: "url to a release"                                                  |
-    | dataset_id         | str: "dataset's unique-id at EMSL"                                       |
-    | dataset_name       | str: "dataset's name at EMSL"                                            |
-    | has_inputs         | json_obj                                                                 |
-    | has_outputs        | json_obj                                                                 |
-    | stats              | json_obj                                                                 |
-
-    has_inputs :
-    | MSMS_out         | str: file_name \|file_size \|checksum                                                                                     |
-    | metagenome_file  | str: file_name \|file_size \|checksum \|
-                         int: entry_count(#of gene sequences) \|
-                         int: duplicate_count(#of duplicate gene sequences) |
-    | parameter_files  | str: for_masic/for_msgfplus : file_name \|file_size \|checksum
-                         parameter file used for peptide identification search
-    | Contaminant_file | str: file_name \|file_size \|checksum
-                         (FASTA containing common contaminants in proteomics)
-
-    has_outputs:
-    | collapsed_fasta_file | str: file_name \|file_size \|checksum                                           |
-    | resultant_file       | str: file_name \|file_size \|checksum                                           |
-    | data_out_table       | str: file_name \|file_size \|checksum                                           |
-
-    stats:
-    | from_collapsed_fasta | int: entry_count(#of unique gene sequences)                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-    | from_resultant_file  | int: total_protein_count                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-    | from_data_out_table  | int: PSM(# of MS/MS spectra matched to a peptide sequence at 5% false discovery rate (FDR)
-                             float: PSM_identification_rate(# of peptide matching MS/MS spectra divided by total spectra searched (5% FDR)
-                             int: unique_peptide_seq_count(# of unique peptide sequences observed in pipeline analysis 5% FDR)
-                             int: first_hit_protein_count(# of proteins observed assuming single peptide-to-protein relationships)
-                             int: mean_peptide_count(Unique peptide sequences matching to each identified protein.)
-
-`more about the NMDC schema <https://github.com/microbiomedata/nmdc-schema/blob/main/jsonschema/nmdc.schema.json>`__
-
-- data_out_table
-
-.. code-block:: bash
-
-    | DatasetName | PeptideSequence | FirstHitProtein | SpectralCount | sum(MasicAbundance) | GeneCount | FullGeneList | FirstHitDescription | DescriptionList | min(Qvalue) |
-
-- collapsed_fasta_file
-- resultant_file
 
 Requirements for Execution
 --------------------------
 
-- Docker or other Container Runtime
+(recommendations are in **bold**):
+  
+- WDL-capable Workflow Execution Tool (**Cromwell**)
+- Container Runtime that can load Docker images (**Docker v2.1.0.3 or higher**) 
 
 
-QA assessment of pipeline
--------------------------
-NMDC Pipeline was validated against metaproteomic processing workflow developed in the Environmental and Molecular Sciences Laboratory
+Hardware Requirements
+---------------------
 
-QA criteria
-	- 95% peptide ID level overlap between DMS (EMSL current standard) and NMDC MetaP pipeline output
-	- 98% protein ID level overlap between DMS (EMSL current standard) and NMDC MetaP pipeline output
-	- Correlation of log(2) abundances between the two approaches of 0.97 (Pearson correlations)
-Pipeline reproducibility
-- run the pipeline 5 times to see ensure reproducible output 
-	- 95% peptide
-	- 99% protein
-	- 0.99 Pearson Correlation
-Dataset is available at https://drive.google.com/drive/folders/1ssL5fBYjSH39oX_WnOlB492O-OkYSmf8
+- 16 GB of disk space for results and intermediate files
+- Recommended to run with 32 GB of RAM or more 
+
+
+Workflow Dependencies
+---------------------
+ 
+- `MASIC v3.2.7901 <https://github.com/PNNL-Comp-Mass-Spec/MASIC>`_ (License: `BSD-2-Clause <https://opensource.org/licenses/BSD-2-Clause>`_)
+- `FASTA File Splitter v1.1.7887 <https://github.com/PNNL-Comp-Mass-Spec/Fasta-File-Splitter>`_ (License: `BSD-2-Clause <https://opensource.org/licenses/BSD-2-Clause>`_)
+- `MzIDMerger v1.3.0 <https://github.com/PNNL-Comp-Mass-Spec/MzidMerger>`_ (License: `BSD-2-Clause <https://opensource.org/licenses/BSD-2-Clause>`_)
+- `Mzid-To-Tsv-Converter v1.4.6 <https://github.com/PNNL-Comp-Mass-Spec/Mzid-To-Tsv-Converter>`_ (License: `BSD-2-Clause <https://opensource.org/licenses/BSD-2-Clause>`_)
+- `Peptide Hit Results Processor v3.0.7842 <https://github.com/PNNL-Comp-Mass-Spec/PHRP>`_ (License: `BSD-2-Clause <https://opensource.org/licenses/BSD-2-Clause>`_)
+- `Protein Digestion Simulator v2.3.7794 <https://github.com/PNNL-Comp-Mass-Spec/Protein-Digestion-Simulator>`_ (License: `BSD-2-Clause <https://opensource.org/licenses/BSD-2-Clause>`_)
+- `Proteowizard v3.0.21258 <https://proteowizard.sourceforge.io/download.html>`_ (License: `Apache License, Version 2 <https://proteowizard.sourceforge.io/licenses.html>`_)
+- `MS-GF+ v2022.04.18 <https://github.com/MSGFPlus/msgfplus>`_ (License: `MS-GF+ License <https://github.com/MSGFPlus/msgfplus/blob/master/LICENSE.txt>`_)
+- `MASIC Results Merger v2.0.7983 <https://github.com/PNNL-Comp-Mass-Spec/MASIC-Results-Merger>`_ (License: `Apache License, Version 2 <https://opensource.org/licenses/Apache-2.0>`_)
+- `Sqlite <https://www.sqlite.org/index.html>`_ (License: `Public Domain <https://www.sqlite.org/copyright.html>`_)
+
+
+Sample Dataset
+-----------------
+
+A sample dataset is forthcoming.
+
+
+Input
+-----
+
+A JSON file containing the following information:
+
+1. A mapper list "metapro.mapper_list" containing an array of JSON objects for mapping paths of .raw files, FASTA, GFF, and additional metadata
+2. Path to a MS-GF+ parameter file, example `file <https://github.com/microbiomedata/metaPro/blob/master/storage/parameters/LTQ-FT_10ppm_2014-08-06.xml>`_
+3. Path to a MASIC parameter file, example `file <https://github.com/microbiomedata/metaPro/blob/master/storage/parameters/MSGFPlus_Tryp_NoMods_20ppmParTol.txt>`_
+4. Path to a contaminant FASTA file
+5. The Q-Value threshold
+6. Additional metadata fields
+
+An example input JSON file is shown below::
+
+   {
+   "metapro.mapper_list": [
+      {
+         "genome_dir": "nmdc_omprc-11-wfzppa38",
+         "dataset_name": "SpruceW_P4_15A_22Jun17_Pippin_17-04-06",
+         "annotation_name": "nmdc_wfmgan-11-pmh0a992.1",
+         "raw_file_loc": "/mnt/d/NMDC/nmdc_bsm-13-bgefg837/SpruceW_P4_15A_22Jun17_Pippin_17-04-06.raw",
+         "dataset_id": "nmdc_dobj-11-9gcej008",
+         "faa_file_loc": "/mnt/d/NMDC/nmdc_bsm-13-bgefg837/nmdc_wfmgan-11-pmh0a992.1_proteins.faa",
+         "faa_file_id": "nmdc_dobj-11-j5mh8584",
+         "gff_file_loc": "/mnt/d/NMDC/nmdc_bsm-13-bgefg837/nmdc_wfmgan-11-pmh0a992.1_functional_annotation.gff",
+         "gff_file_id": "nmdc_dobj-11-jq8ct440"
+      }
+   ],
+   "metapro.MASIC_PARAM_FILE_LOC": "/mnt/d/NMDC/reprocessing_spruce_2/LTQ-FT_10ppm_2014-08-06.xml",
+   "metapro.MSGFPLUS_PARAM_FILE_LOC": "/mnt/d/NMDC/reprocessing_spruce_2/MSGFPlus_Tryp_NoMods_20ppmParTol.txt",
+   "metapro.CONTAMINANT_FILE_LOC": "/mnt/d/NMDC/reprocessing_spruce_2/Tryp_Pig_Bov.fasta",
+   "metapro.QVALUE_THRESHOLD": "0.05",
+   "metapro.STUDY": "spruce",
+   "metapro.EXECUTION_RESOURCE": "EMSL",
+   "metapro.DATA_URL": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/",
+   "metapro.MASIC_PARAM_FILE_ID": "nmdc_dobj-11-hfx93f93",
+   "metapro.MSGFPLUS_PARAM_FILE_ID": "nmdc_dobj-11-h9637w90",
+   "metapro.CONTAMINANT_FILE_ID": "nmdc_dobj-11-sprrem27"
+   }
+
+
+Output
+------
+
+The workflow will produce four results files:
+   - *_Peptide_Report.tsv
+   - *_Protein_Report.tsv
+   - *_QC_metrics.tsv
+   - *_msgfplus_syn_PlusSICStats.txt
+
 
 Version History
 ---------------
 
-- 1.0.0
-- 1.2.0
 - 1.2.1
+- 1.2.0
+- 1.0.0
 
 Point of contact
 ----------------
 
-Package maintainer: Cameron <cameron.giberson@pnnl.gov>
+Package maintainer: Cam Giberson <cameron.giberson@pnnl.gov>
