@@ -1,7 +1,7 @@
 # Meta-proteomics workflow.
 <hr>
 
-![workflow](docs/workflow_diagram_v2.png)  
+![workflow](docs/metap_workflow2024.svg)  
 
 <hr>
 
