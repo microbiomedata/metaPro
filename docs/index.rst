@@ -2,7 +2,6 @@ Metaproteomic Workflow (v1.2.1)
 ========================================
 
 .. image:: metap_workflow2024.svg
-   :scale: 25%
    :alt: Metaproteomics workflow
 
 
