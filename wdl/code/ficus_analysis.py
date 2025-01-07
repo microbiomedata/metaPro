@@ -28,7 +28,8 @@ class DataOutputtable:
         dataset_id,
         faa_id,
         dataset_name,
-        did_split_analysis
+        did_split_analysis,
+        is_metagenome_free_analysis
     ):
 
         self.dataset_id = dataset_id
@@ -47,6 +48,7 @@ class DataOutputtable:
         cols_to_rename = {"ProteinName": "Protein"}
         self.fasta_df.rename(columns=cols_to_rename, inplace=True)
         self.fasta_df["Index"] = self.fasta_df.index + 1
+        self.is_metagenome_free_analysis = is_metagenome_free_analysis
 
         # saved to served multiple calls
         self.query_8_result = None
@@ -271,17 +273,29 @@ class DataOutputtable:
         :param gff_file: JGI annotation file.
         :return: dataframe with col: ['protein', 'Product', 'pfam', 'ko', 'ec_number', 'cog']
         """
-        filtered_df = self.annotation.filter_feature_of_type(["CDS"])
-        col_of_interest = ["ID", "product", "pfam", "ko", "ec_number", "cog"]
-        attributeTag_df = filtered_df.attributes_to_columns()[col_of_interest]
-        cols_to_rename = {"ID": "Protein", "product": "Product"}
-        attributeTag_df.rename(columns=cols_to_rename, inplace=True)
-        # cleaning up columns
-        # TODO: remove KO: EC: strings
-        attributeTag_df["ko"] = attributeTag_df["ko"]  # .str.replace('KO:', '')
-        attributeTag_df["ec_number"] = attributeTag_df[
-            "ec_number"
-        ]  # .str.replace('EC:', '')
+
+        if self.is_metagenome_free_analysis:
+            df = pd.DataFrame()
+            col_of_interest = ["ID", "product", "kegg_annotations"]
+            df["parsed_attributes"] = self.annotation.df["attributes"].apply(self.parse_attributes)
+            attributeTag_df = pd.json_normalize(df["parsed_attributes"]).fillna("None")[col_of_interest]
+            attributeTag_df["pfam"] = None
+            attributeTag_df["ec_number"] = None
+            attributeTag_df["cog"] = None
+            cols_to_rename = {"ID": "Protein", "product": "Product", "kegg_annotations": "ko"}
+            attributeTag_df.rename(columns=cols_to_rename, inplace=True)
+        else:
+            filtered_df = self.annotation.filter_feature_of_type(["CDS"])
+            col_of_interest = ["ID", "product", "pfam", "ko", "ec_number", "cog"]
+            attributeTag_df = filtered_df.attributes_to_columns()[col_of_interest]
+            cols_to_rename = {"ID": "Protein", "product": "Product"}
+            attributeTag_df.rename(columns=cols_to_rename, inplace=True)
+            # cleaning up columns
+            # TODO: remove KO: EC: strings
+            attributeTag_df["ko"] = attributeTag_df["ko"]  # .str.replace('KO:', '')
+            attributeTag_df["ec_number"] = attributeTag_df[
+                "ec_number"
+            ]  # .str.replace('EC:', '')
 
         self._DataOutputtable_xlsx(attributeTag_df, "query_0")
         return attributeTag_df
@@ -903,6 +917,19 @@ class DataOutputtable:
 
         # TODO: Change string type to "min_q_value", 'peptide_spectral_count', 'peptide_sum_masic_abundance' int!
         return self.peptide_report, protein_report, qc_metrics_report
+    
+    @staticmethod
+    def parse_attributes(raw_attributes: str):
+        if str(raw_attributes) == "nan":
+            return None
+
+        attributes = raw_attributes.split(";")
+        attributes_map = {}
+        for attr in attributes:
+            if "=" in attr:
+                key, value = attr.split("=", 1)
+                attributes_map[key] = value
+        return attributes_map
 
 if __name__ == "__main__":
 
@@ -914,10 +941,12 @@ if __name__ == "__main__":
     threshold= sys.argv[6]
     dataset_name= sys.argv[7]
     is_split_analysis= sys.argv[8]
+    is_metagenome_free_analysis = sys.argv[9]
 
     print(f"{fasta_txt_file}\n{gff_file}\n{resultant_file}\n{dataset_id}\n{faa_id}\n{threshold}\n")
 
     is_split_analysis = is_split_analysis.rstrip().lower() == "true"
+    is_metagenome_free_analysis = is_metagenome_free_analysis.rstrip().lower() == "true"
 
     data_obj = DataOutputtable(
         gff_file,
@@ -927,7 +956,8 @@ if __name__ == "__main__":
         dataset_id,
         faa_id,
         dataset_name,
-        is_split_analysis
+        is_split_analysis,
+        is_metagenome_free_analysis
     )
 
     (
