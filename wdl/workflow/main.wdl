@@ -3,6 +3,7 @@ version 1.0
 import "run_job_analysis.wdl" as run_analysis
 import "report_gen.wdl" as generate_reports
 import "metadata_coll.wdl" as collect_metadata
+import "kaiko.wdl" as kaiko
 
 workflow metapro {
     Int fasta_split_on_size_mb = 1000
@@ -22,14 +23,25 @@ workflow metapro {
         String STUDY
         String EXECUTION_RESOURCE
         String DATA_URL
+        File KAIKO_PARAM_FILE_LOC
+        Boolean METAGENOME_FREE
     }
 
     scatter (myobj in mapper_list) {
+
+        if (METAGENOME_FREE){
+            call kaiko.run {
+                input:
+                    raw_file = myobj['raw_file_loc'],
+                    kaiko_config = KAIKO_PARAM_FILE_LOC
+            }
+        }
+
         call run_analysis.job_analysis {
             input:
                 dataset_name            = myobj['dataset_name'],
                 raw_file_loc            = myobj['raw_file_loc'],
-                faa_file_loc            = myobj['faa_file_loc'],
+                faa_file_loc            = select_first([ run.faa_file, myobj['faa_file_loc'] ]),
                 QVALUE_THRESHOLD        = QVALUE_THRESHOLD,
                 MASIC_PARAM_FILENAME    = MASIC_PARAM_FILE_LOC,
                 MSGFPLUS_PARAM_FILENAME = MSGFPLUS_PARAM_FILE_LOC,
@@ -42,7 +54,7 @@ workflow metapro {
         call generate_reports.report_gen {
             input:
                 faa_txt_file      = job_analysis.faa_with_contaminates,
-                gff_file          = myobj['gff_file_loc'],
+                gff_file          = select_first([ run.gff_file, myobj['gff_file_loc'] ]),
                 resultant_file    = job_analysis.resultant_file,
                 Dataset_id        = myobj['dataset_id'],
                 faa_file_id       = myobj['faa_file_id'],
@@ -50,7 +62,8 @@ workflow metapro {
                 annotation_name   = myobj['annotation_name'],
                 dataset_name      = myobj['dataset_name'],
                 first_hits_file   = job_analysis.first_hits_file,
-                did_split         = job_analysis.did_split
+                did_split         = job_analysis.did_split,
+                metagenome_free   = METAGENOME_FREE
         }
 
         Result result = {
