@@ -1,26 +1,36 @@
-{ "metapro.mapper_list": [
-      {
-        "dataset_id": "500088",
-        "genome_dir":"1781_100336",
-        "dataset_name": "Froze_Core_2015_N2_50_60_34_QE_26May16_Pippin_16-03-39",
-        "annotation_name": "Ga0482236",
-        "raw_file_loc": "/home/anub229/del_it/benchmarkrun/storage/500088/Froze_Core_2015_N2_50_60_34_QE_26May16_Pippin_16-03-39.raw",
-        "faa_file_loc" : "/home/anub229/del_it/benchmarkrun/storage/1781_100336/img_annotation/Ga0482236_proteins.faa",
-        "gff_file_loc": "/home/anub229/del_it/benchmarkrun/storage/1781_100336/img_annotation/Ga0482236_functional_annotation.gff"
-      },
-        {
-        "dataset_id": "500088",
-        "genome_dir":"1781_100336",
-        "dataset_name": "Froze_Core_2015_N2_50_60_34_QE_26May16_Pippin_16-03-39",
-        "annotation_name": "Ga0482236",
-        "raw_file_loc": "/home/anub229/del_it/benchmarkrun/storage/500088/Froze_Core_2015_N2_50_60_34_QE_26May16_Pippin_16-03-39.raw",
-        "faa_file_loc" : "/home/anub229/del_it/benchmarkrun/storage/1781_100336/img_annotation/Ga0482236_proteins.faa",
-        "gff_file_loc": "/home/anub229/del_it/benchmarkrun/storage/1781_100336/img_annotation/Ga0482236_functional_annotation.gff"
-      }
+{
+  "metapro.mapper_list": [
+    {
+      "genome_dir": "nmdc_omprc-11-wfzppa38",
+      "dataset_name": "SpruceW_P4_15A_22Jun17_Pippin_17-04-06",
+      "annotation_name": "nmdc_wfmgan-11-pmh0a992.1",
+      "raw_file_loc": "/mnt/d/NMDC/reprocessing_spruce_2/nmdc_bsm-13-bgefg837/SpruceW_P4_15A_22Jun17_Pippin_17-04-06.raw",
+      "dataset_id": "nmdc_dobj-11-9gcej008",
+      "faa_file_loc": "/mnt/d/NMDC/reprocessing_spruce_2/nmdc_bsm-13-bgefg837/nmdc_wfmgan-11-pmh0a992.1_proteins.faa",
+      "faa_file_id": "nmdc_dobj-11-j5mh8584",
+      "gff_file_loc": "/mnt/d/NMDC/reprocessing_spruce_2/nmdc_bsm-13-bgefg837/nmdc_wfmgan-11-pmh0a992.1_functional_annotation.gff",
+      "gff_file_id": "nmdc_dobj-11-jq8ct440"
+    },
+    {
+      "genome_dir": "nmdc_omprc-11-ar7xyy02",
+      "dataset_name": "SpruceW_P13_87B_22Jun17_Pippin_17-04-06",
+      "annotation_name": "nmdc_wfmgan-11-78nfyt10.1",
+      "raw_file_loc": "/mnt/d/NMDC/reprocessing_spruce_2/nmdc_bsm-13-h3hs0w34/SpruceW_P13_87B_22Jun17_Pippin_17-04-06.raw",
+      "dataset_id": "nmdc_dobj-11-rjpqdg61",
+      "faa_file_loc": "/mnt/d/NMDC/reprocessing_spruce_2/nmdc_bsm-13-h3hs0w34/nmdc_wfmgan-11-78nfyt10.1_proteins.faa",
+      "faa_file_id": "nmdc_dobj-11-ebf2vr37",
+      "gff_file_loc": "/mnt/d/NMDC/reprocessing_spruce_2/nmdc_bsm-13-h3hs0w34/nmdc_wfmgan-11-78nfyt10.1_functional_annotation.gff",
+      "gff_file_id": "nmdc_dobj-11-t6g94b08"
+    }
   ],
-  "metapro.MASIC_PARAM_FILE_LOC":"/home/anub229/del_it/benchmarkrun/storage/parameters/LTQ-FT_10ppm_2014-08-06.xml",
-  "metapro.MSGFPLUS_PARAM_FILE_LOC":"/home/anub229/del_it/benchmarkrun/storage/parameters/MSGFPlus_Tryp_NoMods_20ppmParTol.txt",
-  "metapro.CONTAMINANT_FILE_LOC":"/home/anub229/del_it/benchmarkrun/storage/parameters/Tryp_Pig_Bov.fasta",
-  "metapro.QVALUE_THRESHOLD":"0.05",
-  "metapro.STUDY":"stegen"
+  "metapro.MASIC_PARAM_FILE_LOC": "/mnt/d/NMDC/reprocessing_spruce_2/LTQ-FT_10ppm_2014-08-06.xml",
+  "metapro.MSGFPLUS_PARAM_FILE_LOC": "/mnt/d/NMDC/reprocessing_spruce_2/MSGFPlus_Tryp_NoMods_20ppmParTol.txt",
+  "metapro.CONTAMINANT_FILE_LOC": "/mnt/d/NMDC/reprocessing_spruce_2/Tryp_Pig_Bov.fasta",
+  "metapro.QVALUE_THRESHOLD": "0.05",
+  "metapro.STUDY": "spruce",
+  "metapro.EXECUTION_RESOURCE": "EMSL",
+  "metapro.DATA_URL": "https://nmdcdemo.emsl.pnnl.gov/proteomics/results/",
+  "metapro.MASIC_PARAM_FILE_ID": "nmdc_dobj-11-hfx93f93",
+  "metapro.MSGFPLUS_PARAM_FILE_ID": "nmdc_dobj-11-h9637w90",
+  "metapro.CONTAMINANT_FILE_ID": "nmdc_dobj-11-sprrem27"
 }
