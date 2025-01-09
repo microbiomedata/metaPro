@@ -20,16 +20,10 @@ task convertToMgf {
     }
 }
 
-struct KaikoInputFiles {
-    File mgf_file
-    File kaiko_config 
-}
-
 task kaiko {
     input {
-        KaikoInputFiles kaikoFiles
-        File mgf_file = kaikoFiles.mgf_file
-        File kaiko_config = kaikoFiles.kaiko_config
+        File mgf_file
+        File kaiko_config
         String kaiko_volume_dir
     }
     command <<<
@@ -39,10 +33,10 @@ task kaiko {
         mgf=`basename ~{mgf_file}`
         ln -s ~{mgf_file} /data/input/$mgf
         cd /Kaiko_metaproteome
-        python Kaiko_pipeline_main.py \
+        python -m Kaiko_main.Kaiko_main \
             --config=~{kaiko_config}
-        find /data/output -name '*.fasta' -exec mv -t $execution_dir {} +
-        find /data/output -name '*.gff' -exec mv -t $execution_dir {} +
+        find /data/output/Kaiko_output -name '*.fasta' -exec mv -t $execution_dir {} +
+        find /data/output/Kaiko_output -name '*.gff' -exec mv -t $execution_dir {} +
         cd $execution_dir
     >>>
     output {
@@ -50,7 +44,7 @@ task kaiko {
         File outfile_gff = glob("*.gff")[0]
     }
     runtime {
-        docker: 'kaiko-py310:latest'
+        docker: 'camiloposso15/kaiko_2.0-py3.10:latest'
     }
 }
 
@@ -65,10 +59,11 @@ workflow run {
         input:
             raw_file = raw_file,
     }
-    KaikoInputFiles inpt = {"mgf_file": convertToMgf.outfile, "kaiko_config": kaiko_config}
+
     call kaiko {
         input:
-            kaikoFiles = inpt,
+            mgf_file = convertToMgf.outfile,
+            kaiko_config = kaiko_config,
             kaiko_volume_dir = kaiko_data_location
     }
 
