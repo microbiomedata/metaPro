@@ -203,6 +203,9 @@ task concatcontaminate {
         File    outfile = output_filename
         String  start = read_string("start.txt")
     }
+    runtime {
+        docker: 'microbiomedata/metapro-masic:v3.2.7901'
+    }
 }
 
 workflow job_analysis{
