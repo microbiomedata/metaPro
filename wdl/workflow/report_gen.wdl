@@ -48,7 +48,6 @@ task ficus_analysis {
 task proteinDigestionSimulator {
     input{
         File faa_file
-        String annotation_name
         String output_filename = sub(basename(faa_file), "\\.fasta$", ".txt")
     }
     command {
@@ -73,7 +72,6 @@ workflow report_gen{
         File   first_hits_file
         String Dataset_id
         String faa_file_id
-        String annotation_name
         String q_value_threshold
         String dataset_name
         Boolean did_split
@@ -84,8 +82,8 @@ workflow report_gen{
     call proteinDigestionSimulator {
         input:
             faa_file        = faa_txt_file,
-            annotation_name = annotation_name
     }
+    
     call ficus_analysis {
         input:
             faa_txt_file      = proteinDigestionSimulator.outfile,
