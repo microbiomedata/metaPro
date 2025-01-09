@@ -11,6 +11,7 @@ task ficus_analysis {
         String q_value_threshold
         String dataset_name
         Boolean did_split
+        Boolean metagenome_free
     }
     command {
         if [ ${did_split} == true ]; then
@@ -32,7 +33,8 @@ task ficus_analysis {
             ${faa_file_id} \
             $threshold \
             ${dataset_name} \
-            ${did_split}
+            ${did_split} \
+            ${metagenome_free}
     }
     output {
         File   peptide_file   = "${Dataset_id}_${faa_file_id}_Peptide_Report.tsv"
@@ -75,6 +77,8 @@ workflow report_gen{
         String q_value_threshold
         String dataset_name
         Boolean did_split
+        Boolean metagenome_free
+
     }
 
     call proteinDigestionSimulator {
@@ -92,7 +96,8 @@ workflow report_gen{
             faa_file_id       = faa_file_id,
             q_value_threshold = q_value_threshold,
             dataset_name      = dataset_name,
-            did_split         = did_split
+            did_split         = did_split,
+            metagenome_free   = metagenome_free
     }
     output {
         File   peptide_file   = ficus_analysis.peptide_file
