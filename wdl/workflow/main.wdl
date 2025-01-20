@@ -37,11 +37,14 @@ workflow metapro {
             }
         }
 
+        File? faa_to_use = if METAGENOME_FREE then run.faa_file else myobj['faa_file_loc']
+        File? gff_to_use = if METAGENOME_FREE then run.gff_file else myobj['gff_file_loc']
+
         call run_analysis.job_analysis {
             input:
                 dataset_name            = myobj['dataset_name'],
                 raw_file_loc            = myobj['raw_file_loc'],
-                faa_file_loc            = select_first([ run.faa_file, myobj['faa_file_loc'] ]),
+                faa_file_loc            = select_first([faa_to_use]),
                 QVALUE_THRESHOLD        = QVALUE_THRESHOLD,
                 MASIC_PARAM_FILENAME    = MASIC_PARAM_FILE_LOC,
                 MSGFPLUS_PARAM_FILENAME = MSGFPLUS_PARAM_FILE_LOC,
@@ -54,7 +57,7 @@ workflow metapro {
         call generate_reports.report_gen {
             input:
                 faa_txt_file      = job_analysis.faa_with_contaminates,
-                gff_file          = select_first([ run.gff_file, myobj['gff_file_loc'] ]),
+                gff_file          = select_first([gff_to_use]),
                 resultant_file    = job_analysis.resultant_file,
                 Dataset_id        = myobj['dataset_id'],
                 faa_file_id       = myobj['faa_file_id'],
@@ -70,8 +73,9 @@ workflow metapro {
             "peptide_report_file": report_gen.peptide_file,
             "protein_report_file": report_gen.protein_file,
             "qc_metric_report_file": report_gen.qc_metric_file,
-            "faa_file": myobj['faa_file_loc'],
+            "faa_file": faa_to_use,
             "txt_faa_file": report_gen.txt_faa_file,
+            "gff_file": gff_to_use,
             "genome_directory": myobj['genome_dir'],
             "dataset_id": myobj['dataset_id'],
             "start_time": job_analysis.start_time,
@@ -97,6 +101,7 @@ workflow metapro {
             contaminant_file_id = CONTAMINANT_FILE_ID,
             masic_param_id = MASIC_PARAM_FILE_ID,
             msgfplus_param_id = MSGFPLUS_PARAM_FILE_ID,
-            version = version
+            version = version,
+            metagenome_free = METAGENOME_FREE
     }
 }

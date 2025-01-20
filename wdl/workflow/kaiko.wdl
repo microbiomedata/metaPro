@@ -68,7 +68,7 @@ workflow run {
     }
 
     output {
-        File   faa_file = kaiko.outfile_fasta
-        File   gff_file = kaiko.outfile_gff
+        File?   faa_file = kaiko.outfile_fasta
+        File?   gff_file = kaiko.outfile_gff
      }
 }

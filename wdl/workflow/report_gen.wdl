@@ -76,7 +76,6 @@ workflow report_gen{
         String dataset_name
         Boolean did_split
         Boolean metagenome_free
-
     }
 
     call proteinDigestionSimulator {

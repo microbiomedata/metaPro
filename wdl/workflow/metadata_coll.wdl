@@ -7,6 +7,7 @@ struct Result {
     File qc_metric_report_file
     File faa_file
     File txt_faa_file
+    File gff_file
     String genome_directory
     String dataset_id
     String start_time
@@ -29,6 +30,7 @@ task collect{
         String masic_param_id
         String msgfplus_param_id
         String version
+        Boolean metagenome_free
     }
     command {
         python /app/metadata_collection/code/gen_metadata.py \
@@ -43,7 +45,8 @@ task collect{
             ~{masic_param_id} \
             ~{msgfplus_param_id} \
             ~{contaminant_file_id} \
-            ~{version}
+            ~{version} \
+            ~{metagenome_free}
     }
     output {
         File   activity    = "${study}_MetaProteomicAnalysis_activity.json"
@@ -67,6 +70,7 @@ workflow gen_metadata{
         String masic_param_id
         String msgfplus_param_id
         String version
+        Boolean metagenome_free
     }
     call collect {
         input:
@@ -81,7 +85,8 @@ workflow gen_metadata{
             contaminant_file_id = contaminant_file_id,
             masic_param_id = masic_param_id,
             msgfplus_param_id = msgfplus_param_id,
-            version = version
+            version = version,
+            metagenome_free = metagenome_free
     }
     output {
         File   activity    = collect.activity
