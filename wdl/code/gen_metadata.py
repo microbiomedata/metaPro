@@ -7,7 +7,7 @@ import hashlib
 from urllib.parse import urljoin
 from datetime import datetime
 from linkml_runtime.dumpers import json_dumper
-from nmdc_schema.nmdc import Database, MetaproteomicsAnalysisActivity, DataObject, ProteinQuantification, PeptideQuantification, FileTypeEnum
+from nmdc_schema.nmdc import Database, MetaproteomicsAnalysis, DataObject, FileTypeEnum, MetaproteomicsAnalysisCategoryEnum, ExecutionResourceEnum
 from nmdc_schema.nmdc_data import get_nmdc_jsonschema_string
 from nmdc_id_source import NmdcIdSource, NmdcFakeIdSource
 from typing import List
@@ -28,7 +28,8 @@ class GenMetadata:
                 masic_param_id: str,
                 msgf_param_id: str,
                 contam_id: str,
-                version: str):
+                version: str,
+                in_silico_generated: bool):
 
         self.execution_resource = execution_resource
         self.git_url = git_url
@@ -43,6 +44,7 @@ class GenMetadata:
         self.msgf_param_id = msgf_param_id
         self.contam_id = contam_id
         self.version = version
+        self.in_silico_generated = in_silico_generated
 
         self.dataset_id = None
         self.genome_directory = None
@@ -56,6 +58,7 @@ class GenMetadata:
         self.ended_at_time = None
         self.fasta_id = None
         self.gff_id = None
+        self.gff_file = None
 
     def get_md5(self, file):
         """
@@ -70,43 +73,6 @@ class GenMetadata:
         else:
             return ""
 
-    def get_ProteinQuantification(self):
-        protein_arr = []
-
-        with open(self.protein_report, encoding="utf-8-sig") as tsvfile:
-            tsvreader = csv.reader(tsvfile, delimiter="\t")
-            header = next(tsvreader)
-
-            for line in tsvreader:
-                protein_quantification = ProteinQuantification(
-                    peptide_sequence_count = line[1],
-                    best_protein = line[2].replace(" ", ""),
-                    all_proteins = [protein.replace(" ", "") for protein in line[9].split(",")],
-                    protein_spectral_count = line[12],
-                    protein_sum_masic_abundance = line[13],
-                )
-
-                protein_arr.append(protein_quantification)
-
-    def get_PeptideQuantification(self):
-        peptide_quantifications_arr = []
-
-        with open(self.peptide_report, encoding="utf-8-sig") as tsvfile:
-            tsvreader = csv.reader(tsvfile, delimiter="\t")
-            header = next(tsvreader)
-            for line in tsvreader:
-                peptide_quantification = PeptideQuantification(
-                peptide_sequence = line[1],
-                best_protein = line[2].replace(" ", ""),
-                all_proteins = [protein.replace(" ", "") for protein in line[9].split(",")],
-                min_q_value = line[11],
-                peptide_spectral_count = line[12],
-                peptide_sum_masic_abundance = int(float(line[13]))
-                )
-
-                peptide_quantifications_arr.append(peptide_quantification)
-        
-        return peptide_quantifications_arr
 
     def get_file_data_object(self, file_path: str, file_name: str, description: str, activity_id: str, type: str) -> DataObject:
         """
@@ -121,9 +87,10 @@ class GenMetadata:
             description=description,
             file_size_bytes=os.stat(file_path).st_size,
             md5_checksum=hashlib.md5(open(file_path,'rb').read()).hexdigest(),
-            was_generated_by=None,
+            was_generated_by=activity_id,
             data_object_type=type,
             url=urljoin(self.results_url, file_name),
+            type="nmdc:DataObject",
         )
 
         return data_object
@@ -170,6 +137,28 @@ class GenMetadata:
             )
         )
 
+        if self.in_silico_generated:
+            data_objects.append(
+                self.get_file_data_object(
+                    self.fasta_file,
+                    os.path.basename(self.fasta_file),
+                    f"In-silico generated annotation amino acid FASTA for {self.activity_id}", 
+                    self.activity_id,
+                    "Annotation Amino Acid FASTA"
+                )
+            )
+        
+        if self.in_silico_generated:
+            data_objects.append(
+                self.get_file_data_object(
+                    self.fasta_file,
+                    os.path.basename(self.fasta_file),
+                    f"In-silico generated functional annotation GFF for {self.activity_id}", 
+                    self.activity_id,
+                    "Functional Annotation GFF"
+                )
+            )
+
         return data_objects
 
     def get_has_input(self) -> List[str]:
@@ -179,20 +168,25 @@ class GenMetadata:
 
         has_input = [
             self.dataset_id,
-            self.gff_id,
-            self.fasta_id,
             self.msgf_param_id,
             self.masic_param_id,
             self.contam_id
         ]
+        if not in_silico_generated:
+            has_input.append(self.gff_id)
+            has_input.append(self.fasta_id)
         
         return has_input
 
-    def get_metaproteomics_analysis_activity(self, data_objects: list[DataObject]) -> MetaproteomicsAnalysisActivity:
+    def get_metaproteomics_analysis_activity(self, data_objects: list[DataObject]) -> MetaproteomicsAnalysis:
         has_input_arr = self.get_has_input()
+        
         has_output_arr = [data_object.id for data_object in data_objects]
+        
+        
+        mp_analysis_category = MetaproteomicsAnalysisCategoryEnum.in_silico_metagenome if self.in_silico_generated else MetaproteomicsAnalysisCategoryEnum.matched_metagenome
 
-        mp_analysis_activity_obj = MetaproteomicsAnalysisActivity(
+        mp_analysis_activity_obj = MetaproteomicsAnalysis(
             id=self.activity_id,
             execution_resource=self.execution_resource,
             git_url=self.git_url,
@@ -203,10 +197,9 @@ class GenMetadata:
             has_output=has_output_arr,
             has_input=has_input_arr,
             started_at_time=self.started_at_time,
-            ended_at_time=self.ended_at_time
+            ended_at_time=self.ended_at_time,
+            metaproteomics_analysis_category=mp_analysis_category
             )
-
-        mp_analysis_activity_obj.has_peptide_quantifications = self.get_PeptideQuantification()
 
         return mp_analysis_activity_obj
     
@@ -224,6 +217,7 @@ class GenMetadata:
         ended_at_time,
         gff_id,
         fasta_id,
+        gff_file
     ):
         self.dataset_id = dataset_id
         self.genome_directory = genome_directory
@@ -237,6 +231,7 @@ class GenMetadata:
         self.ended_at_time = ended_at_time
         self.gff_id = gff_id
         self.fasta_id = fasta_id
+        self.gff_file = gff_file
 
 
     @staticmethod
@@ -248,11 +243,12 @@ class GenMetadata:
                   masic_param_id: str,
                   msgf_param_id: str,
                   contam_id: str,
-                  version: str) -> 'GenMetadata':
+                  version: str,
+                  in_silico_generated: bool) -> 'GenMetadata':
         '''
         Create a GenMetadata object with newly minted activity ID with OOP in mind.
         '''
-        analysis_type = "nmdc:MetaproteomicsAnalysisActivity"
+        analysis_type = "nmdc:MetaproteomicsAnalysis"
         activity_id = id_source.get_ids(analysis_type, 1)[0]
         activity_id = activity_id + "." + str(WORKFLOW_METADATA_VERSION)
 
@@ -263,7 +259,8 @@ class GenMetadata:
                            masic_param_id,
                            msgf_param_id,
                            contam_id,
-                           version)
+                           version,
+                           in_silico_generated)
 
 
 def underscore_to_colon(curie: str):
@@ -283,12 +280,15 @@ if __name__ == "__main__":
     msgf_param_id = sys.argv[10]
     contam_id = sys.argv[11]
     version = sys.argv[12]
+    is_metagenome_free_analysis = sys.argv[13]
+
+    in_silico_generated = is_metagenome_free_analysis.rstrip().lower() == "true"
 
     if results_url[-1] != '/':
         results_url = results_url + '/'
 
     data_objects_arr: List[DataObject] = []
-    metaproteomics_analysis_activity_arr: List[MetaproteomicsAnalysisActivity] = []
+    metaproteomics_analysis_activity_arr: List[MetaproteomicsAnalysis] = []
 
     # Minting source
     id_source = NmdcIdSource(os.environ['CLIENT_ID'], os.environ['CLIENT_SECRET'])
@@ -310,8 +310,10 @@ if __name__ == "__main__":
                 masic_param_id=underscore_to_colon(masic_param_id),
                 msgf_param_id=underscore_to_colon(msgf_param_id),
                 contam_id=underscore_to_colon(contam_id),
-                version=version)
+                version=version,
+                in_silico_generated=in_silico_generated)
 
+            #TODO this class should be immutable after instantiation, remove setting keys
             meta_file.set_keys(
                 underscore_to_colon(mapping["dataset_id"]),
                 underscore_to_colon(mapping["genome_directory"]),
@@ -324,7 +326,8 @@ if __name__ == "__main__":
                 mapping["start_time"],
                 mapping["end_time"],
                 underscore_to_colon(mapping["gff_id"]),
-                underscore_to_colon(mapping["fasta_id"])
+                underscore_to_colon(mapping["fasta_id"]),
+                mapping["gff_file"]
             )
 
             data_objects = meta_file.get_data_objects()

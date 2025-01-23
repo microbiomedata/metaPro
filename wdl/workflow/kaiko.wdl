@@ -28,22 +28,23 @@ task kaiko {
     }
     command <<<
         execution_dir=$(pwd)
-        cd /Kaiko_pipeline
+        mkdir -p /data/input
+        mkdir /data/output
         mgf=`basename ~{mgf_file}`
-        mkdir input
-        # ln -s ~{mgf_file} input/$mgf
-        mv ~{mgf_file} input/$mgf
-        ln -s ~{kaiko_volume_dir} Kaiko_volume
-        python Kaiko_pipeline_main.py \
+        ln -s ~{mgf_file} /data/input/$mgf
+        cd /Kaiko_metaproteome
+        python -m Kaiko_main.Kaiko_main \
             --config=~{kaiko_config}
-        find Kaiko_output -name '*.fasta' -exec mv -t $execution_dir {} +
-        cd execution_dir
+        find /data/output/Kaiko_output -name '*.fasta' -exec mv -t $execution_dir {} +
+        find /data/output/Kaiko_output -name '*.gff' -exec mv -t $execution_dir {} +
+        cd $execution_dir
     >>>
     output {
-        File outfile = glob("*.fasta")[0]
+        File outfile_fasta = glob("*.fasta")[0]
+        File outfile_gff = glob("*.gff")[0]
     }
     runtime {
-        docker: 'kaiko-py310:latest'
+        docker: 'camiloposso15/kaiko_2.0-py3.10:latest'
     }
 }
 
@@ -58,6 +59,7 @@ workflow run {
         input:
             raw_file = raw_file,
     }
+
     call kaiko {
         input:
             mgf_file = convertToMgf.outfile,
@@ -66,6 +68,7 @@ workflow run {
     }
 
     output {
-        File   faa_file = kaiko.outfile
+        File?   faa_file = kaiko.outfile_fasta
+        File?   gff_file = kaiko.outfile_gff
      }
 }
