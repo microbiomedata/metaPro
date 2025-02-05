@@ -126,6 +126,7 @@ class DataOutputtable:
 
         return counted_protein_df
 
+    @write_df_excel
     def query_1(self):
         """
         selecting distinct peptide and protein pairs from 5% FDR non-decoy results.
@@ -137,6 +138,7 @@ class DataOutputtable:
 
         return FiltPeps_df.drop_duplicates().sort_values(by=["PeptideSequence"])
 
+    @write_df_excel
     def query_4(self, table_1, table_2, table_3):
 
         # inner join on 'Protein'
