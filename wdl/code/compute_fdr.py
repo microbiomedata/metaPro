@@ -36,91 +36,7 @@ class FdrImmediate(FdrSearchStrategy):
         fdr = self.fdr1(self.spec_e_value)
 
         return FdrResult(self.spec_e_value, fdr)
-
-
-class FdrLog(FdrSearchStrategy):
-    def __init__(self, data, target_fdr: Decimal, spec_e_value_coeff: Decimal, spec_e_value_exp: Decimal):
-        self.spec_e_value_coeff = spec_e_value_coeff
-        self.spec_e_value_exp = spec_e_value_exp
-        self.fdr_target = target_fdr
-        super().__init__(data)
-        
-    class FdrCalc():
-        def __init__(self, current_compare_fn, fdr_fn, target_fdr, initial_fdr, coeff, exp, exp_inc, next_compare_fn, stop_condition_fn, stop_exp, is_done):
-            self.current_compare_fn = current_compare_fn
-            self.coeff = coeff
-            self.fdr_fn = fdr_fn
-            self.target_fdr = target_fdr
-            self.exp = exp
-            self.exp_inc = exp_inc
-            self.next_compare_fn = next_compare_fn
-            self.stop_condition_fn = stop_condition_fn
-            self._is_done = is_done
-            self.fdr_i = initial_fdr
-            self.stop_exp = stop_exp
-            self.ten = Decimal('10.0')
-            self.n = Decimal('-1.0')
-            self.inc_mult = Decimal('0.1')
-
-        def do(self):
-            while not self._is_done:
-                if self.stop_condition_fn(abs(self.exp_inc), self.stop_exp):
-                    self._is_done = True
-                    return self
-                
-                self.exp += self.exp_inc
-                self.fdr_i = self.fdr_fn(self.spec_e_value)
-                if not self.current_compare_fn(self.target_fdr, self.fdr_i):
-                    next_exp = self.n * self.exp_inc * self.inc_mult
-                    return FdrLog.FdrCalc(
-                        self.next_compare_fn,
-                        self.fdr_fn,
-                        self.target_fdr,
-                        self.fdr_i,
-                        self.coeff,
-                        self.exp,
-                        next_exp,
-                        self.current_compare_fn,
-                        self.stop_condition_fn,
-                        self.stop_exp,
-                        self.is_done
-                    )
-
-
-        @property
-        def is_done(self):
-            return self._is_done
-
-        @property
-        def fdr(self):
-            return self.fdr_i
-
-        @property
-        def spec_e_value(self):
-            return self.coeff * (self.ten ** self.exp)
-
-    def find_values(self) -> FdrResult:
-        less_than = lambda x, y : x < y
-        greater_than = lambda x, y: x > y
-        calc = FdrLog.FdrCalc(
-            less_than,
-            self.fdr1,
-            self.fdr_target,
-            Decimal('0.0'),
-            self.spec_e_value_coeff,
-            self.spec_e_value_exp,
-            Decimal('-1.0'),
-            greater_than,
-            less_than,
-            Decimal('0.00000001'),
-            False
-        )
-        while not calc.is_done:
-            calc = calc.do()
-
-        return FdrResult(calc.spec_e_value, calc.fdr)
-        
-        
+              
 class FdrDownIterate(FdrSearchStrategy):
     def __init__(self, data, spec_e_value: Decimal, fdr: Decimal, spec_e_inc: Decimal):
         self.spec_e_value = spec_e_value
@@ -156,7 +72,6 @@ def get_args():
     parser.add_argument('--spece', type=str, help='')
     parser.add_argument('--speceinc', type=str, help='')
     parser.add_argument('--precision', type=int, help='Floating point precision', required=False)
-    parser.add_argument('--iter', action='store_true', help='Iteratively finds and prints SpecEValue for given FDR')
     parser.add_argument('--single', action='store_true', help='Prints FDR for given SpecEValue')
     # parser.add_argument('--log', action='store_true')
     parser.add_argument('--out', type=str, help='', default='out.json')
@@ -178,20 +93,13 @@ if __name__ == "__main__":
     result = None
     to_write = None
 
-    if args.single:
-        spec_e_value = Decimal(args.spece)
+    spec_e_value = Decimal(args.spece)
+    spec_e_value_inc = Decimal(args.speceinc)
+    fdr = Decimal(args.fdr)
 
-        fdr_imm = FdrImmediate(rows, spec_e_value)
-        result = fdr_imm.find_values()
-        to_write = result.FDR
-    elif args.iter:
-        spec_e_value = Decimal(args.spece)
-        spec_e_value_inc = Decimal(args.speceinc)
-        fdr = Decimal(args.fdr)
-
-        fdr_iterate = FdrDownIterate(rows, spec_e_value, fdr, spec_e_value_inc)
-        result = fdr_iterate.find_values()
-        to_write = result.SpecEValue
+    fdr_iterate = FdrDownIterate(rows, spec_e_value, fdr, spec_e_value_inc)
+    result = fdr_iterate.find_values()
+    to_write = result.SpecEValue
 
     sys.stdout.write(str(to_write))
 
