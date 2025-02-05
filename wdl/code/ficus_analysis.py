@@ -2,16 +2,15 @@ import pandas as pd
 import warnings
 import sys
 import json
+import functools
+from pathlib import Path
 
 warnings.filterwarnings("ignore")
 
 import gffpandas.gffpandas as gffpd
 import os
 
-pd.set_option("precision", 20)
-
-__author__ = "Anubhav <anubhav@pnnl.gov>"
-
+pd.set_option("display.precision", 20)
 
 class DataOutputtable:
     """
@@ -55,21 +54,20 @@ class DataOutputtable:
         self.peptide_report = None
 
         # building log excel files:
-        file_loc = os.path.join(*self.gff_file.split("/")[:-1])
-        # self.writer = pd.ExcelWriter(f"/{file_loc}/{DATA_LOG}.xlsx", engine='xlsxwriter')
-
-        # log dataframe.
-        indexes = [f"query_{idx}" for idx in range(23)]
-        indexes.extend(["Peptide_Report", "Protein_Report", "qc_metrics"])
-        cols = ["#row", "#col", "col_name"]
-        self.log_df = pd.DataFrame(columns=cols, index=indexes)
-
-    def _DataOutputtable_xlsx(self, df, sheet_name):
-
-        self.log_df.at[sheet_name, "#row"] = df.shape[0]
-        self.log_df.at[sheet_name, "#col"] = df.shape[1]
-        self.log_df.at[sheet_name, "col_name"] = ", ".join(df.columns.tolist())
-        # df.to_excel(self.writer, sheet_name=sheet_name, index=False)
+        gff_parent_path = Path(gff_file).parent
+        self.writer = pd.ExcelWriter(gff_parent_path / "query_results.xlsx")
+        
+    def write_df_excel(func):
+        '''
+        This function wraps all query functions to write the resultant 10k rows of the returned 
+        dataframe to an excel file.
+        '''
+        @functools.wraps(func)
+        def capture(self, *args, **kwargs):
+            result_df: pd.DataFrame = func(self, *args, **kwargs)   
+            result_df.iloc[:10000].to_excel(self.writer, sheet_name=func.__name__, index=False)
+            return result_df
+        return capture
 
     def FiltPeps(self, df):
 
@@ -94,7 +92,8 @@ class DataOutputtable:
             .sort_values(by=["PeptideSequence"])
         )
 
-    def query_2(self):
+    @write_df_excel
+    def query_2(self) -> pd.DataFrame:
         """
         counting distinct peptides per protein using 5% FDR filter and removing Decoy proteins
         :param query_1_df:
@@ -109,10 +108,10 @@ class DataOutputtable:
             .reset_index(name="PeptideSequence_Count")
         )
 
-        self._DataOutputtable_xlsx(counted_peptides_df, "query_2")
         return counted_peptides_df
 
-    def query_3(self):
+    @write_df_excel
+    def query_3(self) -> pd.DataFrame:
         """
 
         :param query_1_df:
@@ -125,7 +124,6 @@ class DataOutputtable:
             grouped_by_peptide["Protein"].count().reset_index(name="Protein_Count")
         )
 
-        self._DataOutputtable_xlsx(counted_protein_df, "query_3")
         return counted_protein_df
 
     def query_1(self):
@@ -137,9 +135,6 @@ class DataOutputtable:
         temp_df = self.resultant_df.copy()
         FiltPeps_df = self.get_FiltPeps(temp_df)
 
-        self._DataOutputtable_xlsx(
-            FiltPeps_df.drop_duplicates().sort_values(by=["PeptideSequence"]), "query_1"
-        )
         return FiltPeps_df.drop_duplicates().sort_values(by=["PeptideSequence"])
 
     def query_4(self, table_1, table_2, table_3):
@@ -159,9 +154,6 @@ class DataOutputtable:
             "Protein_Count",
         ]
 
-        self._DataOutputtable_xlsx(
-            merge_3[col_of_interest].sort_values(by=["PeptideSequence"]), "query_4"
-        )
         return merge_3[col_of_interest].sort_values(by=["PeptideSequence"])
 
     def get_MaxPepCounts(self, table_4):
@@ -213,15 +205,14 @@ class DataOutputtable:
         ].transform(min)
         return filtered[["PeptideSequence", "CountOfPeptideCounts", "MinIndexValue"]]
 
+    @write_df_excel
     def query_5(self, table_4):
         peps_with_1_protein = table_4[table_4["Protein_Count"] == 1]
         peps_with_1_protein.rename(columns={"Protein": "BestProtein"}, inplace=True)
 
-        self._DataOutputtable_xlsx(
-            peps_with_1_protein[["PeptideSequence", "BestProtein"]], "query_5"
-        )
         return peps_with_1_protein[["PeptideSequence", "BestProtein"]]
 
+    @write_df_excel
     def query_6(self, table_4):
         BestSingleProteins_df = self.get_BestSingleProteins(table_4)
         joined = BestSingleProteins_df.merge(
@@ -232,11 +223,9 @@ class DataOutputtable:
         )
         joined.rename(columns={"Protein": "BestProtein"}, inplace=True)
 
-        self._DataOutputtable_xlsx(
-            joined[["PeptideSequence", "BestProtein"]], "query_6"
-        )
         return joined[["PeptideSequence", "BestProtein"]]
 
+    @write_df_excel
     def query_7(self, table_4):
         BestIndexedProtein_df = self.get_BestIndexedProtein(table_4)
         merged = BestIndexedProtein_df.merge(
@@ -247,9 +236,6 @@ class DataOutputtable:
         )
         merged.rename(columns={"Protein": "BestProtein"}, inplace=True)
 
-        self._DataOutputtable_xlsx(
-            merged[["PeptideSequence", "BestProtein"]].drop_duplicates(), "query_7"
-        )
         return merged[["PeptideSequence", "BestProtein"]].drop_duplicates()
 
     def get_best_protein_associated_with_peptide(self, table_4):
@@ -267,6 +253,7 @@ class DataOutputtable:
         table_5_6_7_unioned = self.get_best_protein_associated_with_peptide(table_4)
         return table_5_6_7_unioned
 
+    @write_df_excel
     def query_0(self):
         """
 
@@ -297,9 +284,9 @@ class DataOutputtable:
                 "ec_number"
             ]  # .str.replace('EC:', '')
 
-        self._DataOutputtable_xlsx(attributeTag_df, "query_0")
         return attributeTag_df
 
+    @write_df_excel
     def query_8(self):
         # TODO:remove all tables except table_5_6_7_unioned
         # 1. get best_protein_associated_with_peptide
@@ -328,7 +315,6 @@ class DataOutputtable:
         PeptideBestProteinAnnotated = merged[col_of_interest]
         PeptideBestProteinAnnotated.rename(columns=cols_to_rename, inplace=True)
 
-        self._DataOutputtable_xlsx(PeptideBestProteinAnnotated, "query_8")
         return PeptideBestProteinAnnotated
 
     def get_FwdPeptideSequences(self):
@@ -338,6 +324,7 @@ class DataOutputtable:
         ].transform("nunique")
         return FiltPeps_df[["PeptideSequence", "GeneCount"]]
 
+    @write_df_excel
     def query_9(self):
         FwdPeptideSequences_df = self.get_FwdPeptideSequences()
 
@@ -355,12 +342,6 @@ class DataOutputtable:
             right_on=["PeptideSequence"],
         )
 
-        self._DataOutputtable_xlsx(
-            merged[["PeptideSequence", "GeneCount", "Protein"]]
-            .drop_duplicates()
-            .sort_values(by=["PeptideSequence"]),
-            "query_9",
-        )
         return (
             merged[["PeptideSequence", "GeneCount", "Protein"]]
             .drop_duplicates()
@@ -388,6 +369,7 @@ class DataOutputtable:
             annotation_str = Protein
         return annotation_str
 
+    @write_df_excel
     def query_10(self):
         table_9 = self.query_9()
         AnnotationSplitout_df = self.query_0()
@@ -401,16 +383,11 @@ class DataOutputtable:
             axis=1,
         )
 
-        self._DataOutputtable_xlsx(
-            merged[
-                ["PeptideSequence", "GeneCount", "Protein", "annotation"]
-            ].sort_values(by=["PeptideSequence"]),
-            "query_10",
-        )
         return merged[
             ["PeptideSequence", "GeneCount", "Protein", "annotation"]
         ].sort_values(by=["PeptideSequence"])
 
+    @write_df_excel
     def query_11(self):
         table_10 = self.query_10()
 
@@ -436,18 +413,13 @@ class DataOutputtable:
             .transform(lambda x: " | ".join(x))
         )
 
-        self._DataOutputtable_xlsx(
-            table_10[["PeptideSequence", "GeneCount", "FullGeneList", "AnnotationList"]]
-            .drop_duplicates()
-            .sort_values(by=["PeptideSequence"]),
-            "query_11",
-        )
         return (
             table_10[["PeptideSequence", "GeneCount", "FullGeneList", "AnnotationList"]]
             .drop_duplicates()
             .sort_values(by=["PeptideSequence"])
         )
 
+    @write_df_excel
     def query_12(self):
 
         temp_df = self.resultant_df.copy()
@@ -471,14 +443,6 @@ class DataOutputtable:
             "sum"
         )
 
-        self._DataOutputtable_xlsx(
-            FiltPassPeptideAbundanceData[
-                ["PeptideSequence", "SpectralCount", "sum(StatMomentsArea)"]
-            ]
-            .drop_duplicates()
-            .sort_values(by=["PeptideSequence"]),
-            "query_12",
-        )
         return (
             FiltPassPeptideAbundanceData[
                 ["PeptideSequence", "SpectralCount", "sum(StatMomentsArea)"]
@@ -487,6 +451,7 @@ class DataOutputtable:
             .sort_values(by=["PeptideSequence"])
         )
 
+    @write_df_excel
     def query_13(self):
         temp_df = self.resultant_df.copy()
         # temp_df['Dataset_x'] = 'default value'
@@ -535,29 +500,6 @@ class DataOutputtable:
 
         merged_3["DatasetName"] = self.dataset_name
 
-        self._DataOutputtable_xlsx(
-            merged_3[
-                [
-                    "DatasetName",
-                    "PeptideSequence",
-                    "BestProtein",
-                    "Product",
-                    "EC_Number",
-                    "pfam",
-                    "KO",
-                    "COG",
-                    "GeneCount",
-                    "FullGeneList",
-                    "AnnotationList",
-                    "min(QValue)",
-                    "SpectralCount",
-                    "sum(MASICAbundance)",
-                ]
-            ]
-            .drop_duplicates()
-            .sort_values(by=["DatasetName"]),
-            "query_13",
-        )
         return (
             merged_3[
                 [
@@ -581,6 +523,7 @@ class DataOutputtable:
             .sort_values(by=["DatasetName"])
         )
 
+    @write_df_excel
     def query_14(self):
         Peptide_Report = self.query_13()
 
@@ -594,19 +537,6 @@ class DataOutputtable:
             ["BestProtein"]
         )["sum(MASICAbundance)"].transform("sum")
 
-        self._DataOutputtable_xlsx(
-            Peptide_Report[
-                [
-                    "BestProtein",
-                    "UniquePeptideCount",
-                    "SummedSpectraCounts",
-                    "SummedPeptideMASICAbundances",
-                ]
-            ]
-            .drop_duplicates()
-            .sort_values(by=["BestProtein"]),
-            "query_14",
-        )
         return (
             Peptide_Report[
                 [
@@ -620,6 +550,7 @@ class DataOutputtable:
             .sort_values(by=["BestProtein"])
         )
 
+    @write_df_excel
     def query_15(self):
 
         PeptideBestProteinAnnotated_df = self.query_8_result  # self.query_8()
@@ -632,18 +563,14 @@ class DataOutputtable:
             right_on=["PeptideSequence"],
         )
         non_decoy_filtered_df = merged[~merged["Protein"].str.startswith("XXX")]
-        self._DataOutputtable_xlsx(
-            non_decoy_filtered_df[["BestProtein", "Protein"]]
-            .drop_duplicates(subset=["BestProtein", "Protein"])
-            .sort_values(by=["BestProtein"]),
-            "query_15",
-        )
+
         return (
             non_decoy_filtered_df[["BestProtein", "Protein"]]
             .drop_duplicates(subset=["BestProtein", "Protein"])
             .sort_values(by=["BestProtein"])
         )
 
+    @write_df_excel
     def query_16(self):
         BestProteinGeneLists = self.query_15()  # .drop_duplicates(subset=['Protein'])
 
@@ -667,12 +594,6 @@ class DataOutputtable:
         )["Protein"].transform("count")
         BestProteinGeneLists.sort_values(["FullGeneList"], ascending=True, inplace=True)
 
-        self._DataOutputtable_xlsx(
-            BestProteinGeneLists[["BestProtein", "GeneCount", "FullGeneList"]]
-            .drop_duplicates()
-            .sort_values(by=["BestProtein"]),
-            "query_16",
-        )
         return (
             BestProteinGeneLists[["BestProtein", "GeneCount", "FullGeneList"]]
             .drop_duplicates()
@@ -699,6 +620,7 @@ class DataOutputtable:
                 annotation_str = annotation_str + f";cog={cog}"
             return annotation_str
 
+    @write_df_excel
     def query_17(self):
 
         AnnotationSplitout_df = self.query_0()
@@ -715,20 +637,13 @@ class DataOutputtable:
             axis=1,
         )
 
-        # display(ProteinBestProteinsAnnotated)
-        self._DataOutputtable_xlsx(
-            ProteinBestProteinsAnnotated[["BestProtein", "Protein", "annotation"]]
-            .drop_duplicates()
-            .sort_values(by=["BestProtein"]),
-            "query_17",
-        )
-
         return (
             ProteinBestProteinsAnnotated[["BestProtein", "Protein", "annotation"]]
             .drop_duplicates()
             .sort_values(by=["BestProtein"])
         )
 
+    @write_df_excel
     def query_18(self):
 
         BestProteinAnnotationLists = self.query_17()
@@ -738,18 +653,14 @@ class DataOutputtable:
         ] = BestProteinAnnotationLists.groupby(["BestProtein"])["annotation"].transform(
             lambda x: " | ".join(x)
         )
-        self._DataOutputtable_xlsx(
-            BestProteinAnnotationLists[["BestProtein", "AnnotationList"]]
-            .drop_duplicates()
-            .sort_values(by=["BestProtein"]),
-            "query_18",
-        )
+
         return (
             BestProteinAnnotationLists[["BestProtein", "AnnotationList"]]
             .drop_duplicates()
             .sort_values(by=["BestProtein"])
         )
 
+    @write_df_excel
     def query_19(self):
         Peptide_Report_df = self.peptide_report.copy()[
             ["DatasetName", "BestProtein", "Product", "EC_Number", "pfam", "KO", "COG"]
@@ -793,35 +704,33 @@ class DataOutputtable:
             "SummedSpectraCounts",
             "SummedPeptideMASICAbundances",
         ]
-        self._DataOutputtable_xlsx(
-            merged_3[distinct_colm]
-            .drop_duplicates(subset=distinct_colm)
-            .sort_values(by=["DatasetName"]),
-            "query_19",
-        )
+
         return (
             merged_3[distinct_colm]
             .drop_duplicates(subset=distinct_colm)
             .sort_values(by=["DatasetName"])
         )
 
+    @write_df_excel
     def query_20(self):
 
         total_protein_count = pd.DataFrame(
             {"total_protein_count": self.fasta_df.Protein.nunique()}, index=[0]
         )
-        self._DataOutputtable_xlsx(total_protein_count, "query_20")
+
         return total_protein_count
 
+    @write_df_excel
     def query_21(self):
         temp_df = self.resultant_df.copy()
         filtered = self.get_FiltPeps_gen(temp_df)[["Scan", "Charge"]]
         PSM_Count = pd.DataFrame(
             {"PSM_Count": len(filtered.groupby(["Scan", "Charge"])["Scan"])}, index=[0]
         )
-        self._DataOutputtable_xlsx(PSM_Count, "query_21")
+
         return PSM_Count
 
+    @write_df_excel
     def query_22(self):
         temp_df = self.resultant_df.copy()
         Total_PSM_Count = pd.DataFrame(
@@ -832,9 +741,10 @@ class DataOutputtable:
             },
             index=[0],
         )
-        self._DataOutputtable_xlsx(Total_PSM_Count, "query_22")
+
         return Total_PSM_Count
 
+    @write_df_excel
     def query_23(self):
         Table12 = pd.DataFrame(
             {
@@ -845,9 +755,10 @@ class DataOutputtable:
             },
             index=[0],
         )
-        self._DataOutputtable_xlsx(Table12, "query_23")
+
         return Table12
 
+    @write_df_excel
     def query_24(self):
         Peptide_Report_df = self.peptide_report.copy()
         unique_peptide_seq_count = (
@@ -868,25 +779,23 @@ class DataOutputtable:
             index=[0],
         )
 
-        self._DataOutputtable_xlsx(qc_metrics, "query_24")
         return qc_metrics
 
     def create_peptide_report(self):
         Peptide_Report_df = self.query_13()
         Peptide_Report_df.sort_values(["GeneCount"], ascending=False, inplace=True)
-        self._DataOutputtable_xlsx(Peptide_Report_df, "Peptide_Report")
+
         return Peptide_Report_df
 
     def create_protein_report(self):
         Protein_Report_df = self.query_19()
         Protein_Report_df.sort_values(["GeneCount"], ascending=False, inplace=True)
-
-        self._DataOutputtable_xlsx(Protein_Report_df, "Protein_Report")
+        
         return Protein_Report_df
 
     def create_qc_metrics(self):
         qc_metrics_df = self.query_24()
-        self._DataOutputtable_xlsx(qc_metrics_df, "qc_metrics")
+        
         return qc_metrics_df
 
     def gen_reports(self):
@@ -970,3 +879,6 @@ if __name__ == "__main__":
     peptide_report.to_csv(f"{dataset_id}_{faa_id}_Peptide_Report.tsv", sep="\t", index=False)
     protein_report.to_csv(f"{dataset_id}_{faa_id}_Protein_Report.tsv", sep="\t", index=False)
     qc_metrics_report.to_csv( f"{dataset_id}_{faa_id}_QC_metrics.tsv", sep="\t", index=False)
+    
+    # flush and close excel writer
+    data_obj.writer.close()
