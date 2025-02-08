@@ -5,6 +5,7 @@ import json
 import functools
 from pathlib import Path
 from typing import Tuple
+from datetime import datetime
 
 warnings.filterwarnings("ignore")
 
@@ -13,6 +14,9 @@ import os
 
 pd.set_option("display.precision", 20)
 
+def timestamp_as_string():
+    return datetime.now().strftime("%Y%m%d%H%M%S")
+    
 class DataOutputtable:
     """
     Created based of data manipulation performed using MSSQLsever queries by
@@ -43,11 +47,11 @@ class DataOutputtable:
             resultant_file, sep="\t", float_precision="round_trip"
         )
         self.did_split_analysis = did_split_analysis
-        col_of_interest = ["ProteinName", "Sequence"]
-        self.fasta_df = pd.read_csv(fasta_txt_file, sep="\t")[col_of_interest]
-        cols_to_rename = {"ProteinName": "Protein"}
-        self.fasta_df.rename(columns=cols_to_rename, inplace=True)
-        self.fasta_df["Index"] = self.fasta_df.index + 1
+        # col_of_interest = ["ProteinName", "Sequence"]
+        # self.fasta_df = pd.read_csv(fasta_txt_file, sep="\t")[col_of_interest]
+        # cols_to_rename = {"ProteinName": "Protein"}
+        # self.fasta_df.rename(columns=cols_to_rename, inplace=True)
+        # self.fasta_df["Index"] = self.fasta_df.index + 1
         self.is_metagenome_free_analysis = is_metagenome_free_analysis
 
         # saved to served multiple calls
@@ -56,7 +60,7 @@ class DataOutputtable:
 
         # building log excel files:
         gff_parent_path = Path(gff_file).parent
-        self.writer = pd.ExcelWriter(gff_parent_path / "query_results.xlsx")
+        self.writer = pd.ExcelWriter(gff_parent_path / f"query_results_{timestamp_as_string()}.xlsx")
         
     def write_df_excel(func):
         '''
@@ -81,10 +85,12 @@ class DataOutputtable:
         ].str.extract(r"\.(.*)\.")
         return non_decoy_filtered_df
 
+    @write_df_excel
     def get_FiltPeps_gen(self, df):
         FiltPeps_df = self.FiltPeps(df)
         return FiltPeps_df.drop_duplicates().sort_values(by=["PeptideSequence"])
 
+    @write_df_excel
     def get_FiltPeps(self, df: pd.DataFrame) -> pd.DataFrame:
         FiltPeps_df = self.FiltPeps(df)
         return (
@@ -145,20 +151,21 @@ class DataOutputtable:
         # inner join on 'Protein'
         merge_1 = table_1.merge(table_2, how="inner", on="Protein")
         # inner join on 'Protein'
-        merge_2 = merge_1.merge(self.fasta_df, how="inner", on="Protein")
+        # merge_2 = merge_1.merge(self.fasta_df, how="inner", on="Protein")
         # inner join on 'PeptideSequence'
-        merge_3 = merge_2.merge(table_3, how="inner", on="PeptideSequence")
+        merge_3 = merge_1.merge(table_3, how="inner", on="PeptideSequence")
 
         col_of_interest = [
             "Protein",
             "PeptideSequence",
             "PeptideSequence_Count",
-            "Index",
+            # "Index",
             "Protein_Count",
         ]
 
         return merge_3[col_of_interest].sort_values(by=["PeptideSequence"])
 
+    @write_df_excel
     def get_MaxPepCounts(self, table_4: pd.DataFrame) -> pd.DataFrame:
         peps_morethan_1_protein = table_4[table_4["Protein_Count"] > 1]
         peps_morethan_1_protein[
@@ -171,7 +178,9 @@ class DataOutputtable:
         return peps_morethan_1_protein[
             ["PeptideSequence", "MaxPeptideSequenceCount"]
         ].drop_duplicates()
+        # return peps_morethan_1_protein
 
+    @write_df_excel
     def get_MaxPepCounts_table_4_joined(self, table_4: pd.DataFrame) -> pd.DataFrame:
         MaxPepCounts_df = self.get_MaxPepCounts(table_4)
         joined = MaxPepCounts_df.merge(
@@ -185,8 +194,11 @@ class DataOutputtable:
         ].transform("count")
         return joined
 
+    @write_df_excel
     def get_BestSingleProteins(self, table_4: pd.DataFrame) -> pd.DataFrame:
-
+        '''
+        Get the best protein associated with the peptide sequence, non degenerate razor protein list
+        '''
         MaxPepCounts_table_4_joined_df = self.get_MaxPepCounts_table_4_joined(table_4)
         filtered = MaxPepCounts_table_4_joined_df[
             MaxPepCounts_table_4_joined_df["CountOfPeptideCounts"] == 1
@@ -198,15 +210,17 @@ class DataOutputtable:
             ["PeptideSequence", "CountOfPeptideCounts", "MaxPeptideSequenceCount"]
         ]
 
+    @write_df_excel
     def get_BestIndexedProtein(self, table_4: pd.DataFrame) -> pd.DataFrame:
         MaxPepCounts_table_4_joined_df = self.get_MaxPepCounts_table_4_joined(table_4)
         filtered = MaxPepCounts_table_4_joined_df[
             MaxPepCounts_table_4_joined_df["CountOfPeptideCounts"] > 1
         ]
-        filtered["MinIndexValue"] = filtered.groupby(["PeptideSequence"])[
-            "Index"
-        ].transform(min)
-        return filtered[["PeptideSequence", "CountOfPeptideCounts", "MinIndexValue"]]
+        # filtered["MinIndexValue"] = filtered.groupby(["PeptideSequence"])[
+        #     "Index"
+        # ].transform(min)
+        # return filtered[["PeptideSequence", "CountOfPeptideCounts", "MinIndexValue"]]
+        return filtered[["PeptideSequence", "CountOfPeptideCounts"]]
 
     @write_df_excel
     def query_5(self, table_4: pd.DataFrame) -> pd.DataFrame:
@@ -227,27 +241,42 @@ class DataOutputtable:
         joined.rename(columns={"Protein": "BestProtein"}, inplace=True)
 
         return joined[["PeptideSequence", "BestProtein"]]
+    
+    @write_df_excel
+    def query_6_7(self, table_4: pd.DataFrame) -> pd.DataFrame:
+        MaxPepCounts_table_4_joined_df = self.get_MaxPepCounts_table_4_joined(table_4)
+        filtered = MaxPepCounts_table_4_joined_df[
+            MaxPepCounts_table_4_joined_df["CountOfPeptideCounts"] > 1
+        ]
+        
 
     @write_df_excel
-    def query_7(self, table_4: pd.DataFrame) -> pd.DataFrame:
+    def query_7(self, table_4: pd.DataFrame) -> pd.DataFrame: 
+        '''
+        This function is used to get the best protein associated with the peptide sequence.
+        '''
         BestIndexedProtein_df = self.get_BestIndexedProtein(table_4)
         merged = BestIndexedProtein_df.merge(
             table_4,
             how="inner",
-            left_on=["PeptideSequence", "MinIndexValue"],
-            right_on=["PeptideSequence", "Index"],
+            # left_on=["PeptideSequence", "MinIndexValue"],
+            # right_on=["PeptideSequence", "Index"],
+            left_on=["PeptideSequence"],
+            right_on=["PeptideSequence"],
         )
         merged.rename(columns={"Protein": "BestProtein"}, inplace=True)
 
         return merged[["PeptideSequence", "BestProtein"]].drop_duplicates()
 
+    @write_df_excel
     def get_best_protein_associated_with_peptide(self, table_4: pd.DataFrame) -> pd.DataFrame:
         # Take Union of 3 dataframes!
-        table_5 = self.query_5(table_4)
+        table_5 = self.query_5(table_4) # NonDegenerate_razer_protein_list
         table_6 = self.query_6(table_4)
-        table_7 = self.query_7(table_4)
+        table_7 = self.query_7(table_4) 
         return pd.concat([table_5, table_6, table_7])
 
+    @write_df_excel
     def parse_MSGFjobs_MASIC_resultant(self) -> pd.DataFrame:
         table_1 = self.query_1()
         table_2 = self.query_2()
@@ -320,6 +349,7 @@ class DataOutputtable:
 
         return PeptideBestProteinAnnotated
 
+    @write_df_excel
     def get_FwdPeptideSequences(self) -> pd.DataFrame:
         FiltPeps_df = self.get_FiltPeps(self.resultant_df)
         FiltPeps_df["GeneCount"] = FiltPeps_df.groupby(["PeptideSequence"])[
@@ -714,14 +744,15 @@ class DataOutputtable:
             .sort_values(by=["DatasetName"])
         )
 
-    @write_df_excel
-    def query_20(self) -> pd.DataFrame:
+    # TODO : query_20
+    # @write_df_excel
+    # def query_20(self) -> pd.DataFrame:
 
-        total_protein_count = pd.DataFrame(
-            {"total_protein_count": self.fasta_df.Protein.nunique()}, index=[0]
-        )
+    #     total_protein_count = pd.DataFrame(
+    #         {"total_protein_count": self.fasta_df.Protein.nunique()}, index=[0]
+    #     )
 
-        return total_protein_count
+    #     return total_protein_count
 
     @write_df_excel
     def query_21(self) -> pd.DataFrame:
@@ -777,25 +808,28 @@ class DataOutputtable:
                 "unique_peptide_seq_count": unique_peptide_seq_count,
                 "BestProtein_count": BestProtein_count,
                 "mean_peptide_count": mean_peptide_count,
-                "total_protein_count": self.query_20().total_protein_count
+                # "total_protein_count": self.query_20().total_protein_count
             },
             index=[0],
         )
 
         return qc_metrics
 
+    @write_df_excel
     def create_peptide_report(self) -> pd.DataFrame:
         Peptide_Report_df = self.query_13()
         Peptide_Report_df.sort_values(["GeneCount"], ascending=False, inplace=True)
 
         return Peptide_Report_df
 
+    @write_df_excel
     def create_protein_report(self) -> pd.DataFrame:
         Protein_Report_df = self.query_19()
         Protein_Report_df.sort_values(["GeneCount"], ascending=False, inplace=True)
         
         return Protein_Report_df
 
+    @write_df_excel
     def create_qc_metrics(self) -> pd.DataFrame:
         qc_metrics_df = self.query_24()
         
