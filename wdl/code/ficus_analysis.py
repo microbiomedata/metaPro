@@ -178,7 +178,6 @@ class DataOutputtable:
         return peps_morethan_1_protein[
             ["PeptideSequence", "MaxPeptideSequenceCount"]
         ].drop_duplicates()
-        # return peps_morethan_1_protein
 
     @write_df_excel
     def get_MaxPepCounts_table_4_joined(self, table_4: pd.DataFrame) -> pd.DataFrame:
@@ -194,21 +193,21 @@ class DataOutputtable:
         ].transform("count")
         return joined
 
-    @write_df_excel
-    def get_BestSingleProteins(self, table_4: pd.DataFrame) -> pd.DataFrame:
-        '''
-        Get the best protein associated with the peptide sequence, non degenerate razor protein list
-        '''
-        MaxPepCounts_table_4_joined_df = self.get_MaxPepCounts_table_4_joined(table_4)
-        filtered = MaxPepCounts_table_4_joined_df[
-            MaxPepCounts_table_4_joined_df["CountOfPeptideCounts"] == 1
-        ]
-        filtered["MaxPeptideSequenceCount"] = filtered.groupby(["PeptideSequence"])[
-            "PeptideSequence_Count"
-        ].transform(max)
-        return filtered[
-            ["PeptideSequence", "CountOfPeptideCounts", "MaxPeptideSequenceCount"]
-        ]
+    # @write_df_excel
+    # def get_BestSingleProteins(self, table_4: pd.DataFrame) -> pd.DataFrame:
+    #     '''
+    #     Get the best protein associated with the peptide sequence, non degenerate razor protein list
+    #     '''
+    #     MaxPepCounts_table_4_joined_df = self.get_MaxPepCounts_table_4_joined(table_4)
+    #     filtered = MaxPepCounts_table_4_joined_df[
+    #         MaxPepCounts_table_4_joined_df["CountOfPeptideCounts"] == 1
+    #     ]
+    #     filtered["MaxPeptideSequenceCount"] = filtered.groupby(["PeptideSequence"])[
+    #         "PeptideSequence_Count"
+    #     ].transform(max)
+    #     return filtered[
+    #         ["PeptideSequence", "CountOfPeptideCounts", "MaxPeptideSequenceCount"]
+    #     ]
 
     @write_df_excel
     def get_BestIndexedProtein(self, table_4: pd.DataFrame) -> pd.DataFrame:
@@ -231,7 +230,14 @@ class DataOutputtable:
 
     @write_df_excel
     def query_6(self, table_4: pd.DataFrame) -> pd.DataFrame:
-        BestSingleProteins_df = self.get_BestSingleProteins(table_4)
+        MaxPepCounts_table_4_joined_df = self.get_MaxPepCounts_table_4_joined(table_4)
+        
+        filtered = MaxPepCounts_table_4_joined_df[MaxPepCounts_table_4_joined_df["CountOfPeptideCounts"] == 1]
+        
+        filtered["MaxPeptideSequenceCount"] = filtered.groupby(["PeptideSequence"])["PeptideSequence_Count"].transform(max)
+        
+        BestSingleProteins_df = filtered[["PeptideSequence", "CountOfPeptideCounts", "MaxPeptideSequenceCount"]]
+        
         joined = BestSingleProteins_df.merge(
             table_4,
             how="inner",
