@@ -97,8 +97,8 @@ A JSON file containing the following information:
 4. Path to a contaminant FASTA file
 5. The Q-Value threshold
 6. A study name, used when generating NMDC metadata.
-7. The name of the execution resource this pipeline was ran on, used when generating NMDC metadata.
-8. A URL for where resulting metada can be located, used when generating NMDC metadata.
+7. The name of the execution resource this workflow was ran on, used when generating NMDC metadata.
+8. The base URL used to construct the location for the workflows output reports, used when generating NMDC metadata.
 9. The NMDC Identifier of the MASIC parameter file, used when generating NMDC metadata.
 10. The NMDC Identifier of the MS-GF+ parameter file, used when generating NMDC metadata.
 11. The NMDC Identifier of the contaminant FASTA file, used when generating NMDC metadata.
