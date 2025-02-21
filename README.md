@@ -41,4 +41,4 @@ Metaproteomics analyses identify the active organisms/species in a microbial com
 
 [More about workflow...](docs/index.rst)
 
-[Documentation](https://nmdc-proteomics-workflow.readthedocs.io/en/latest/)
+[Documentation](https://docs.microbiomedata.org/workflows/chapters/11_Metaproteomics/index.html)
