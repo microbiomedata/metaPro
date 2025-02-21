@@ -48,7 +48,7 @@ task ficus_analysis {
 task proteinDigestionSimulator {
     input{
         File faa_file
-        String output_filename = sub(basename(faa_file), "\\.fasta$", ".txt")
+        String output_filename = sub(basename(faa_file), "\\.faa$", ".txt")
     }
     command {
         mono /app/pds/ProteinDigestionSimulator.exe \
