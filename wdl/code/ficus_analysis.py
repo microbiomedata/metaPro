@@ -43,9 +43,7 @@ class DataOutputtable:
         self.gff_file = gff_file
         self.annotation = gffpd.read_gff3(gff_file)
         self.dataset_name = dataset_name
-        self.resultant_df = pd.read_csv(
-            resultant_file, sep="\t", float_precision="round_trip"
-        )
+        self.resultant_df = pd.read_csv(resultant_file, sep="\t", float_precision="round_trip")
         self.did_split_analysis = did_split_analysis
         # col_of_interest = ["ProteinName", "Sequence"]
         # self.fasta_df = pd.read_csv(fasta_txt_file, sep="\t")[col_of_interest]
@@ -104,7 +102,7 @@ class DataOutputtable:
         """
         counting distinct peptides per protein using 5% FDR filter and removing Decoy proteins
         :param query_1_df:
-        :return: dataframe with col: 'Protein'  'PeptideSequence_Count'
+        :return: dataframe with col: 'Protein'  'peptides_per_protein'
         """
         temp_df = self.resultant_df.copy()
         FiltPeps_df = self.get_FiltPeps(temp_df)
@@ -112,7 +110,7 @@ class DataOutputtable:
         counted_peptides_df = (
             grouped_by_protein["PeptideSequence"]
             .count()
-            .reset_index(name="PeptideSequence_Count")
+            .reset_index(name="peptides_per_protein")
         )
 
         return counted_peptides_df
@@ -122,13 +120,13 @@ class DataOutputtable:
         """
 
         :param query_1_df:
-        :return: dataframe with col: 'PeptideSequence'  'Protein_Count'
+        :return: dataframe with col: 'PeptideSequence'  'proteins_per_peptide'
         """
         temp_df = self.resultant_df.copy()
         FiltPeps_df = self.get_FiltPeps(temp_df)
         grouped_by_peptide = FiltPeps_df.groupby("PeptideSequence")
         counted_protein_df = (
-            grouped_by_peptide["Protein"].count().reset_index(name="Protein_Count")
+            grouped_by_peptide["Protein"].count().reset_index(name="proteins_per_peptide")
         )
 
         return counted_protein_df
@@ -158,25 +156,25 @@ class DataOutputtable:
         col_of_interest = [
             "Protein",
             "PeptideSequence",
-            "PeptideSequence_Count",
+            "peptides_per_protein",
             # "Index",
-            "Protein_Count",
+            "proteins_per_peptide",
         ]
 
         return merge_3[col_of_interest].sort_values(by=["PeptideSequence"])
 
     @write_df_excel
     def get_MaxPepCounts(self, table_4: pd.DataFrame) -> pd.DataFrame:
-        peps_morethan_1_protein = table_4[table_4["Protein_Count"] > 1]
+        peps_morethan_1_protein = table_4[table_4["proteins_per_peptide"] > 1]
         peps_morethan_1_protein[
-            "MaxPeptideSequenceCount"
+            "max_peptides_per_protein"
         ] = peps_morethan_1_protein.groupby(["PeptideSequence"])[
-            "PeptideSequence_Count"
+            "peptides_per_protein"
         ].transform(
             max
         )
         return peps_morethan_1_protein[
-            ["PeptideSequence", "MaxPeptideSequenceCount"]
+            ["PeptideSequence", "max_peptides_per_protein"]
         ].drop_duplicates()
 
     @write_df_excel
@@ -185,11 +183,11 @@ class DataOutputtable:
         joined = MaxPepCounts_df.merge(
             table_4,
             how="inner",
-            left_on=["PeptideSequence", "MaxPeptideSequenceCount"],
-            right_on=["PeptideSequence", "PeptideSequence_Count"],
+            left_on=["PeptideSequence", "max_peptides_per_protein"],
+            right_on=["PeptideSequence", "peptides_per_protein"],
         )
         joined["CountOfPeptideCounts"] = joined.groupby(["PeptideSequence"])[
-            "PeptideSequence_Count"
+            "peptides_per_protein"
         ].transform("count")
         return joined
 
@@ -202,11 +200,11 @@ class DataOutputtable:
     #     filtered = MaxPepCounts_table_4_joined_df[
     #         MaxPepCounts_table_4_joined_df["CountOfPeptideCounts"] == 1
     #     ]
-    #     filtered["MaxPeptideSequenceCount"] = filtered.groupby(["PeptideSequence"])[
-    #         "PeptideSequence_Count"
+    #     filtered["max_peptides_per_protein"] = filtered.groupby(["PeptideSequence"])[
+    #         "peptides_per_protein"
     #     ].transform(max)
     #     return filtered[
-    #         ["PeptideSequence", "CountOfPeptideCounts", "MaxPeptideSequenceCount"]
+    #         ["PeptideSequence", "CountOfPeptideCounts", "max_peptides_per_protein"]
     #     ]
 
     @write_df_excel
@@ -221,128 +219,140 @@ class DataOutputtable:
         # return filtered[["PeptideSequence", "CountOfPeptideCounts", "MinIndexValue"]]
         return filtered[["PeptideSequence", "CountOfPeptideCounts"]]
 
-    @write_df_excel # proteins here are associated with a single peptide sequence, but that peptide *could* be associated with multiple proteins
-    def query_5(self, table_4: pd.DataFrame) -> pd.DataFrame:
-        peps_with_1_protein = table_4[table_4["Protein_Count"] == 1]
-        peps_with_1_protein.rename(columns={"Protein": "BestProtein"}, inplace=True)
+    # @write_df_excel # proteins here are associated with a single peptide sequence, but that peptide *could* be associated with multiple proteins
+    # def query_5(self, table_4: pd.DataFrame) -> pd.DataFrame:
+    #     peps_with_1_protein = table_4[table_4["proteins_per_peptide"] == 1]
+    #     peps_with_1_protein.rename(columns={"Protein": "BestProtein"}, inplace=True)
 
-        return peps_with_1_protein[["PeptideSequence", "BestProtein"]]
+    #     return peps_with_1_protein[["PeptideSequence", "BestProtein"]]
 
-    @write_df_excel
-    def query_6(self, table_4: pd.DataFrame) -> pd.DataFrame:
-        MaxPepCounts_table_4_joined_df = self.get_MaxPepCounts_table_4_joined(table_4)
+    # @write_df_excel
+    # def query_6(self, table_4: pd.DataFrame) -> pd.DataFrame:
+    #     MaxPepCounts_table_4_joined_df = self.get_MaxPepCounts_table_4_joined(table_4)
         
-        filtered = MaxPepCounts_table_4_joined_df[MaxPepCounts_table_4_joined_df["CountOfPeptideCounts"] == 1]
+    #     filtered = MaxPepCounts_table_4_joined_df[MaxPepCounts_table_4_joined_df["CountOfPeptideCounts"] == 1]
         
-        filtered["MaxPeptideSequenceCount"] = filtered.groupby(["PeptideSequence"])["PeptideSequence_Count"].transform(max)
+    #     filtered["max_peptides_per_protein"] = filtered.groupby(["PeptideSequence"])["peptides_per_protein"].transform(max)
         
-        BestSingleProteins_df = filtered[["PeptideSequence", "CountOfPeptideCounts", "MaxPeptideSequenceCount"]]
+    #     BestSingleProteins_df = filtered[["PeptideSequence", "CountOfPeptideCounts", "max_peptides_per_protein"]]
         
-        joined = BestSingleProteins_df.merge(
-            table_4,
-            how="inner",
-            left_on=["PeptideSequence", "MaxPeptideSequenceCount"],
-            right_on=["PeptideSequence", "PeptideSequence_Count"],
-        )
-        joined.rename(columns={"Protein": "BestProtein"}, inplace=True)
+    #     joined = BestSingleProteins_df.merge(
+    #         table_4,
+    #         how="inner",
+    #         left_on=["PeptideSequence", "max_peptides_per_protein"],
+    #         right_on=["PeptideSequence", "peptides_per_protein"],
+    #     )
+    #     joined.rename(columns={"Protein": "BestProtein"}, inplace=True)
 
-        return joined[["PeptideSequence", "BestProtein"]]
+    #     return joined[["PeptideSequence", "BestProtein"]]
     
     @write_df_excel
-    def query_5_6_7(self, table_4: pd.DataFrame) -> pd.DataFrame:
-        #Case 1
-        peps_with_1_protein = table_4[table_4["Protein_Count"] == 1]
-        # peps_with_1_protein.rename(columns={"Protein": "BestProtein"}, inplace=True)
+    def get_razor_protein_associated_with_peptide(self, table_4: pd.DataFrame) -> pd.DataFrame:
+        """
+        """
+        # peptide_razor_prot_mapping = pd.DataFrame(columns=["PeptideSequence", "Protein"])
+        print(f"table_4 length: {len(table_4)}")
+        print(f"unique peptide sequences table 4: {len(set(table_4['PeptideSequence']))}")
+        # Case 1
+        peps_with_1_protein = table_4[table_4["proteins_per_peptide"] == 1]
+        print(f"1.) unique peptides in peps_with_1_protein count: {len(set(peps_with_1_protein['PeptideSequence']))}")
 
         # Protein here is Razor protein
-        non_degenerate_razor_protein_list = peps_with_1_protein[["PeptideSequence", "Protein"]] 
+        non_degenerate_razor_protein_df = peps_with_1_protein[["PeptideSequence", "Protein"]] 
+        non_degenerate_peptide_set_to_remove = set(non_degenerate_razor_protein_df['PeptideSequence'])
+        
+        # SHOWN TO HAVE NO DUPLICATES
+        duplicated_df = non_degenerate_razor_protein_df[non_degenerate_razor_protein_df['PeptideSequence'].duplicated(keep=False)]
+        print(f"duplicated count non degen: {len(duplicated_df)}")
+        # print(duplicated_df)
+        
+        print(f"non_degenerate_peptide_set_to_remove == len(peps_with_1_protein):  {non_degenerate_peptide_set_to_remove == len(peps_with_1_protein)}")
+        print(f"len(non_degenerate_peptide_set_to_remove): {len(non_degenerate_peptide_set_to_remove)}")
+        # end Case 1
 
         #Case 2
         # Get table that lists multiple peptide sequences, we want all peptides that are associated with MULTIPLE proteins
         # case when protein per peptide > 1 -> Degenerate_peptide_list
-        peps_with_many_proteins = table_4[table_4["PeptideSequence_Count"] > 1]
+        peps_with_many_proteins = table_4[table_4["proteins_per_peptide"] > 1]
+        print(f"2.) unique peptides in peps_with_many_proteins count: {len(set(peps_with_many_proteins['PeptideSequence']))}")
+
         degenerate_peptide_list = peps_with_many_proteins[["PeptideSequence", "Protein"]]
 
-        # result = pd.concat([degenerate_peptide_list, non_degenerate_razor_protein_list])
-        
         # - find peptides where more than one NonDegereate_razor_protein_list member is associated (get all peptides in NonNonDegereate_razor_protein_list [a])
 		#   - merge Degenerate_peptide_list with NonDegenerate_razor_protein_list on peptide (take table 4) //(all peptides with protein count > 1 where the protein is in NonDegereate_razor_protein_list)
-        working_table_4_df = table_4.copy()
-        #   - group by peptide and count NonDegenerate_razor_protein_list members -> NonDegenerate_razor_protein_list_member_count (peptide, protein_count)
-        protein_set = set(non_degenerate_razor_protein_list['Protein'].unique())
-        filtered_df = working_table_4_df[working_table_4_df['Protein'].isin(protein_set)]
+        #   - group by peptide and count NonDegenerate_razor_protein_list members -> NonDegenerate_razor_protein_list_member_count (peptide, proteins_per_peptide)
+        non_degenerate_protein_set = set(non_degenerate_razor_protein_df['Protein'].unique())
+        NonDegenerate_razor_protein_list_member_int_df = peps_with_many_proteins[peps_with_many_proteins['Protein'].isin(non_degenerate_protein_set)]
+        print(f"len(NonDegenerate_razor_protein_list_member_int_df): {len(NonDegenerate_razor_protein_list_member_int_df)}")
+        print(f"len(set(NonDegenerate_razor_protein_list_member_int_df['PeptideSequence'])): {len(set(NonDegenerate_razor_protein_list_member_int_df['PeptideSequence']))}")
 
-        protein_counts = filtered_df.groupby('PeptideSequence')['Protein'].transform(
-            lambda x: x.value_counts().get(x.iloc[0], 0)
-        )
+        #- group by peptide and count NonDegenerate_razor_protein_list members -> NonDegenerate_razor_protein_list_member_count (peptide, protein_count) (groupby and count IFF prot in NonDegereate_razor_protein_list)
+        # *SKIP COUNTING, WORK OFF OF UNIQUE OR NOT UNIQUE*
+        
+        #- for NonDegenerate_razor_protein_list_member_count = 1 -> Degenerate_peptides_with_only_unique_protein (peptide, razor_protein)
+        Degenerate_peptides_with_only_unique_protein =  NonDegenerate_razor_protein_list_member_int_df.drop_duplicates(subset=['PeptideSequence'], keep=False, inplace=False)[['PeptideSequence', 'Protein']]
+        Degenerate_peptides_with_only_unique_protein_to_remove = set(Degenerate_peptides_with_only_unique_protein['PeptideSequence'])
+        print(f"len(Degenerate_peptides_with_only_unique_protein_to_remove): {len(Degenerate_peptides_with_only_unique_protein_to_remove)}")
+        print(f"Degenerate_peptides_with_only_unique_protein['PeptideSequence'].nunique() == len(Degenerate_peptides_with_only_unique_protein): {Degenerate_peptides_with_only_unique_protein['PeptideSequence'].nunique() == len(Degenerate_peptides_with_only_unique_protein)}")
 
-        # working_table_4_df['protein_count'] = working_table_4_df['PeptideSequence'].map(lambda seq: protein_counts[working_table_4_df['PeptideSequence'] == seq].sum())
+        # - for NonDegenerate_razor_protein_list_member_count > 1 -> Degenerate_peptides_with_morethanone_unique_protein (peptide, unique_protein_count)
+		# - remove peptide from filter passing peptides that match Degenerate_peptides_with_morethanone_unique_protein (filter passing being table_4?, remove all matching peptide instances or just peptide-prot pair?)
+        Degenerate_peptides_with_morethanone_unique_protein_to_remove_df = NonDegenerate_razor_protein_list_member_int_df[NonDegenerate_razor_protein_list_member_int_df['PeptideSequence'].duplicated(keep=False)]
+        Degenerate_peptides_with_morethanone_unique_protein_to_remove_set = set(Degenerate_peptides_with_morethanone_unique_protein_to_remove_df['PeptideSequence'])
+        print(f"len(Degenerate_peptides_with_morethanone_unique_protein_to_remove): {len(Degenerate_peptides_with_morethanone_unique_protein_to_remove_df)}")
 
-        # NonDegenerate_razor_protein_list_member_count = working_table_4_df[['PeptideSequence', 'Protein', 'protein_count']]
-        NonDegenerate_razor_protein_list_member_count = working_table_4_df.copy()
-
-        # - for NonDegenerate_razor_protein_list_member_count = 1 -> Degenerate_peptides_with_only_unique_protein (peptide, razor_protein)
-        Degenerate_peptides_with_only_unique_protein_filtered = NonDegenerate_razor_protein_list_member_count[NonDegenerate_razor_protein_list_member_count['protein_count'] == 1]
-        # Protein here is Razor protein
-        Degenerate_peptides_with_only_unique_protein = Degenerate_peptides_with_only_unique_protein_filtered[['PeptideSequence', 'Protein']]
-
-        # - for NonDegenerate_razor_protein_list_member_count > 1 -> - for NonDegenerate_razor_protein_list_member_count > 1 -> Degenerate_peptides_with_morethanone_unique_protein (peptide, unique_protein_count) (peptide, unique_protein_count)
-        Degenerate_peptides_with_morethanone_unique_protein = NonDegenerate_razor_protein_list_member_count[NonDegenerate_razor_protein_list_member_count['protein_count'] > 1]
-
-        # - remove peptide from filter passing peptides that match Degenerate_peptides_with_morethanone_unique_protein (filter passing being table_4?, remove all matching peptide instances or just peptide-prot pair?)
-        pairs_set = set(zip(Degenerate_peptides_with_morethanone_unique_protein['PeptideSequence'], Degenerate_peptides_with_morethanone_unique_protein['Protein']))
-
-        # Which table?
-        working_table_4_filtered_df = working_table_4_df[~working_table_4_df[['PeptideSequence', 'Protein']].apply(tuple, axis=1).isin(pairs_set)]
-        # working_table_4_filtered_df = Degenerate_peptides_with_morethanone_unique_protein[~Degenerate_peptides_with_morethanone_unique_protein[['PeptideSequence', 'Protein']].apply(tuple, axis=1).isin(pairs_set)]
-        return working_table_4_filtered_df
-
-        # - find max peptide_per_protein_count for all remaining proteins grouped to peptide in question
-        # may have to recalc PeptideSequence_Count?
+        # - find max peptide_per_protein_count for all remaining proteins grouped to peptide in question (remove all found peptides with a razor protein from master list?)
         # - store this as a value
-        working_table_4_filtered_df["MaxPeptideSequenceCount"] = working_table_4_filtered_df.groupby(["PeptideSequence"])["PeptideSequence_Count"].transform(max)
-        return working_table_4_filtered_df
-    
         # - retrieve all proteins that match this stored value for peptide in question -> Degenerate_peptides_with_max_nonunique_peptide_count (peptide, razor_protein)
         # - practical effect: if one protein has max number or if there is a list of proteins with this max number, both situations pass
-        def filter_by_max_peptide_count(group):
-            max_count = group['MaxPeptideSequenceCount'].max()
-            return group[group['MaxPeptideSequenceCount'] == max_count] 
 
-        filtered_df = working_table_4_filtered_df.groupby('PeptideSequence').apply(filter_by_max_peptide_count).reset_index(drop=True)
+        max_peptide_per_protein_count = peps_with_many_proteins.copy()
 
-        Degenerate_peptides_with_max_nonunique_peptide_count = filtered_df[['PeptideSequence', 'Protein']]
+        max_peptide_per_protein_count = max_peptide_per_protein_count[~max_peptide_per_protein_count['PeptideSequence'].isin(Degenerate_peptides_with_morethanone_unique_protein_to_remove_set)]
+        max_peptide_per_protein_count = max_peptide_per_protein_count[~max_peptide_per_protein_count['PeptideSequence'].isin(Degenerate_peptides_with_only_unique_protein_to_remove)]
+        max_peptide_per_protein_count = max_peptide_per_protein_count[~max_peptide_per_protein_count['PeptideSequence'].isin(non_degenerate_peptide_set_to_remove)]
+        
+        max_peptide_per_protein_count["max_peptides_per_protein"] = max_peptide_per_protein_count.groupby(["PeptideSequence"])["peptides_per_protein"].transform(max)
 
-        # Protein here is Razor protein
-        return Degenerate_peptides_with_max_nonunique_peptide_count
+        print(f"peptides matched count: {len(Degenerate_peptides_with_morethanone_unique_protein_to_remove_df) + len(Degenerate_peptides_with_only_unique_protein_to_remove) + len(non_degenerate_peptide_set_to_remove)}")
+        print(f"peptides unmatched count: {len(set(max_peptide_per_protein_count['PeptideSequence']))}")
+
+        # Grab only the peptide-protein pairs that have the max_peptides_per_protein
+        max_peptide_per_protein_count = max_peptide_per_protein_count[max_peptide_per_protein_count["peptides_per_protein"] == max_peptide_per_protein_count["max_peptides_per_protein"]]
+        print(f"len(max_peptide_per_protein_count): {len(max_peptide_per_protein_count)}")
+        print(f"len(set(max_peptide_per_protein_count['PeptideSequence'])): {len(set(max_peptide_per_protein_count['PeptideSequence']))}")
+
+        result = pd.concat([non_degenerate_razor_protein_df, Degenerate_peptides_with_only_unique_protein, max_peptide_per_protein_count[["PeptideSequence", "Protein"]]])
+        result = result.rename(columns={"Protein": "BestProtein"})
+        return result
 
 
-    @write_df_excel
-    def query_7(self, table_4: pd.DataFrame) -> pd.DataFrame: 
-        '''
-        This function is used to get the best protein associated with the peptide sequence.
-        '''
-        BestIndexedProtein_df = self.get_BestIndexedProtein(table_4)
-        merged = BestIndexedProtein_df.merge(
-            table_4,
-            how="inner",
-            # left_on=["PeptideSequence", "MinIndexValue"],
-            # right_on=["PeptideSequence", "Index"],
-            left_on=["PeptideSequence"],
-            right_on=["PeptideSequence"],
-        )
-        merged.rename(columns={"Protein": "BestProtein"}, inplace=True)
+    # @write_df_excel
+    # def query_7(self, table_4: pd.DataFrame) -> pd.DataFrame: 
+    #     '''
+    #     This function is used to get the best protein associated with the peptide sequence.
+    #     '''
+    #     BestIndexedProtein_df = self.get_BestIndexedProtein(table_4)
+    #     merged = BestIndexedProtein_df.merge(
+    #         table_4,
+    #         how="inner",
+    #         # left_on=["PeptideSequence", "MinIndexValue"],
+    #         # right_on=["PeptideSequence", "Index"],
+    #         left_on=["PeptideSequence"],
+    #         right_on=["PeptideSequence"],
+    #     )
+    #     merged.rename(columns={"Protein": "BestProtein"}, inplace=True)
 
-        return merged[["PeptideSequence", "BestProtein"]].drop_duplicates()
+    #     return merged[["PeptideSequence", "BestProtein"]].drop_duplicates()
 
     @write_df_excel
     def get_best_protein_associated_with_peptide(self, table_4: pd.DataFrame) -> pd.DataFrame:
         # Take Union of 3 dataframes!
-        table_5 = self.query_5(table_4) # NonDegenerate_razer_protein_list
-        table_int = self.query_5_6_7(table_4)
-        table_6 = self.query_6(table_4)
-        table_7 = self.query_7(table_4) 
-        return pd.concat([table_5, table_6, table_7])
+        # table_5 = self.query_5(table_4)
+        # table_6 = self.query_6(table_4)
+        # table_7 = self.query_7(table_4) 
+        # return pd.concat([table_5, table_6, table_7])
+        return 
 
     @write_df_excel
     def parse_MSGFjobs_MASIC_resultant(self) -> pd.DataFrame:
@@ -350,8 +360,9 @@ class DataOutputtable:
         table_2 = self.query_2()
         table_3 = self.query_3()
         table_4 = self.query_4(table_1, table_2, table_3)
-        table_5_6_7_unioned = self.get_best_protein_associated_with_peptide(table_4)
-        return table_5_6_7_unioned
+        # table_5_6_7_unioned = self.get_best_protein_associated_with_peptide(table_4)
+        peptide_to_razor_protein_df = self.get_razor_protein_associated_with_peptide(table_4)
+        return peptide_to_razor_protein_df
 
     @write_df_excel
     def query_0(self) -> pd.DataFrame:
@@ -620,7 +631,7 @@ class DataOutputtable:
                     "sum(MASICAbundance)",
                 ]
             ]
-            .drop_duplicates()
+            .drop_duplicates() # TODO check if this needs to be removed, probably does
             .sort_values(by=["DatasetName"])
         )
 
@@ -647,7 +658,7 @@ class DataOutputtable:
                     "SummedPeptideMASICAbundances",
                 ]
             ]
-            .drop_duplicates()
+            .drop_duplicates() # TODO check if this needs to be removed, probably does
             .sort_values(by=["BestProtein"])
         )
 
@@ -667,7 +678,7 @@ class DataOutputtable:
 
         return (
             non_decoy_filtered_df[["BestProtein", "Protein"]]
-            .drop_duplicates(subset=["BestProtein", "Protein"])
+            .drop_duplicates(subset=["BestProtein", "Protein"]) # TODO check if this needs to be removed, probably does
             .sort_values(by=["BestProtein"])
         )
 
@@ -816,11 +827,11 @@ class DataOutputtable:
     # @write_df_excel
     # def query_20(self) -> pd.DataFrame:
 
-    #     total_protein_count = pd.DataFrame(
-    #         {"total_protein_count": self.fasta_df.Protein.nunique()}, index=[0]
+    #     total_proteins_per_peptide = pd.DataFrame(
+    #         {"total_proteins_per_peptide": self.fasta_df.Protein.nunique()}, index=[0]
     #     )
 
-    #     return total_protein_count
+    #     return total_proteins_per_peptide
 
     @write_df_excel
     def query_21(self) -> pd.DataFrame:
@@ -866,17 +877,17 @@ class DataOutputtable:
         unique_peptide_seq_count = (
             Peptide_Report_df.PeptideSequence.drop_duplicates().count()
         )
-        BestProtein_count = Peptide_Report_df.BestProtein.drop_duplicates().count()
-        mean_peptide_count = (unique_peptide_seq_count / BestProtein_count)
+        Bestproteins_per_peptide = Peptide_Report_df.BestProtein.drop_duplicates().count()
+        mean_peptide_count = (unique_peptide_seq_count / Bestproteins_per_peptide)
 
         qc_metrics = pd.DataFrame(
             {
                 "PSM_count": self.query_21().PSM_Count,
                 "PSM_identification_rate": self.query_23().PSM_identification_rate,
                 "unique_peptide_seq_count": unique_peptide_seq_count,
-                "BestProtein_count": BestProtein_count,
+                "Bestproteins_per_peptide": Bestproteins_per_peptide,
                 "mean_peptide_count": mean_peptide_count,
-                # "total_protein_count": self.query_20().total_protein_count
+                # "total_proteins_per_peptide": self.query_20().total_proteins_per_peptide
             },
             index=[0],
         )
@@ -974,18 +985,18 @@ if __name__ == "__main__":
         is_metagenome_free_analysis
     )
 
-    data_obj.parse_MSGFjobs_MASIC_resultant()
+    # data_obj.parse_MSGFjobs_MASIC_resultant()
 
-    # (
-    #     peptide_report,
-    #     protein_report,
-    #     qc_metrics_report,
-    # ) = data_obj.gen_reports()
+    (
+        peptide_report,
+        protein_report,
+        qc_metrics_report,
+    ) = data_obj.gen_reports()
 
     # write dfs to file.
-    # peptide_report.to_csv(f"{dataset_id}_{faa_id}_Peptide_Report.tsv", sep="\t", index=False)
-    # protein_report.to_csv(f"{dataset_id}_{faa_id}_Protein_Report.tsv", sep="\t", index=False)
-    # qc_metrics_report.to_csv( f"{dataset_id}_{faa_id}_QC_metrics.tsv", sep="\t", index=False)
+    peptide_report.to_csv(f"{dataset_id}_{faa_id}_Peptide_Report.tsv", sep="\t", index=False)
+    protein_report.to_csv(f"{dataset_id}_{faa_id}_Protein_Report.tsv", sep="\t", index=False)
+    qc_metrics_report.to_csv( f"{dataset_id}_{faa_id}_QC_metrics.tsv", sep="\t", index=False)
     
     # flush and close excel writer
     data_obj.writer.close()
