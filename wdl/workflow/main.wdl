@@ -6,8 +6,7 @@ import "metadata_coll.wdl" as collect_metadata
 import "kaiko.wdl" as kaiko
 
 workflow metapro {
-    Int fasta_split_on_size_mb = 1000
-    Int fasta_split_count = 22
+    Int fasta_split_on_size_mb = 150
     String git_url = "https://github.com/microbiomedata/metaPro/releases/tag/v1.2.1"
     String version = "v1.2.1"
 
@@ -50,7 +49,6 @@ workflow metapro {
                 MSGFPLUS_PARAM_FILENAME = MSGFPLUS_PARAM_FILE_LOC,
                 CONTAMINANT_FILENAME    = CONTAMINANT_FILE_LOC,
                 FASTA_SPLIT_ON_SIZE_MB  = fasta_split_on_size_mb,
-                FASTA_SPLIT_COUNT       = fasta_split_count,
                 dataset_id              = myobj['dataset_id'],
                 faa_file_id             = myobj['faa_file_id']
         }

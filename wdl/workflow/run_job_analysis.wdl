@@ -146,12 +146,12 @@ task masicresultmerge {
 task fastaFileSplitter {
     input{
         File    fasta_file_loc
-        Int     split_count
+        Int     split_size
     }
     command {
         mono /app/FastaFileSplitter/FastaFileSplitter.exe \
             /I:~{fasta_file_loc} \
-            /N:~{split_count} \
+            /MB:~{split_size} \
             /O:~{'.'}
     }
     output {
@@ -218,7 +218,6 @@ workflow job_analysis{
         File   MSGFPLUS_PARAM_FILENAME
         File   CONTAMINANT_FILENAME
         Int    FASTA_SPLIT_ON_SIZE_MB
-        Int    FASTA_SPLIT_COUNT
         String dataset_id
         String faa_file_id
     }
@@ -243,7 +242,7 @@ workflow job_analysis{
         call fastaFileSplitter {
             input:
                 fasta_file_loc  = faa_file_loc,
-                split_count  = FASTA_SPLIT_COUNT
+                split_size  = FASTA_SPLIT_ON_SIZE_MB
         }
         scatter(split_fasta_file in fastaFileSplitter.outfiles)
         {
