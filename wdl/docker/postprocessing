@@ -20,7 +20,8 @@ RUN pip install --upgrade pip
 RUN export LDFLAGS="-L/usr/local/opt/openssl/lib"
 
 RUN pip install pandas
-# swagger-UI is optional
+
+# openpyxl needed for pandas to_excel method
 RUN pip install six pandas openpyxl gffpandas
 
 # copy project

@@ -691,15 +691,15 @@ class DataOutputtable:
             .sort_values(by=["DatasetName"])
         )
 
-    # TODO : query_20
-    # @write_df_excel
-    # def query_20(self) -> pd.DataFrame:
 
-    #     total_proteins_per_peptide = pd.DataFrame(
-    #         {"total_proteins_per_peptide": self.fasta_df.Protein.nunique()}, index=[0]
-    #     )
+    @write_df_excel
+    def query_20(self) -> pd.DataFrame:
 
-    #     return total_proteins_per_peptide
+        total_proteins_per_peptide = pd.DataFrame(
+            {"total_proteins_per_peptide": self.query_0()["Protein"].nunique()}, index=[0]
+        )
+
+        return total_proteins_per_peptide
 
     @write_df_excel
     def query_21(self) -> pd.DataFrame:
@@ -755,7 +755,7 @@ class DataOutputtable:
                 "unique_peptide_seq_count": unique_peptide_seq_count,
                 "Bestproteins_per_peptide": Bestproteins_per_peptide,
                 "mean_peptide_count": mean_peptide_count,
-                # "total_proteins_per_peptide": self.query_20().total_proteins_per_peptide
+                "total_proteins_per_peptide": self.query_20().total_proteins_per_peptide
             },
             index=[0],
         )
