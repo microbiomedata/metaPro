@@ -696,7 +696,7 @@ class DataOutputtable:
     def query_20(self) -> pd.DataFrame:
 
         total_proteins_per_peptide = pd.DataFrame(
-            {"total_proteins_per_peptide": self.query_0()["Protein"].nunique()}, index=[0]
+            {"total_protein_count": self.query_0()["Protein"].nunique()}, index=[0]
         )
 
         return total_proteins_per_peptide
@@ -745,17 +745,17 @@ class DataOutputtable:
         unique_peptide_seq_count = (
             Peptide_Report_df.PeptideSequence.drop_duplicates().count()
         )
-        Bestproteins_per_peptide = Peptide_Report_df.BestProtein.drop_duplicates().count()
-        mean_peptide_count = (unique_peptide_seq_count / Bestproteins_per_peptide)
+        BestProtein_count = Peptide_Report_df.BestProtein.drop_duplicates().count()
+        mean_peptide_count = (unique_peptide_seq_count / BestProtein_count)
 
         qc_metrics = pd.DataFrame(
             {
                 "PSM_count": self.query_21().PSM_Count,
                 "PSM_identification_rate": self.query_23().PSM_identification_rate,
                 "unique_peptide_seq_count": unique_peptide_seq_count,
-                "Bestproteins_per_peptide": Bestproteins_per_peptide,
+                "BestProtein_count": BestProtein_count,
                 "mean_peptide_count": mean_peptide_count,
-                "total_proteins_per_peptide": self.query_20().total_proteins_per_peptide
+                "total_protein_count": self.query_20().total_protein_count
             },
             index=[0],
         )
