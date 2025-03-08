@@ -220,7 +220,7 @@ class DataOutputtable:
         Degenerate_peptides_with_max_nonunique_peptide_count_df = max_peptide_per_protein_count[["PeptideSequence", "Protein"]]
 
         result = pd.concat([non_degenerate_razor_protein_df, Degenerate_peptides_with_only_unique_protein, Degenerate_peptides_with_max_nonunique_peptide_count_df])
-        result = result.rename(columns={"Protein": "BestProtein"})
+        result = result.rename(columns={"Protein": "RazorProtein"})
         return result
 
     @write_df_excel
@@ -268,7 +268,7 @@ class DataOutputtable:
     @write_df_excel
     def query_8(self) -> pd.DataFrame:
         # TODO:remove all tables except table_5_6_7_unioned
-        # 1. get best_protein_associated_with_peptide
+        # 1. get razor_protein_associated_with_peptide
         #         table_1,table_2,table_3,table_4,
         table_5_6_7_unioned = self.parse_MSGFjobs_MASIC_resultant()
         # 2. get annotations
@@ -277,12 +277,12 @@ class DataOutputtable:
         merged = table_5_6_7_unioned.merge(
             AnnotationSplitout_df,
             how="left",
-            left_on=["BestProtein"],
+            left_on=["RazorProtein"],
             right_on=["Protein"],
         )
         col_of_interest = [
             "PeptideSequence",
-            "BestProtein",
+            "RazorProtein",
             "Product",
             "ec_number",
             "pfam",
@@ -291,10 +291,10 @@ class DataOutputtable:
         ]
 
         cols_to_rename = {"ec_number": "EC_Number", "ko": "KO", "cog": "COG"}
-        PeptideBestProteinAnnotated = merged[col_of_interest]
-        PeptideBestProteinAnnotated.rename(columns=cols_to_rename, inplace=True)
+        PeptideRazorProteinAnnotated = merged[col_of_interest]
+        PeptideRazorProteinAnnotated.rename(columns=cols_to_rename, inplace=True)
 
-        return PeptideBestProteinAnnotated
+        return PeptideRazorProteinAnnotated
 
     @write_df_excel
     def get_FwdPeptideSequences(self) -> pd.DataFrame:
@@ -454,13 +454,13 @@ class DataOutputtable:
             right_on=["PeptideSequence"],
         )
 
-        PeptideBestProteinAnnotated_df = self.query_8()
+        PeptideRazorProteinAnnotated_df = self.query_8()
         # saved for multiple call.
-        self.query_8_result = PeptideBestProteinAnnotated_df.copy()
+        self.query_8_result = PeptideRazorProteinAnnotated_df.copy()
 
         # left outer join 'PeptideSequence'
         merged_2 = merged_1.merge(
-            PeptideBestProteinAnnotated_df, how="left", on=["PeptideSequence"]
+            PeptideRazorProteinAnnotated_df, how="left", on=["PeptideSequence"]
         )
 
         PeptideAbundanceInfo_df = self.query_12()
@@ -485,7 +485,7 @@ class DataOutputtable:
                 [
                     "DatasetName",
                     "PeptideSequence",
-                    "BestProtein",
+                    "RazorProtein",
                     "Product",
                     "EC_Number",
                     "pfam",
@@ -507,36 +507,36 @@ class DataOutputtable:
     def query_14(self) -> pd.DataFrame:
         Peptide_Report = self.query_13()
 
-        Peptide_Report["UniquePeptideCount"] = Peptide_Report.groupby(["BestProtein"])[
+        Peptide_Report["UniquePeptideCount"] = Peptide_Report.groupby(["RazorProtein"])[
             "PeptideSequence"
         ].transform("count")
-        Peptide_Report["SummedSpectraCounts"] = Peptide_Report.groupby(["BestProtein"])[
+        Peptide_Report["SummedSpectraCounts"] = Peptide_Report.groupby(["RazorProtein"])[
             "SpectralCount"
         ].transform("sum")
         Peptide_Report["SummedPeptideMASICAbundances"] = Peptide_Report.groupby(
-            ["BestProtein"]
+            ["RazorProtein"]
         )["sum(MASICAbundance)"].transform("sum")
 
         return (
             Peptide_Report[
                 [
-                    "BestProtein",
+                    "RazorProtein",
                     "UniquePeptideCount",
                     "SummedSpectraCounts",
                     "SummedPeptideMASICAbundances",
                 ]
             ]
             .drop_duplicates() # TODO check if this needs to be removed, probably does
-            .sort_values(by=["BestProtein"])
+            .sort_values(by=["RazorProtein"])
         )
 
     @write_df_excel
     def query_15(self) -> pd.DataFrame:
 
-        PeptideBestProteinAnnotated_df = self.query_8_result  # self.query_8()
+        PeptideRazorProteinAnnotated_df = self.query_8_result  # self.query_8()
         temp_df = self.resultant_df.copy()
         temp_df["PeptideSequence"] = temp_df["Peptide"].str.extract(r"\.(.*)\.")
-        merged = PeptideBestProteinAnnotated_df.merge(
+        merged = PeptideRazorProteinAnnotated_df.merge(
             temp_df,
             how="inner",
             left_on=["PeptideSequence"],
@@ -545,18 +545,18 @@ class DataOutputtable:
         non_decoy_filtered_df = merged[~merged["Protein"].str.startswith("XXX")]
 
         return (
-            non_decoy_filtered_df[["BestProtein", "Protein"]]
-            .drop_duplicates(subset=["BestProtein", "Protein"]) # TODO check if this needs to be removed, probably does
-            .sort_values(by=["BestProtein"])
+            non_decoy_filtered_df[["RazorProtein", "Protein"]]
+            .drop_duplicates(subset=["RazorProtein", "Protein"]) # TODO check if this needs to be removed, probably does
+            .sort_values(by=["RazorProtein"])
         )
 
     @write_df_excel
     def query_16(self) -> pd.DataFrame:
-        BestProteinGeneLists = self.query_15()  # .drop_duplicates(subset=['Protein'])
+        RazorProteinGeneLists = self.query_15()  # .drop_duplicates(subset=['Protein'])
 
         # prepare protein list
-        BestProteinGeneLists["FullGeneList"] = BestProteinGeneLists.groupby(
-            ["BestProtein"]
+        RazorProteinGeneLists["FullGeneList"] = RazorProteinGeneLists.groupby(
+            ["RazorProtein"]
         )["Protein"].transform(lambda x: ", ".join(x))
         # sort them!
         get_list_func = lambda x: x.split(", ") if len(x.split(", ")) > 1 else x
@@ -565,28 +565,28 @@ class DataOutputtable:
             if isinstance(get_list_func(x), list)
             else get_list_func(x)
         )
-        BestProteinGeneLists["FullGeneList"] = BestProteinGeneLists[
+        RazorProteinGeneLists["FullGeneList"] = RazorProteinGeneLists[
             "FullGeneList"
         ].apply(f)
 
-        BestProteinGeneLists["GeneCount"] = BestProteinGeneLists.groupby(
-            ["BestProtein"]
+        RazorProteinGeneLists["GeneCount"] = RazorProteinGeneLists.groupby(
+            ["RazorProtein"]
         )["Protein"].transform("count")
-        BestProteinGeneLists.sort_values(["FullGeneList"], ascending=True, inplace=True)
+        RazorProteinGeneLists.sort_values(["FullGeneList"], ascending=True, inplace=True)
 
         return (
-            BestProteinGeneLists[["BestProtein", "GeneCount", "FullGeneList"]]
+            RazorProteinGeneLists[["RazorProtein", "GeneCount", "FullGeneList"]]
             .drop_duplicates()
-            .sort_values(by=["BestProtein"])
+            .sort_values(by=["RazorProtein"])
         )
 
     def mod_build_annotation_str(
-        self, BestProtein, Protein, Product, pfam, ko, ec_number, cog
+        self, RazorProtein, Protein, Product, pfam, ko, ec_number, cog
     ):
 
         if Product != Product:  # pd.isna(Product):
             # handle <class 'float'> nan
-            return BestProtein
+            return RazorProtein
         else:
 
             annotation_str = f"gene_name={Protein}" + f";product={Product}"
@@ -605,73 +605,73 @@ class DataOutputtable:
 
         AnnotationSplitout_df = self.query_0()
 
-        table_15 = self.query_15()  # have bestProtein
-        ProteinBestProteinsAnnotated = table_15.merge(
+        table_15 = self.query_15()  # have RazorProtein
+        ProteinRazorProteinsAnnotated = table_15.merge(
             AnnotationSplitout_df, how="left", left_on=["Protein"], right_on=["Protein"]
         )
-        #         display(ProteinBestProteinsAnnotated)
-        ProteinBestProteinsAnnotated["annotation"] = ProteinBestProteinsAnnotated.apply(
+        #         display(ProteinRazorProteinsAnnotated)
+        ProteinRazorProteinsAnnotated["annotation"] = ProteinRazorProteinsAnnotated.apply(
             lambda x: self.mod_build_annotation_str(
-                x.BestProtein, x.Protein, x.Product, x.pfam, x.ko, x.ec_number, x.cog
+                x.RazorProtein, x.Protein, x.Product, x.pfam, x.ko, x.ec_number, x.cog
             ),
             axis=1,
         )
 
         return (
-            ProteinBestProteinsAnnotated[["BestProtein", "Protein", "annotation"]]
+            ProteinRazorProteinsAnnotated[["RazorProtein", "Protein", "annotation"]]
             .drop_duplicates()
-            .sort_values(by=["BestProtein"])
+            .sort_values(by=["RazorProtein"])
         )
 
     @write_df_excel
     def query_18(self) -> pd.DataFrame:
 
-        BestProteinAnnotationLists = self.query_17()
+        RazorProteinAnnotationLists = self.query_17()
 
-        BestProteinAnnotationLists[
+        RazorProteinAnnotationLists[
             "AnnotationList"
-        ] = BestProteinAnnotationLists.groupby(["BestProtein"])["annotation"].transform(
+        ] = RazorProteinAnnotationLists.groupby(["RazorProtein"])["annotation"].transform(
             lambda x: " | ".join(x)
         )
 
         return (
-            BestProteinAnnotationLists[["BestProtein", "AnnotationList"]]
+            RazorProteinAnnotationLists[["RazorProtein", "AnnotationList"]]
             .drop_duplicates()
-            .sort_values(by=["BestProtein"])
+            .sort_values(by=["RazorProtein"])
         )
 
     @write_df_excel
     def query_19(self) -> pd.DataFrame:
         Peptide_Report_df = self.peptide_report.copy()[
-            ["DatasetName", "BestProtein", "Product", "EC_Number", "pfam", "KO", "COG"]
+            ["DatasetName", "RazorProtein", "Product", "EC_Number", "pfam", "KO", "COG"]
         ]
-        BestProteinGeneLists = self.query_16()
+        RazorProteinGeneLists = self.query_16()
         merged_1 = Peptide_Report_df.merge(
-            BestProteinGeneLists,
+            RazorProteinGeneLists,
             how="inner",
-            left_on=["BestProtein"],
-            right_on=["BestProtein"],
+            left_on=["RazorProtein"],
+            right_on=["RazorProtein"],
         )
 
-        BestProteinAnnotationLists = self.query_18()
+        RazorProteinAnnotationLists = self.query_18()
         merged_2 = merged_1.merge(
-            BestProteinAnnotationLists,
+            RazorProteinAnnotationLists,
             how="inner",
-            left_on=["BestProtein"],
-            right_on=["BestProtein"],
+            left_on=["RazorProtein"],
+            right_on=["RazorProtein"],
         )
 
         PeptideAbundanceInfo_df = self.query_14()
         merged_3 = merged_2.merge(
             PeptideAbundanceInfo_df,
             how="inner",
-            left_on=["BestProtein"],
-            right_on=["BestProtein"],
+            left_on=["RazorProtein"],
+            right_on=["RazorProtein"],
         )
 
         distinct_colm = [
             "DatasetName",
-            "BestProtein",
+            "RazorProtein",
             "Product",
             "EC_Number",
             "pfam",
@@ -745,15 +745,15 @@ class DataOutputtable:
         unique_peptide_seq_count = (
             Peptide_Report_df.PeptideSequence.drop_duplicates().count()
         )
-        BestProtein_count = Peptide_Report_df.BestProtein.drop_duplicates().count()
-        mean_peptide_count = (unique_peptide_seq_count / BestProtein_count)
+        RazorProtein_count = Peptide_Report_df.RazorProtein.drop_duplicates().count()
+        mean_peptide_count = (unique_peptide_seq_count / RazorProtein_count)
 
         qc_metrics = pd.DataFrame(
             {
                 "PSM_count": self.query_21().PSM_Count,
                 "PSM_identification_rate": self.query_23().PSM_identification_rate,
                 "unique_peptide_seq_count": unique_peptide_seq_count,
-                "BestProtein_count": BestProtein_count,
+                "RazorProtein_count": RazorProtein_count,
                 "mean_peptide_count": mean_peptide_count,
                 "total_protein_count": self.query_20().total_protein_count
             },
@@ -792,7 +792,7 @@ class DataOutputtable:
         # rename to adhere nmdc.schema.json
         cols_to_rename = {
             "PeptideSequence": "peptide_sequence",
-            "BestProtein": "best_protein",
+            "RazorProtein": "razor_protein",
             "FullGeneList": "all_proteins",
             "min(QValue)": "min_q_value",
             "SpectralCount": "peptide_spectral_count",
@@ -802,7 +802,7 @@ class DataOutputtable:
 
         # rename to adhere nmdc.schema.json
         cols_to_rename = {
-            "BestProtein": "best_protein",
+            "RazorProtein": "razor_protein",
             "FullGeneList": "all_proteins",
             "sum(MASICAbundance)": "peptide_sum_masic_abundance",
         }
