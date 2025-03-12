@@ -252,8 +252,8 @@ class GenMetadata:
         analysis_type = "nmdc:MetaproteomicsAnalysis"
 
         if analysis_id:
-            partial_id, version = analysis_id.rsplit(".", 1)
-            incremented_version = int(version) + 1
+            partial_id, wf_version = analysis_id.rsplit(".", 1)
+            incremented_version = int(wf_version) + 1
             activity_id = partial_id + "." + str(incremented_version)
         else:
             activity_id = id_source.get_ids(analysis_type, 1)[0]
