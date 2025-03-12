@@ -186,7 +186,7 @@ task msgfplusresultsmerge {
         File    outfile_fasta = output_fasta_file_name 
     }
     runtime {
-        docker: 'microbiomedata/metapro-mzidmerger:v1.3.0'
+        docker: 'microbiomedata/metapro-mzidmerger:v1.4.26'
     }
 }
 task concatcontaminate {
