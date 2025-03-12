@@ -271,6 +271,8 @@ class GenMetadata:
 
 
 def underscore_to_colon(curie: str):
+    if curie is None:
+        return None
     return curie.replace('_', ':')
 
 
@@ -319,7 +321,7 @@ if __name__ == "__main__":
                 contam_id=underscore_to_colon(contam_id),
                 version=version,
                 in_silico_generated=in_silico_generated,
-                analysis_id=mapping.get("analysis_id", None))
+                analysis_id=underscore_to_colon(mapping.get("analysis_id", None)))
 
             #TODO this class should be immutable after instantiation, remove setting keys
             meta_file.set_keys(
