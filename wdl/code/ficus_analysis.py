@@ -51,9 +51,9 @@ class DataOutputtable:
         self.query_8_result = None
         self.peptide_report = None
 
-        # building log excel files:
-        gff_parent_path = Path(gff_file).parent
-        self.writer = pd.ExcelWriter(gff_parent_path / f"query_results_{timestamp_as_string()}.xlsx")
+        # # building log excel files:
+        # gff_parent_path = Path(gff_file).parent
+        # self.writer = pd.ExcelWriter(gff_parent_path / f"query_results_{timestamp_as_string()}.xlsx")
         
     def write_df_excel(func):
         '''
@@ -866,5 +866,5 @@ if __name__ == "__main__":
     protein_report.to_csv(f"{dataset_id}_{faa_id}_Protein_Report.tsv", sep="\t", index=False)
     qc_metrics_report.to_csv( f"{dataset_id}_{faa_id}_QC_metrics.tsv", sep="\t", index=False)
     
-    # flush and close excel writer
-    data_obj.writer.close()
+    # # flush and close excel writer
+    # data_obj.writer.close()
