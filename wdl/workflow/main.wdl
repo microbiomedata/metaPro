@@ -79,7 +79,8 @@ workflow metapro {
             "start_time": job_analysis.start_time,
             "end_time": job_analysis.end_time,
             "fasta_id": myobj['faa_file_id'],
-            "gff_id": myobj['gff_file_id']
+            "gff_id": myobj['gff_file_id'],
+            "analysis_id": myobj['analysis_id']
         }
     }
 

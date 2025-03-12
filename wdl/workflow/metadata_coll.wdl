@@ -14,6 +14,7 @@ struct Result {
     String end_time
     String fasta_id
     String gff_id
+    String analysis_id
 }
 
 task collect{
