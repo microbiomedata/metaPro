@@ -7,8 +7,8 @@ import "kaiko.wdl" as kaiko
 
 workflow metapro {
     Int fasta_split_on_size_mb = 150
-    String git_url = "https://github.com/microbiomedata/metaPro/releases/tag/v1.2.1"
-    String version = "v1.2.1"
+    String git_url = "https://github.com/microbiomedata/metaPro/releases/tag/v2.0.0"
+    String version = "v2.0.0"
 
     input{
         Array[Object] mapper_list
