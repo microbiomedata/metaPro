@@ -19,8 +19,7 @@ task ficus_analysis {
                 --file=${first_hits_file}   \
                 --fdr=${q_value_threshold}  \
                 --spece=1.0e-10 \
-                --speceinc=1.0e-13  \
-                --iter
+                --speceinc=1.0e-13 
             threshold=$(cat out.json | jq ".SpecEValue")
         else
             threshold=${q_value_threshold}
