@@ -244,13 +244,20 @@ class GenMetadata:
                   msgf_param_id: str,
                   contam_id: str,
                   version: str,
-                  in_silico_generated: bool) -> 'GenMetadata':
+                  in_silico_generated: bool, 
+                  analysis_id: str = None) -> 'GenMetadata':
         '''
         Create a GenMetadata object with newly minted activity ID with OOP in mind.
         '''
         analysis_type = "nmdc:MetaproteomicsAnalysis"
-        activity_id = id_source.get_ids(analysis_type, 1)[0]
-        activity_id = activity_id + "." + str(WORKFLOW_METADATA_VERSION)
+
+        if analysis_id:
+            partial_id, version = analysis_id.rsplit(".", 1)
+            incremented_version = int(version) + 1
+            activity_id = partial_id + "." + str(incremented_version)
+        else:
+            activity_id = id_source.get_ids(analysis_type, 1)[0]
+            activity_id = activity_id + "." + str(WORKFLOW_METADATA_VERSION)
 
         return GenMetadata(analysis_type, execution_resource, git_url, results_url, id_source, activity_id,
                            contaminate_file,
@@ -311,7 +318,8 @@ if __name__ == "__main__":
                 msgf_param_id=underscore_to_colon(msgf_param_id),
                 contam_id=underscore_to_colon(contam_id),
                 version=version,
-                in_silico_generated=in_silico_generated)
+                in_silico_generated=in_silico_generated,
+                analysis_id=mapping.get("analysis_id", None))
 
             #TODO this class should be immutable after instantiation, remove setting keys
             meta_file.set_keys(
