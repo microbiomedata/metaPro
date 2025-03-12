@@ -63,7 +63,7 @@ class DataOutputtable:
         @functools.wraps(func)
         def capture(self, *args, **kwargs):
             result_df: pd.DataFrame = func(self, *args, **kwargs)   
-            result_df.iloc[:10000].to_excel(self.writer, sheet_name=func.__name__, index=False)
+            # result_df.iloc[:10000].to_excel(self.writer, sheet_name=func.__name__, index=False)
             return result_df
         return capture
 
