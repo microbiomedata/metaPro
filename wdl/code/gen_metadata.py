@@ -349,16 +349,10 @@ if __name__ == "__main__":
 
         # 2. dump collections in json files
         schema = get_nmdc_jsonschema_string()
-        activity_file = f"{study}_MetaProteomicAnalysis_activity.json"
-        data_obj_file = f"{study}_analysis_data_objects.json"
 
-        activity_db = Database()
-        activity_db.metaproteomics_analysis_activity_set = metaproteomics_analysis_activity_arr
+        db = Database()
+        db.workflow_execution_set = metaproteomics_analysis_activity_arr
+        db.data_object_set = data_objects_arr
 
-        data_obj_db = Database()
-        data_obj_db.data_object_set = data_objects_arr
-
-        # json_dumper.dump(activity_db, contexts=schema, inject_type=False, to_file=activity_file)
-        # json_dumper.dump(data_obj_db, contexts=schema, inject_type=False, to_file=data_obj_file)        
-        json_dumper.dump(activity_db, inject_type=False, to_file=activity_file)
-        json_dumper.dump(data_obj_db, inject_type=False, to_file=data_obj_file)
+        metadata_file = f"{study}_nmdc_metadata.json"     
+        json_dumper.dump(db, inject_type=False, to_file=metadata_file)
