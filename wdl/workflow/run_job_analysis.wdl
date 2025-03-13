@@ -193,7 +193,7 @@ task concatcontaminate {
     input{
         File faa_file
         File contaminate_file
-        String output_filename = sub(input_file, "\\.[^.]+$", ".faa") # Force .faa extension
+        String output_filename = basename(sub(faa_file, "\\.[^.]+$", ".faa")) # Force .faa extension
     }
     command<<<
         date -u --iso-8601=seconds > start.txt
