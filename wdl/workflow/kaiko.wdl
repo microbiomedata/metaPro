@@ -27,6 +27,7 @@ task kaiko {
         String kaiko_volume_dir
     }
     command <<<
+        export TMPDIR=/data
         execution_dir=$(pwd)
         mkdir -p /data/input
         mkdir /data/output
