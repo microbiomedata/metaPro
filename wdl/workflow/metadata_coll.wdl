@@ -50,8 +50,7 @@ task collect{
             ~{metagenome_free}
     }
     output {
-        File   activity    = "${study}_MetaProteomicAnalysis_activity.json"
-        File   data_object = "${study}_analysis_data_objects.json"
+        File   metadata    = "${study}_nmdc_metadata.json"
     }
     runtime {
         docker: 'microbiomedata/metapro-metadatacollection:2.0.0'
@@ -90,7 +89,6 @@ workflow gen_metadata{
             metagenome_free = metagenome_free
     }
     output {
-        File   activity    = collect.activity
-        File   data_object = collect.data_object
+        File   metadata    = collect.metadata
      }
 }
