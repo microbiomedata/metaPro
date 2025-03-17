@@ -41,8 +41,8 @@ task kaiko {
         cd $execution_dir
     >>>
     output {
-        File outfile_fasta = glob("*.fasta")[0]
-        File outfile_gff = glob("*.gff")[0]
+        File outfile_fasta = glob("*kaiko*.fasta")[0]
+        File outfile_gff = glob("*kaiko*.gff")[0]
     }
     runtime {
         docker: 'camiloposso15/kaiko_2.0-py3.10:latest'
