@@ -27,7 +27,7 @@ class DataOutputtable:
         self,
         gff_file,
         resultant_file,
-        fasta_txt_file, # this can go away
+        fasta_txt_file,
         threshold,
         dataset_id,     # this can go away
         faa_id,         # this can go away
@@ -43,6 +43,7 @@ class DataOutputtable:
         self.gff_file = gff_file
         self.annotation = gffpd.read_gff3(gff_file)
         self.dataset_name = dataset_name
+        self.fasta_txt_file_df = pd.read_csv(fasta_txt_file, sep="\t", float_precision="round_trip")
         self.resultant_df = pd.read_csv(resultant_file, sep="\t", float_precision="round_trip")
         self.did_split_analysis = did_split_analysis
         self.is_metagenome_free_analysis = is_metagenome_free_analysis
@@ -241,15 +242,18 @@ class DataOutputtable:
         """
 
         if self.is_metagenome_free_analysis:
-            df = pd.DataFrame()
-            col_of_interest = ["ID", "product", "kegg_annotations"]
-            df["parsed_attributes"] = self.annotation.df["attributes"].apply(self.parse_attributes)
-            attributeTag_df = pd.json_normalize(df["parsed_attributes"]).fillna("None")[col_of_interest]
-            attributeTag_df["pfam"] = None
-            attributeTag_df["ec_number"] = None
-            attributeTag_df["cog"] = None
-            cols_to_rename = {"ID": "Protein", "product": "Product", "kegg_annotations": "ko"}
+            tmp_fasta_df = self.fasta_txt_file_df[['ProteinName']].copy()
+            tmp_fasta_df.rename(columns={"ProteinName": "Protein"}, inplace=True)
+            tmp_fasta_df['protein_simple'] = tmp_fasta_df['Protein'].str.split('|').str[1]
+            protein_map = tmp_fasta_df.set_index('protein_simple')['Protein'].to_dict()
+
+            col_of_interest = ["ID", "product", "ko", "ec_number", "cog", "pfam"]
+            parsed_attributes = self.annotation.df["attributes"].apply(self.parse_attributes)
+            attributeTag_df = pd.json_normalize(parsed_attributes).fillna("None")[col_of_interest]
+            cols_to_rename = {"ID": "Protein", "product": "Product"}
             attributeTag_df.rename(columns=cols_to_rename, inplace=True)
+            attributeTag_df['Protein'] = attributeTag_df['Protein'].map(protein_map)
+            attributeTag_df = attributeTag_df.replace('NA', None)
         else:
             filtered_df = self.annotation.filter_feature_of_type(["CDS"])
             col_of_interest = ["ID", "product", "pfam", "ko", "ec_number", "cog"]
