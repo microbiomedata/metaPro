@@ -151,8 +151,8 @@ class GenMetadata:
         if self.in_silico_generated:
             data_objects.append(
                 self.get_file_data_object(
-                    self.fasta_file,
-                    os.path.basename(self.fasta_file),
+                    self.gff_file,
+                    os.path.basename(self.gff_file),
                     f"In-silico generated functional annotation GFF for {self.activity_id}", 
                     self.activity_id,
                     "Functional Annotation GFF"
