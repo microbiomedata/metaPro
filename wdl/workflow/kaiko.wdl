@@ -25,6 +25,7 @@ task kaiko {
         File mgf_file
         File kaiko_config
         String kaiko_volume_dir
+        String dataset_id
     }
     command <<<
         export TMPDIR=/data
@@ -39,6 +40,11 @@ task kaiko {
         find /data/output/Kaiko_output -name '*.fasta' -exec mv -t $execution_dir {} +
         find /data/output/Kaiko_output -name '*.gff' -exec mv -t $execution_dir {} +
         cd $execution_dir
+        for file in *.fasta *.gff; do
+            if [ -f "$file" ]; then
+                mv "$file" "~{dataset_id}_$file"
+            fi
+        done
     >>>
     output {
         File outfile_fasta = glob("*kaiko*.fasta")[0]
@@ -54,6 +60,7 @@ workflow run {
     input {
         File   raw_file
         File   kaiko_config
+        String dataset_id
     }
 
     call convertToMgf {
@@ -65,7 +72,8 @@ workflow run {
         input:
             mgf_file = convertToMgf.outfile,
             kaiko_config = kaiko_config,
-            kaiko_volume_dir = kaiko_data_location
+            kaiko_volume_dir = kaiko_data_location,
+            dataset_id = dataset_id
     }
 
     output {
