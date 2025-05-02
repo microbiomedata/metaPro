@@ -52,11 +52,6 @@ ARG BUILD_VERSION
 # Labels.
 LABEL org.label-schema.build-date=$BUILD_DATE
 LABEL org.label-schema.name="National Microbiome Data Collaborative: Meta-proteomics workflow"
-LABEL org.label-schema.description="NMDC Meta-proteomics workflow \
-                                    - This image is built on Ubuntu-16.04 and more information about the image and \
-                                      how to run it's container can be found on ["org.label-schema.vcs-url"] \
-                                    - Additionally, documentation[Examples, datasets etc] is at \
-                                      https://nmdc-proteomics-workflow.readthedocs.io/en/latest/"
 LABEL org.label-schema.url="https://microbiomedata.org/"
 LABEL org.label-schema.vcs-url="https://github.com/PNNL-Comp-Mass-Spec/NMDC-Proteomics-Workflow"
 #LABEL org.label-schema.vcs-ref=$VCS_REF
