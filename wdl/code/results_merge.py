@@ -1,5 +1,4 @@
 import click
-import csv
 import pandas as pd
 
 
