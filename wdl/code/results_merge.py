@@ -1,6 +1,21 @@
 import click
+import math
 import pandas as pd
 
+
+def format_sci_conditional(x, exp_threshold=6, precision=6):
+    if isinstance(x, float):
+        if x != 0:
+            exp = math.floor(math.log10(abs(x)))
+            x_rounded = round(x, precision)
+            if abs(exp) >= exp_threshold:
+                return f'{x_rounded:.{precision}e}'
+            else:
+                return f'{x_rounded:.{precision}f}'
+        else:
+            return f'{0:.{precision}f}'
+    else:
+        return x
 
 @click.command()
 @click.option('--sicstats', type=click.Path(exists=True), required=True, help='Path to SICstats file from MASIC.')
@@ -80,6 +95,9 @@ def merge_files(sicstats, syn, output):
     merged_df['PeakWidthMinutes'] = 0
 
     merged_df = merged_df.sort_values(by='ResultID')
+
+    # format numbers
+    merged_expanded_df = merged_df.applymap(lambda x: format_sci_conditional(x))
 
     merged_df.to_csv(output, index=False, sep='\t')
 
