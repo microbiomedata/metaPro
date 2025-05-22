@@ -20,7 +20,7 @@ def format_sci_conditional(x, exp_threshold=6, precision=6):
 @click.command()
 @click.option('--sicstats', type=click.Path(exists=True), required=True, help='Path to SICstats file from MASIC.')
 @click.option('--syn', type=click.Path(exists=True), required=True, help='Path to syn file from MS-GF+.')
-@click.option('--output', type=click.Path(writable=True), required=True, help='Path to write the combined output CSV.')
+@click.option('--output', type=click.Path(writable=True), required=True, help='Filepath to write the combined output CSV.')
 def merge_files(sicstats, syn, output):
     """
     Merges SICstats and syn files side-by-side and writes the combined DataFrame to a TSV output file.
