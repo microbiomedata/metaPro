@@ -101,7 +101,7 @@ services:
       context: ./
       dockerfile: docker/run_analysis/resultsmerge
       args:
-        MASICResultsMerge_VERSION: ${ResultsMerge_VERSION}
+        ResultsMerge_VERSION: ${ResultsMerge_VERSION}
     container_name: resultsmerge
     volumes:
       - shared-data:/app/storage
