@@ -95,14 +95,14 @@ services:
       - .env
     tty: true
 
-  masicresultsmerge:
-    image: $MASIC_MERGE_TAG
+  resultsmerge:
+    image: $RESULTS_MERGE_TAG
     build:
       context: ./
-      dockerfile: docker/run_analysis/masicresultsmerge
+      dockerfile: docker/run_analysis/resultsmerge
       args:
-        MASICResultsMerge_VERSION: ${MASICResultsMerge_VERSION}
-    container_name: masicresultsmerge
+        ResultsMerge_VERSION: ${ResultsMerge_VERSION}
+    container_name: resultsmerge
     volumes:
       - shared-data:/app/storage
       - log-data:/app/log

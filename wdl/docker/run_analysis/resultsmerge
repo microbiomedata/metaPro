@@ -1,0 +1,15 @@
+FROM python:3.11-slim
+
+WORKDIR /app/resultsmerge
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    LC_ALL=C.UTF-8 \
+    LANG=C.UTF-8
+
+RUN pip install --upgrade pip && \
+    pip install pandas click
+
+COPY code/results_merge.py /app/resultsmerge/
+
+CMD ["python3"]

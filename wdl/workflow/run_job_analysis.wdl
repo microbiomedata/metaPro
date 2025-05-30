@@ -125,14 +125,10 @@ task masicresultmerge {
         String faa_file_id
     }
     command {
-        synopsis_file_loc=$(find .. -type f -regex ".*~{dataset_name}_syn.txt")
-        cp $synopsis_file_loc ../execution/
-        sic_stats_file_loc=$(find .. -type f -regex ".*~{dataset_name}_SICstats.txt")
-        cp $sic_stats_file_loc ../execution/
-        mv ~{dataset_name}_syn.txt ~{dataset_id}_~{faa_file_id}_msgfplus_syn.txt
-        mv ~{dataset_name}_SICstats.txt ~{dataset_id}_~{faa_file_id}_SICStats.txt
-        mono /app/MASICResultsMerge/MASICResultsMerger.exe \
-        ~{dataset_id}_~{faa_file_id}_msgfplus_syn.txt
+        python3 /app/resultsmerge/results_merge.py \
+        --sicstats=~{sic_stats_file} \
+        --syn=~{synopsis_file} \
+        --output="$(pwd)/~{dataset_id}_~{faa_file_id}_msgfplus_syn_PlusSICStats.txt"
         date --iso-8601=seconds > stop.txt
     }
     output {
@@ -140,7 +136,7 @@ task masicresultmerge {
         String stop = read_string("stop.txt")
     }
     runtime {
-        docker: 'microbiomedata/metapro-masicresultsmerge:v2.0.7983'
+        docker: 'microbiomedata/metapro-resultsmerge:2.0.0'
     }
 }
 task fastaFileSplitter {
