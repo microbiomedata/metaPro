@@ -53,7 +53,7 @@ task collect{
         File   metadata    = "${study}_nmdc_metadata.json"
     }
     runtime {
-        docker: 'microbiomedata/metapro-metadatacollection:2.0.0'
+        docker: 'microbiomedata/metapro-metadatacollection:2.0.2'
     }
 }
 workflow gen_metadata{

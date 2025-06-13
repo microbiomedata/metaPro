@@ -136,7 +136,7 @@ task masicresultmerge {
         String stop = read_string("stop.txt")
     }
     runtime {
-        docker: 'microbiomedata/metapro-resultsmerge:2.0.0'
+        docker: 'microbiomedata/metapro-resultsmerge:2.0.2'
     }
 }
 task fastaFileSplitter {

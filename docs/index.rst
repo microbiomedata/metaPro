@@ -6,7 +6,7 @@
          site the file is incorporated into. You can learn more about the `github_url` field at:
          https://sphinx-rtd-theme.readthedocs.io/en/stable/configuring.html#confval-github_url
 
-Metaproteomic Workflow (v1.2.1)
+Metaproteomic Workflow (v2.0.2)
 ========================================
 
 .. image:: metap_workflow2024.svg
