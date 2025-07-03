@@ -9,7 +9,7 @@ struct InputObject {
     File raw_file_loc
     File faa_file_loc
     File gff_file_loc
-    String genome_dir
+    String data_generation_id
     String dataset_id
     String faa_file_id
     String gff_file_id
@@ -88,7 +88,7 @@ workflow metapro {
             "faa_file": faa_to_use,
             "txt_faa_file": report_gen.txt_faa_file,
             "gff_file": gff_to_use,
-            "genome_directory": myobj.genome_dir,
+            "data_generation_id": myobj.data_generation_id,
             "dataset_id": myobj.dataset_id,
             "start_time": job_analysis.start_time,
             "end_time": job_analysis.end_time,

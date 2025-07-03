@@ -47,7 +47,7 @@ class GenMetadata:
         self.in_silico_generated = in_silico_generated
 
         self.dataset_id = None
-        self.genome_directory = None
+        self.data_generation_id = None
         self.annotation_file_name = None
         self.resultant_file = None
         self.fasta_file = None
@@ -192,7 +192,7 @@ class GenMetadata:
             git_url=self.git_url,
             version=self.version,
             name=f"Metaproteomics Analysis Activity for {self.activity_id}",
-            was_informed_by=self.genome_directory,
+            was_informed_by=self.data_generation_id,
             type=self.type,
             has_output=has_output_arr,
             has_input=has_input_arr,
@@ -206,7 +206,7 @@ class GenMetadata:
     def set_keys(
         self,
         dataset_id,
-        genome_directory,
+        data_generation_id,
         annotation_file_name,
         resultant_file,
         fasta_file,
@@ -220,7 +220,7 @@ class GenMetadata:
         gff_file
     ):
         self.dataset_id = dataset_id
-        self.genome_directory = genome_directory
+        self.data_generation_id = data_generation_id
         self.annotation_file_name = annotation_file_name
         self.resultant_file = resultant_file
         self.fasta_file = fasta_file
@@ -326,7 +326,7 @@ if __name__ == "__main__":
             #TODO this class should be immutable after instantiation, remove setting keys
             meta_file.set_keys(
                 underscore_to_colon(mapping["dataset_id"]),
-                underscore_to_colon(mapping["genome_directory"]),
+                underscore_to_colon(mapping["data_generation_id"]),
                 os.path.basename(mapping["txt_faa_file"]),
                 mapping["resultant_file"],
                 mapping["faa_file"],
