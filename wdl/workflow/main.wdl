@@ -9,8 +9,7 @@ struct InputObject {
     File raw_file_loc
     File faa_file_loc
     File gff_file_loc
-    String genome_dir
-    String dataset_name
+    String data_generation_id
     String dataset_id
     String faa_file_id
     String gff_file_id
@@ -40,6 +39,8 @@ workflow metapro {
 
     scatter (myobj in mapper_list) {
 
+        String dataset_name = basename(myobj.raw_file_loc, ".raw")
+
         if (METAGENOME_FREE){
             call kaiko.run {
                 input:
@@ -54,7 +55,7 @@ workflow metapro {
 
         call run_analysis.job_analysis {
             input:
-                dataset_name            = myobj.dataset_name,
+                dataset_name            = dataset_name,
                 raw_file_loc            = myobj.raw_file_loc,
                 faa_file_loc            = select_first([faa_to_use]),
                 QVALUE_THRESHOLD        = QVALUE_THRESHOLD,
@@ -73,7 +74,7 @@ workflow metapro {
                 Dataset_id        = myobj.dataset_id,
                 faa_file_id       = myobj.faa_file_id,
                 q_value_threshold = QVALUE_THRESHOLD,
-                dataset_name      = myobj.dataset_name,
+                dataset_name      = dataset_name,
                 first_hits_file   = job_analysis.first_hits_file,
                 did_split         = job_analysis.did_split,
                 metagenome_free   = METAGENOME_FREE
@@ -87,7 +88,7 @@ workflow metapro {
             "faa_file": faa_to_use,
             "txt_faa_file": report_gen.txt_faa_file,
             "gff_file": gff_to_use,
-            "genome_directory": myobj.genome_dir,
+            "data_generation_id": myobj.data_generation_id,
             "dataset_id": myobj.dataset_id,
             "start_time": job_analysis.start_time,
             "end_time": job_analysis.end_time,

@@ -8,7 +8,7 @@ struct Result {
     File faa_file
     File txt_faa_file
     File gff_file
-    String genome_directory
+    String data_generation_id
     String dataset_id
     String start_time
     String end_time

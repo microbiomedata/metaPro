@@ -84,15 +84,14 @@ A JSON file containing the following information:
 
 - ``metapro.mapper_list``: List of datasets to process. Each dataset should contain:
   
-  - ``genome_dir``: Path to genome index directory (optional if running metagenome-free).
-  - ``dataset_name``: Name of dataset.
+  - ``data_generation_id``: ID of data generation record associated with the dataset file.
   - ``raw_file_loc``: Path to the raw file.
   - ``dataset_id``: Unique dataset identifier.
-  - ``faa_file_loc``: Path to translated protein FASTA file (optional if metagenome-free, see below).
-  - ``faa_file_id``: ID of the translated FASTA file (use "kaiko" if metagenome-free).
+  - ``faa_file_loc``: Path to protein FASTA file (optional if metagenome-free, see below).
+  - ``faa_file_id``: ID of the FASTA file (use "kaiko" if metagenome-free).
   - ``gff_file_loc``: Path to GFF annotation file (optional if metagenome-free, see below).
   - ``gff_file_id``: ID of the GFF file (use "kaiko" if metagenome-free).
-  - ``analysis_id``: Optional analysis identifier.
+  - ``analysis_id``: Optional analysis identifier. When left blank, an ID will be generated automatically.
 
 - ``metapro.MASIC_PARAM_FILE_LOC``: Path to MASIC parameter file.
 - ``metapro.MSGFPLUS_PARAM_FILE_LOC``: Path to MS-GF+ parameter file.
@@ -116,8 +115,7 @@ An example input JSON file is shown below when running with a matched metagenome
    {
    "metapro.mapper_list": [
       {
-         "genome_dir": "nmdc_omprc-11-wfzppa38",
-         "dataset_name": "SpruceW_P4_15A_22Jun17_Pippin_17-04-06",
+         "data_generation_id": "nmdc_omprc-11-wfzppa38",
          "annotation_name": "nmdc_wfmgan-11-pmh0a992.1",
          "raw_file_loc": "/mnt/d/NMDC/nmdc_bsm-13-bgefg837/SpruceW_P4_15A_22Jun17_Pippin_17-04-06.raw",
          "dataset_id": "nmdc_dobj-11-9gcej008",
@@ -148,8 +146,7 @@ An example input JSON file is shown below when running with Kaiko, metagenome-fr
    {
    "metapro.mapper_list": [
       {
-         "genome_dir": "nmdc_omprc-11-mkam5c55",
-         "dataset_name": "Froze_Core_2015_N3_40_50_6_QE_26May16_Pippin_16-03-39",
+         "data_generation_id": "nmdc_omprc-11-mkam5c55",
          "raw_file_loc": "/mnt/d/NMDC/stegen/Froze_Core_2015_N3_40_50_6_QE_26May16_Pippin_16-03-39.raw",
          "dataset_id": "nmdc_dobj-11-hp2vmj63",
          "faa_file_loc": "",
