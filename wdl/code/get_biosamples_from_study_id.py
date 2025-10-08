@@ -1,4 +1,4 @@
-from nmdc_api.api import *
+from nmdc_api.schema_api import *
 import click
 import json
 from dataclasses import dataclass
