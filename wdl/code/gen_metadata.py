@@ -7,7 +7,15 @@ import hashlib
 from urllib.parse import urljoin
 from datetime import datetime
 from linkml_runtime.dumpers import json_dumper
-from nmdc_schema.nmdc import Database, MetaproteomicsAnalysis, DataObject, FileTypeEnum, MetaproteomicsAnalysisCategoryEnum, ExecutionResourceEnum
+from nmdc_schema.nmdc import ( 
+    Database,
+    MetaproteomicsAnalysis,
+    DataObject,
+    FileTypeEnum,
+    MetaproteomicsAnalysisCategoryEnum,
+    ExecutionResourceEnum,
+    DataCategoryEnum
+)
 from nmdc_schema.nmdc_data import get_nmdc_jsonschema_string
 from nmdc_id_source import NmdcIdSource, NmdcFakeIdSource
 from typing import List
@@ -91,6 +99,7 @@ class GenMetadata:
             data_object_type=type,
             url=urljoin(self.results_url, file_name),
             type="nmdc:DataObject",
+            data_category=DataCategoryEnum.processed_data
         )
 
         return data_object
@@ -188,17 +197,18 @@ class GenMetadata:
 
         mp_analysis_activity_obj = MetaproteomicsAnalysis(
             id=self.activity_id,
-            execution_resource=self.execution_resource,
+            execution_resource=ExecutionResourceEnum["EMSL-RZR"],
             git_url=self.git_url,
             version=self.version,
             name=f"Metaproteomics Analysis Activity for {self.activity_id}",
-            was_informed_by=self.data_generation_id,
+            was_informed_by=[ self.data_generation_id ],
             type=self.type,
             has_output=has_output_arr,
             has_input=has_input_arr,
             started_at_time=self.started_at_time,
             ended_at_time=self.ended_at_time,
-            metaproteomics_analysis_category=mp_analysis_category
+            metaproteomics_analysis_category=mp_analysis_category,
+            processing_institution="NMDC"
             )
 
         return mp_analysis_activity_obj
