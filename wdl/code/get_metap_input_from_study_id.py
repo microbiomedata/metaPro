@@ -301,7 +301,7 @@ def main(study_id, output_dir, dl, md5):
 
     # write input.json
     with open(output_path / f"{colon_to_underscore(study_id)}_input.json", 'w', encoding="utf-8") as file:
-        file.write(metap_input.model_dump_json(indent=4))
+        file.write(metap_input.model_dump_json(indent=4, by_alias=True))
 
     # optionally write downloaded files report
     if dl:
