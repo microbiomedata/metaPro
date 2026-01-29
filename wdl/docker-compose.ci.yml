@@ -1,0 +1,37 @@
+services:
+  msconvert:
+    image: ghcr.io/microbiomedata/$MSCONVERT_TAG
+    
+  masic_console:
+    image: ghcr.io/microbiomedata/$MASIC_TAG
+
+  msgfplus:
+    image: ghcr.io/microbiomedata/$MSGFPLUS_TAG
+
+  mzidtotsvconverter:
+    image: ghcr.io/microbiomedata/$MZID2TSV_TAG
+
+  peptidehitresultsprocrunner:
+    image: ghcr.io/microbiomedata/$PHRP_TAG
+
+  proteindigestionsimulator:
+    image: ghcr.io/microbiomedata/$PDS_TAG
+
+  resultsmerge:
+    image: ghcr.io/microbiomedata/$RESULTS_MERGE_TAG
+
+  mzidmerger:
+    image: ghcr.io/microbiomedata/$MZIDMERGER_TAG
+
+  validatefastafile:
+    image: ghcr.io/microbiomedata/$VFF_TAG
+
+  fastafilesplitter:
+    image: ghcr.io/microbiomedata/$FFS_TAG
+
+  metadatacollection:
+    image: ghcr.io/microbiomedata/$MMC_TAG
+
+  post-processing:
+    image: ghcr.io/microbiomedata/$MPP_TAG
+
