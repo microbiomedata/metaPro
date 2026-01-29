@@ -4,6 +4,9 @@ on:
   release:
     types: [ published ]
 
+permissions:
+  contents: read
+  packages: write
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
