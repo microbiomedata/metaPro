@@ -16,7 +16,7 @@ task masic {
         File   outfile = "${dataset_name}_SICstats.txt"
     }
     runtime {
-        docker: 'microbiomedata/metapro-masic:v3.2.7901'
+        docker: 'microbiomedata/nmdc-metapro-masic:v3.2.7901'
     }
 }
 task msconvert {
@@ -34,7 +34,7 @@ task msconvert {
         File   outfile = "${dataset_name}.mzML"
     }
     runtime {
-        docker: 'microbiomedata/metapro-msconvert:v3.0.21258'
+        docker: 'microbiomedata/nmdc-metapro-msconvert:v3.0.21258'
     }
 }
 task msgfplus {
@@ -62,7 +62,7 @@ task msgfplus {
         File   rev_cat_fasta = revcat_name
     }
     runtime {
-        docker: 'microbiomedata/metapro-msgfplus:v2022.04.18'
+        docker: 'microbiomedata/nmdc-metapro-msgfplus:v2022.04.18'
     }
 }
 task mzidtotsvconverter{
@@ -84,7 +84,7 @@ task mzidtotsvconverter{
         File   outfile = "${dataset_name}.tsv"
     }
     runtime {
-        docker: 'microbiomedata/metapro-mzidtotsvconverter:v1.4.6'
+        docker: 'microbiomedata/nmdc-metapro-mzidtotsvconverter:v1.4.6'
     }
 }
 task peptidehitresultsprocrunner {
@@ -113,7 +113,7 @@ task peptidehitresultsprocrunner {
         File   first_hits_file = "${dataset_name}_fht.txt"
     }
     runtime {
-        docker: 'microbiomedata/metapro-peptidehitresultsprocrunner:v3.0.7842'
+        docker: 'microbiomedata/nmdc-metapro-peptidehitresultsprocrunner:v3.0.7842'
     }
 }
 task masicresultmerge {
@@ -136,7 +136,7 @@ task masicresultmerge {
         String stop = read_string("stop.txt")
     }
     runtime {
-        docker: 'microbiomedata/metapro-resultsmerge:2.0.2'
+        docker: 'microbiomedata/nmdc-metapro-resultsmerge:2.0.4'
     }
 }
 task fastaFileSplitter {
@@ -154,7 +154,7 @@ task fastaFileSplitter {
         Array[File]   outfiles = glob("*.fasta")
     }
     runtime {
-        docker: 'microbiomedata/metapro-fastafilesplitter:v1.1.7887'
+        docker: 'microbiomedata/nmdc-metapro-fastafilesplitter:v1.1.7887'
     }
 }
 task msgfplusresultsmerge {
@@ -182,7 +182,7 @@ task msgfplusresultsmerge {
         File    outfile_fasta = output_fasta_file_name 
     }
     runtime {
-        docker: 'microbiomedata/metapro-mzidmerger:v1.4.26'
+        docker: 'microbiomedata/nmdc-metapro-mzidmerger:v1.4.26'
     }
 }
 task concatcontaminate {
@@ -200,7 +200,7 @@ task concatcontaminate {
         String  start = read_string("start.txt")
     }
     runtime {
-        docker: 'microbiomedata/metapro-masic:v3.2.7901'
+        docker: 'microbiomedata/nmdc-metapro-masic:v3.2.7901'
     }
 }
 

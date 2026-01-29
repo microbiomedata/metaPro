@@ -1,0 +1,37 @@
+services:
+  msconvert:
+    image: ghcr.io/$MSCONVERT_TAG
+    
+  masic_console:
+    image: ghcr.io/$MASIC_TAG
+
+  msgfplus:
+    image: ghcr.io/$MSGFPLUS_TAG
+
+  mzidtotsvconverter:
+    image: ghcr.io/$MZID2TSV_TAG
+
+  peptidehitresultsprocrunner:
+    image: ghcr.io/$PHRP_TAG
+
+  proteindigestionsimulator:
+    image: ghcr.io/$PDS_TAG
+
+  resultsmerge:
+    image: ghcr.io/$RESULTS_MERGE_TAG
+
+  mzidmerger:
+    image: ghcr.io/$MZIDMERGER_TAG
+
+  validatefastafile:
+    image: ghcr.io/$VFF_TAG
+
+  fastafilesplitter:
+    image: ghcr.io/$FFS_TAG
+
+  metadatacollection:
+    image: ghcr.io/$MMC_TAG
+
+  post-processing:
+    image: ghcr.io/$MPP_TAG
+
