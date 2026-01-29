@@ -41,7 +41,7 @@ task ficus_analysis {
         File   qc_metric_file = "${Dataset_id}_${faa_file_id}_QC_metrics.tsv"
     }
     runtime {
-        docker: 'microbiomedata/metapro-post-processing:2.0.2'
+        docker: 'microbiomedata/nmdc-metapro-post-processing:2.0.4'
     }
 }
 task proteinDigestionSimulator {
@@ -59,7 +59,7 @@ task proteinDigestionSimulator {
         File outfile = output_filename
     }
     runtime {
-        docker: "microbiomedata/metapro-proteindigestionsimulator:v2.3.7794"
+        docker: "microbiomedata/nmdc-metapro-proteindigestionsimulator:v2.3.7794"
     }
 }
 
