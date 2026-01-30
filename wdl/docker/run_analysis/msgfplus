@@ -1,7 +1,6 @@
-FROM openjdk:12
+FROM eclipse-temurin:17-jdk
 
-RUN yum -y update 
-RUN yum -y install wget unzip 
+RUN apt-get update && apt-get install -y wget unzip && rm -rf /var/lib/apt/lists/* 
 
 ARG MSGFPLUS_VERSION
 ARG MSGFPLUS_ZIP_VERSION
@@ -9,9 +8,6 @@ RUN wget -P /app/msgf https://github.com/MSGFPlus/msgfplus/releases/download/$MS
     && cd /app/msgf/ \
     && unzip MSGFPlus_$MSGFPLUS_ZIP_VERSION.zip \
     && rm MSGFPlus_$MSGFPLUS_ZIP_VERSION.zip
-
-#clean unnecessary packages
-RUN yum -y remove wget unzip 
 
 ARG JVM_MAX_HEAP_SIZE
 ARG THREADS
