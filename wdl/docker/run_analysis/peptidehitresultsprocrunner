@@ -1,12 +1,18 @@
 FROM mono
 
-RUN apt-get update \
+# Debian Buster is EOL, use archive repositories
+RUN rm -f /etc/apt/sources.list.d/mono-official-stable.list \
+    && echo "deb http://archive.debian.org/debian/ buster main contrib" > /etc/apt/sources.list \
+    && echo "deb http://archive.debian.org/debian/ buster-updates main contrib" >> /etc/apt/sources.list \
+    && echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until \
+    && apt-get update \
     && apt-get install \
     --no-install-recommends \ 
     --yes  \
     wget \
     unzip \
-    build-essential\
+    make \
+    gcc \
     && apt-get clean
 
 # install System.Data.SQLite
@@ -17,21 +23,23 @@ RUN cd /app/sqlite/ \
     && unzip sqlite-netFx-full-source-*.zip \
     && rm sqlite-netFx-full-source-*.zip \
     && chmod +x /app/sqlite/Setup/compile-interop-assembly-release.sh \
-    && /app/sqlite/Setup/compile-interop-assembly-release.sh
+    && /app/sqlite/Setup/compile-interop-assembly-release.sh \
+    && find /app/sqlite -name "libSQLite.Interop.so" -type f
 
 ARG PHRP_VERSION
 RUN wget -P /app/phrp/ https://github.com/PNNL-Comp-Mass-Spec/PHRP/releases/download/$PHRP_VERSION/PeptideHitResultsProcessor.zip \
     && cd /app/phrp/ \
     && unzip PeptideHitResultsProcessor*.zip \
     && rm PeptideHitResultsProcessor*.zip \
-    && cp /app/sqlite/bin/2013/Release/bin/libSQLite.Interop.so /app/phrp/ \
-    && chmod -x /app/phrp/libSQLite.Interop.so
+    && (cp /app/sqlite/bin/2013/Release/bin/libSQLite.Interop.so /app/phrp/ || true) \
+    && (chmod -x /app/phrp/libSQLite.Interop.so || true)
 
 #clean unnecessary packages
 RUN apt-get -y remove \
     wget \
     unzip \
-    build-essential\
+    make \
+    gcc \
     &&  apt-get -y autoremove && apt-get clean
 
 # WORKDIR /app
