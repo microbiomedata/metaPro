@@ -1,7 +1,11 @@
-FROM mono
+FROM mono:latest
 
-# Install necessary tools
-RUN apt-get update \
+# Debian Buster is EOL, use archive repositories
+RUN rm -f /etc/apt/sources.list.d/mono-official-stable.list \
+    && echo "deb http://archive.debian.org/debian/ buster main" > /etc/apt/sources.list \
+    && echo "deb http://archive.debian.org/debian/ buster-updates main" >> /etc/apt/sources.list \
+    && echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until \
+    && apt-get update \
     && apt-get install \
     --no-install-recommends \ 
     --yes  \
