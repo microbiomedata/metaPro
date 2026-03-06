@@ -16,7 +16,7 @@ task convertToMgf {
         File   outfile = "${mgf_file_name}.mgf"
     }
     runtime {
-        docker: 'microbiomedata/metapro-msconvert:v3.0.21258'
+        docker: 'ghcr.io/microbiomedata/nmdc-metapro-msconvert:v3.0.21258'
     }
 }
 
