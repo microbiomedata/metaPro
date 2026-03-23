@@ -8,7 +8,7 @@ ENV PYTHONUNBUFFERED=1 \
     LANG=C.UTF-8
 
 RUN pip install --upgrade pip && \
-    pip install pandas click
+    pip install pandas==2.2.3 click
 
 COPY code/results_merge.py /app/resultsmerge/
 
