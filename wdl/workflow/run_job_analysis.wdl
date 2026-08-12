@@ -19,22 +19,23 @@ task masic {
         docker: 'ghcr.io/microbiomedata/nmdc-metapro-masic:v3.2.7901'
     }
 }
-task msconvert {
+task convertToMzml {
     input{
         File   raw_file
         String dataset_name
     }
     command {
-        wine msconvert \
-        ~{raw_file} \
-        --zlib \
-        --filter 'peakPicking true 1-'
+        cwd=$(pwd)
+        ThermoRawFileParser.sh \
+            --input=${raw_file} \
+            --format=2 \
+            --output="$cwd"
     }
     output {
         File   outfile = "${dataset_name}.mzML"
     }
     runtime {
-        docker: 'ghcr.io/microbiomedata/nmdc-metapro-msconvert:v3.0.21258'
+        docker: 'quay.io/biocontainers/thermorawfileparser:1.1.0--0'
     }
 }
 task msgfplus {
@@ -228,7 +229,7 @@ workflow job_analysis{
             masic_param = MASIC_PARAM_FILENAME,
             dataset_name= dataset_name
     }
-    call msconvert {
+    call convertToMzml {
         input:
             raw_file     = raw_file_loc,
             dataset_name = dataset_name
@@ -254,7 +255,7 @@ workflow job_analysis{
 
             call msgfplus as msgfplussplit{
                 input:
-                    mzml_file               = msconvert.outfile,
+                    mzml_file               = convertToMzml.outfile,
                     contaminated_fasta_file = concatcontaminatesplit.outfile,
                     msgfplus_params         = MSGFPLUS_PARAM_FILENAME,
                     dataset_name            = dataset_basename,
@@ -276,7 +277,7 @@ workflow job_analysis{
     {
         call msgfplus{
             input:
-                mzml_file               = msconvert.outfile,
+                mzml_file               = convertToMzml.outfile,
                 contaminated_fasta_file = concatcontaminate.outfile,
                 msgfplus_params         = MSGFPLUS_PARAM_FILENAME,
                 dataset_name            = dataset_name,

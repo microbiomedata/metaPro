@@ -6,17 +6,17 @@ task convertToMgf {
         String mgf_file_name = basename(raw_file, ".raw")
     }
     command {
-        wine msconvert \
-            ${raw_file} \
-            --zlib \
-            --filter "peakPicking vendor msLevel=1-" \
-            --mgf
+        cwd=$(pwd)
+        ThermoRawFileParser.sh \
+            --input=${raw_file} \
+            --format=0 \
+            --output="$cwd"
     }
     output {
         File   outfile = "${mgf_file_name}.mgf"
     }
     runtime {
-        docker: 'ghcr.io/microbiomedata/nmdc-metapro-msconvert:v3.0.21258'
+        docker: 'quay.io/biocontainers/thermorawfileparser:1.1.0--0'
     }
 }
 
