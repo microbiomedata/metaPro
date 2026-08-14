@@ -137,7 +137,7 @@ task masicresultmerge {
         String stop = read_string("stop.txt")
     }
     runtime {
-        docker: 'ghcr.io/microbiomedata/nmdc-metapro-resultsmerge:2.0.4'
+        docker: 'ghcr.io/microbiomedata/nmdc-metapro-resultsmerge:2.1.0'
     }
 }
 task fastaFileSplitter {

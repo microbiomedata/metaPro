@@ -41,7 +41,7 @@ task ficus_analysis {
         File   qc_metric_file = "${Dataset_id}_${faa_file_id}_QC_metrics.tsv"
     }
     runtime {
-        docker: 'ghcr.io/microbiomedata/nmdc-metapro-post-processing:2.0.4'
+        docker: 'ghcr.io/microbiomedata/nmdc-metapro-post-processing:2.1.0'
     }
 }
 task proteinDigestionSimulator {
