@@ -18,8 +18,8 @@ struct InputObject {
 
 workflow metapro {
     Int fasta_split_on_size_mb = 150
-    String git_url = "https://github.com/microbiomedata/metaPro/releases/tag/v2.0.4"
-    String version = "v2.0.4"
+    String git_url = "https://github.com/microbiomedata/metaPro/releases/tag/v2.1.0"
+    String version = "v2.1.0"
 
     input{
         Array[InputObject] mapper_list
