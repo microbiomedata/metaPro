@@ -8,6 +8,8 @@ def download_file(url, base_path: Path) -> Optional[str]:
     file_name = os.path.basename(url)
     filepath = base_path / file_name
 
+    print(f"File downloading {file_name} from {url}")
+
     response = requests.get(url)
 
     if response.status_code == 200:
