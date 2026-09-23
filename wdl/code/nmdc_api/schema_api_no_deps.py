@@ -1,9 +1,7 @@
-import requests
 import abc
+import json
+import urllib.request
 from typing import List, Union
-
-
-DEBUG = False
 
 
 class NMDCCollection:
@@ -90,11 +88,11 @@ class Filter:
         return FilterExpressionIn(field, to_compare_values, "$in")
 
 
-def _get(url, filter: Filter, max_page_size: int = 20, next_page_token: str = None):
+def _get(url, filter_query: str, max_page_size: int = 20, next_page_token: str = None):
     base_url = url
     params = {}
 
-    params["filter"] = filter.get_filter_query()
+    params["filter"] = filter_query
     params["max_page_size"] = max_page_size
     if next_page_token:
         params["page_token"] = next_page_token
@@ -103,38 +101,39 @@ def _get(url, filter: Filter, max_page_size: int = 20, next_page_token: str = No
         'accept': 'application/json'
         }
     
-    response = requests.get(base_url, params=params, headers=headers)
+    full_url = f"{base_url}?{urllib.parse.urlencode(params)}"
     
-    if DEBUG:
-        print(response.request.url)
+    request = urllib.request.Request(full_url, headers=headers, method='GET')
+
+    try:
+        with urllib.request.urlopen(request) as response:
+            response_body = response.read().decode('utf-8')
+            if response.status == 200:
+                return json.loads(response_body)
+            else:
+                print(f"Failed to fetch data for '{filter_query}' -- response code: {response.status} -- response: {response.response_body}")
+                return None
+    except urllib.error.HTTPError as e:
+        print(f"Failed to fetch data for '{filter.get_filter_query()}' -- response code: {e.code} -- response: {e.reason}")
     
-    if response.status_code == 200:
-        return response.json()  
-    else:
-        print(f"Failed to fetch data for '{filter.get_filter_query()}' -- response code: {response.status_code} -- response: {response.text}")
-        return None
+    return None
+
 
 def nmdc_get(url, filter: Filter, max_page_size: int = 60):
     results = []
     next_page_token = None
 
     while True:
-        response = _get(url, filter, max_page_size, next_page_token)
+        response = _get(url, filter.get_filter_query(), max_page_size, next_page_token)
         if response:
             result = response.get("resources", [])
-            if DEBUG:
-                print(f"rec'd {len(result)} results")
             
             if len(result) == 0:
                 break
 
             results.extend(result)
             next_page_token = response.get("next_page_token")
-            if DEBUG:
-                print(f"next page token: {next_page_token}")
             if not next_page_token:
-                if DEBUG:
-                    print("no more pages")
                 break
         else:
             break
@@ -145,15 +144,17 @@ def nmdc_get(url, filter: Filter, max_page_size: int = 60):
 def filter_field_value_equals(field: str, to_compare: str):
     return Filter.field_value_equals(field, to_compare)
 
+
 def filter_field_value_matches_all(field: str, to_compare_values: List[str]):
     return Filter.field_value_matches_all(field, to_compare_values)
+
 
 def filter_field_value_matches_any(field: str, to_compare_values: List[str]):
     return Filter.field_value_matches_any(field, to_compare_values)
 
 
 def get_records(collection: str, filter_on: Union[Filter|List[FilterExpression]]):
-    base_url = f"https://api-backup.microbiomedata.org/nmdcschema/{collection}"
+    base_url = f"https://api.microbiomedata.org/nmdcschema/{collection}"
     filter = None
     
     if isinstance(filter_on, Filter):
