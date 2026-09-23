@@ -304,9 +304,9 @@ class MatchedMetagenomeInput(MetaproInput):
             # build mapping object
             mapping.data_generation_id = MetaproInput.colon_to_underscore(records["metaproteome"]["id"])
             mapping.dataset_name = Path(raw_do["name"]).stem
-            mapping.raw_file_loc = datafiles_path / raw_do["name"]
-            mapping.faa_file_loc = datafiles_path / faa_do["name"]
-            mapping.gff_file_loc = datafiles_path / gff_do["name"]
+            mapping.raw_file_loc = (datafiles_path / raw_do["name"]).resolve()
+            mapping.faa_file_loc = (datafiles_path / faa_do["name"]).resolve()
+            mapping.gff_file_loc = (datafiles_path / gff_do["name"]).resolve()
             mapping.dataset_id = MetaproInput.colon_to_underscore(raw_do["id"])
             mapping.faa_file_id = MetaproInput.colon_to_underscore(faa_do["id"])
             mapping.gff_file_id = MetaproInput.colon_to_underscore(gff_do["id"])
@@ -338,10 +338,10 @@ class MatchedMetagenomeInput(MetaproInput):
         # build input.json
         metap_input: MetapInput = MetapInput()
         metap_input.mapper_list = data_files_mapping
-        metap_input.masic_param_file_filepath = settings_path / masic_do["name"]
-        metap_input.msgf_param_file_filepath = settings_path / msgf_do["name"]
-        metap_input.kaiko_param_file_filepath = settings_path / "kaiko_defaults.yaml"
-        metap_input.contaminant_param_file_filepath = settings_path / contam_do["name"]
+        metap_input.masic_param_file_filepath = (settings_path / masic_do["name"]).resolve()
+        metap_input.msgf_param_file_filepath = (settings_path / msgf_do["name"]).resolve()
+        metap_input.kaiko_param_file_filepath = (settings_path / "kaiko_defaults.yaml").resolve()
+        metap_input.contaminant_param_file_filepath = (settings_path / contam_do["name"]).resolve()
         metap_input.masic_parameter_file_id = MetaproInput.colon_to_underscore(masic_do["id"])
         metap_input.msgf_parameter_file_id = MetaproInput.colon_to_underscore(msgf_do["id"])
         metap_input.contaminant_parameter_file_id = self.colon_to_underscore(contam_do["id"])
