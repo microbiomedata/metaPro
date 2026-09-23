@@ -79,16 +79,28 @@ class DownloadedFile:
 
 
 class MetaproInputFile():
-    def __init__(self, metap_input: MetapInput, download_list: List[Tuple[str, Any]], settings_dir: Path, datafiles_dir: Path, should_check_md5: bool):
+    def __init__(self, metap_input: MetapInput, root_dir: str):
         self.metap_input = metap_input
-        self.download_list = download_list
-        self.settings_dir  = settings_dir
-        self.datafiles_dir = datafiles_dir
-        self.should_check_md5 = should_check_md5
+        self.root_dir = Path(root_dir)
 
     @property
     def metapro_input(self) -> MetapInput:
         return self.metap_input
+
+    def save_input_file(self) -> None:
+        self.root_dir.mkdir(parents=True, exist_ok=True)
+
+        with open(self.root_dir / "input.json", 'w', encoding="utf-8") as file:
+            file.write(self.metap_input.model_dump_json(indent=4, by_alias=True))
+
+
+class MetaproFiles():
+    def __init__(self, download_list: List[Tuple[str, Any]], settings_dir: str, datafiles_dir: str, root_dir: str, should_check_md5: bool):
+        self.download_list = download_list
+        self.settings_dir  = Path(settings_dir)
+        self.datafiles_dir = Path(datafiles_dir)
+        self.root_dir = Path(root_dir)
+        self.should_check_md5 = should_check_md5
 
     @staticmethod
     def get_md5(path: Path):
@@ -100,11 +112,13 @@ class MetaproInputFile():
 
         return md5.hexdigest()
 
-    def save_input_file(self) -> None:
+    def touch_files(self) -> None:
         self.settings_dir.mkdir(parents=True, exist_ok=True)
+        self.datafiles_dir.mkdir(parents=True, exist_ok=True)
 
-        with open(self.settings_dir / "input.json", 'w', encoding="utf-8") as file:
-            file.write(self.metap_input.model_dump_json(indent=4, by_alias=True))
+        for do in self.download_list:
+            dir = self.settings_dir if do[0] == "settings" else self.datafiles_dir
+            (dir / do[1]["name"]).touch()
 
     def download_files(self) -> List[DownloadedFile]:
         dls: List[DownloadedFile] = []
@@ -132,7 +146,7 @@ class MetaproInputFile():
                     dat["calculated_md5"] = file_md5
                 dat["filepath"] = filepath
 
-            dat["filename"] = do["name"]
+            dat["filename"] = do[1]["name"]
             dat["is_success"] = is_sucess
             dls.append(DownloadedFile(**dat))
         
@@ -154,7 +168,7 @@ class MetaproInput(ABC):
         self.is_matched_metagenome = is_matched_metagenome
         
     @abstractmethod
-    def build(self) -> MetaproInputFile:
+    def build(self) -> Tuple[MetaproInputFile, MetaproFiles]:
         pass
 
     @staticmethod
@@ -176,7 +190,7 @@ class MetagenomeFreeInput(MetaproInput):
         super().__init__(False, study_id, masic_param_id, msgf_param_id, contam_id,
                           q_value_threshold, execution_resource, output_dir, data_url)
 
-    def build(self) -> MetaproInputFile:
+    def build(self) -> Tuple[MetaproInputFile, MetaproFiles]:
         pass
 
 
@@ -186,7 +200,7 @@ class MatchedMetagenomeInput(MetaproInput):
         super().__init__(True, study_id, masic_param_id, msgf_param_id, contam_id,
                           q_value_threshold, execution_resource, output_dir, data_url)
 
-    def build(self) -> MetaproInputFile:
+    def build(self) -> Tuple[MetaproInputFile, MetaproFiles]:
         to_download_list: List[Tuple[str, Any]] = [] 
 
         # set-up paths
@@ -337,14 +351,9 @@ class MatchedMetagenomeInput(MetaproInput):
         metap_input.data_url = self.data_url
         metap_input.metagenome_free = False # for now
 
-        return MetaproInputFile(
-            metap_input=metap_input,
-            download_list=to_download_list,
-            settings_dir=settings_path,
-            datafiles_dir=datafiles_path,
-            should_check_md5=True
-        )
-    
+        return (MetaproInputFile(metap_input=metap_input, root_dir=self.output_dir),
+            MetaproFiles(download_list=to_download_list, settings_dir=settings_path, datafiles_dir=datafiles_path,
+                         root_dir=self.output_dir, should_check_md5=True))
 
 
 setup_logging(logging.DEBUG)
@@ -376,9 +385,9 @@ def main(study_id, output_dir, dl):
         data_url
     )
 
-    result = matched_metagenome_input.build()
-    result.save_input_file()
-    result.download_files()
+    input_file, input_files = matched_metagenome_input.build()
+    input_file.save_input_file()
+    input_files.touch_files()
 
 
 if __name__ == "__main__":
