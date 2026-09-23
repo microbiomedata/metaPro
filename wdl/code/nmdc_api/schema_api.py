@@ -153,7 +153,7 @@ def filter_field_value_matches_any(field: str, to_compare_values: List[str]):
 
 
 def get_records(collection: str, filter_on: Union[Filter|List[FilterExpression]]):
-    base_url = f"https://api-backup.microbiomedata.org/nmdcschema/{collection}"
+    base_url = f"https://api.microbiomedata.org/nmdcschema/{collection}"
     filter = None
     
     if isinstance(filter_on, Filter):
