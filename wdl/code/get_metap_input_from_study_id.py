@@ -8,14 +8,11 @@ from logging import StreamHandler
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from pydantic import BaseModel, Field, TypeAdapter
-from typing import List, Iterable, Callable, TypeVar, Optional, Tuple, Any
+from typing import List, Iterable, Callable, Optional, Tuple, Any
 from operator import itemgetter
 from dataclasses import dataclass, fields, asdict
 from abc import ABC, abstractmethod
 from itertools import chain
-
-
-T = TypeVar("T")
 
 
 def setup_logging(level=logging.INFO, logfile="get_metap_input_from_study_id.log"):
@@ -174,14 +171,6 @@ class MetaproInput(ABC):
     @staticmethod
     def colon_to_underscore(s: str) -> str:
         return s.replace(':', '_')
-
-    @staticmethod
-    def first_or_default(it: Iterable[T],
-                        predicate: Callable[[T], bool] | None = None,
-                        default: Optional[T] = None) -> Optional[T]:
-        if predicate is None:
-            return next(iter(it), default)
-        return next((x for x in it if predicate(x)), default)
 
     def set_up_paths(self) -> Tuple[Path, Path, Path]:
         output_path = Path(self.output_dir)
@@ -366,7 +355,7 @@ class MatchedMetagenomeInput(MetaproInput):
         for annotation_record in annotation_records:
             mapping: DataFilesMapping = DataFilesMapping()
             
-            records_key = MetaproInput.first_or_default(dga_map.keys(), lambda x: annotation_record["was_informed_by"][0] in x)
+            records_key = next((x for x in dga_map.keys() if annotation_record["was_informed_by"][0] in x), None)
             if records_key is None:
                 log.warning(f"not found: {annotation_record['was_informed_by']}")
                 continue
