@@ -152,8 +152,8 @@ def filter_field_value_matches_any(field: str, to_compare_values: List[str]):
     return Filter.field_value_matches_any(field, to_compare_values)
 
 
-def get_records(collection: str, filter_on: Union[Filter|List[FilterExpression]]):
-    base_url = f"https://api.microbiomedata.org/nmdcschema/{collection}"
+def get_records(collection: str, filter_on: Union[Filter|List[FilterExpression]], use_prod: bool = True):
+    base_url = f"https://{'api' if use_prod else 'api-dev'}.microbiomedata.org/nmdcschema/{collection}"
     filter = None
     
     if isinstance(filter_on, Filter):
