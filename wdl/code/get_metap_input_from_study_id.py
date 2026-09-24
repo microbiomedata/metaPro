@@ -12,6 +12,7 @@ from typing import List, Iterable, Callable, TypeVar, Optional, Tuple, Any
 from operator import itemgetter
 from dataclasses import dataclass, fields, asdict
 from abc import ABC, abstractmethod
+from itertools import chain
 
 
 T = TypeVar("T")
@@ -65,7 +66,6 @@ class MetapInput(BaseModel):
     masic_parameter_file_id: str = Field(serialization_alias="metapro.MASIC_PARAM_FILE_ID", default="")
     msgf_parameter_file_id: str = Field(serialization_alias="metapro.MSGFPLUS_PARAM_FILE_ID", default="")
     contaminant_parameter_file_id: str = Field(serialization_alias="metapro.CONTAMINANT_FILE_ID", default="")
-    kaiko_param_file_filepath: Path = Field(serialization_alias="metapro.KAIKO_PARAM_FILE_LOC", default=settings_dir)
     metagenome_free: bool = Field(serialization_alias="metapro.METAGENOME_FREE", default=False)
 
 
@@ -183,15 +183,108 @@ class MetaproInput(ABC):
             return next(iter(it), default)
         return next((x for x in it if predicate(x)), default)
 
+    def set_up_paths(self) -> Tuple[Path, Path, Path]:
+        output_path = Path(self.output_dir)
+        settings_path = output_path / "settings"
+        datafiles_path = output_path / "datafiles"
+        output_path.mkdir(parents=True, exist_ok=True)
+        settings_path.mkdir(parents=True, exist_ok=True)
+        datafiles_path.mkdir(parents=True, exist_ok=True)
+
+        return output_path, settings_path, datafiles_path
+
 
 class MetagenomeFreeInput(MetaproInput):
     def __init__(self, study_id, masic_param_id, msgf_param_id, contam_id,
-                  q_value_threshold, execution_resource, output_dir, data_url):
+                  q_value_threshold, execution_resource, output_dir, data_url, ):
         super().__init__(False, study_id, masic_param_id, msgf_param_id, contam_id,
                           q_value_threshold, execution_resource, output_dir, data_url)
 
     def build(self) -> Tuple[MetaproInputFile, MetaproFiles]:
-        pass
+        to_download_list: List[Tuple[str, Any]] = [] 
+
+        output_path, settings_path, datafiles_path = self.set_up_paths()
+
+        log.info(f"getting data generation records for {self.study_id}")
+
+        # get data generation records for study
+        set = NMDCCollection.data_generation_set
+        filters = [
+            filter_field_value_equals("associated_studies", self.study_id),
+            filter_field_value_equals("analyte_category", "metaproteome")
+        ]
+        records = get_records(set, filters)
+        if records is None or len(records) == 0:
+            log.warning(f"No records found in '{set}' for study id '{self.study_id}'")
+            return
+
+        log.info(f"return {len(records)} data generation records for {self.study_id}")
+
+        set = NMDCCollection.data_object_set
+        filters = [
+            filter_field_value_matches_any("id", chain.from_iterable([record["has_output"] for record in records]))
+        ] 
+        data_object_records = get_records(set, filters)
+        to_download_list.extend([("data", do) for do in data_object_records])
+
+        data_files_mapping: List[DataFilesMapping] = []
+        for record in records:
+            raw_do = next((do for do in data_object_records if do["id"] in record["has_output"]), None)
+
+            # build mapping object
+            mapping: DataFilesMapping = DataFilesMapping()
+            mapping.data_generation_id = MetaproInput.colon_to_underscore(record["id"])
+            mapping.dataset_name = Path(raw_do["name"]).stem
+            mapping.raw_file_loc = (datafiles_path / raw_do["name"]).resolve()
+            mapping.faa_file_loc = ""
+            mapping.gff_file_loc = ""
+            mapping.dataset_id = MetaproInput.colon_to_underscore(raw_do["id"])
+            mapping.faa_file_id = "kaiko"
+            mapping.gff_file_id = "kaiko"
+            data_files_mapping.append(mapping)
+
+        # get settings files
+        # msgf+ param file
+        set = NMDCCollection.data_object_set
+        filters = [filter_field_value_equals("id", self.msgf_param_id)] 
+        data_object_records = get_records(set, filters)
+        msgf_do = data_object_records[0]
+        to_download_list.append(("settings", msgf_do))
+
+        # masic param file
+        set = NMDCCollection.data_object_set
+        filters = [filter_field_value_equals("id", self.masic_param_id)] 
+        data_object_records = get_records(set, filters)
+        masic_do = data_object_records[0]
+        to_download_list.append(("settings", masic_do))
+
+        # contam file
+        set = NMDCCollection.data_object_set
+        filters = [filter_field_value_equals("id", self.contam_id)] 
+        data_object_records = get_records(set, filters)
+        contam_do = data_object_records[0]
+        to_download_list.append(("settings", contam_do))
+
+        # build input.json
+        metap_input: MetapInput = MetapInput()
+        metap_input.mapper_list = data_files_mapping
+        metap_input.masic_param_file_filepath = (settings_path / masic_do["name"]).resolve()
+        metap_input.msgf_param_file_filepath = (settings_path / msgf_do["name"]).resolve()
+        metap_input.kaiko_param_file_filepath = (settings_path / "kaiko_defaults.yaml").resolve()
+        metap_input.contaminant_param_file_filepath = (settings_path / contam_do["name"]).resolve()
+        metap_input.masic_parameter_file_id = MetaproInput.colon_to_underscore(masic_do["id"])
+        metap_input.msgf_parameter_file_id = MetaproInput.colon_to_underscore(msgf_do["id"])
+        metap_input.contaminant_parameter_file_id = self.colon_to_underscore(contam_do["id"])
+        metap_input.qvalue_threshold = self.q_value_threshold
+        metap_input.study = MetaproInput.colon_to_underscore(self.study_id)
+        metap_input.execution_resource = self.execution_resource
+        metap_input.data_url = self.data_url
+        metap_input.metagenome_free = not self.is_matched_metagenome
+
+        return (MetaproInputFile(metap_input=metap_input, root_dir=self.output_dir),
+            MetaproFiles(download_list=to_download_list, settings_dir=settings_path, datafiles_dir=datafiles_path,
+                         root_dir=self.output_dir, should_check_md5=True))
+
 
 
 class MatchedMetagenomeInput(MetaproInput):
@@ -203,13 +296,7 @@ class MatchedMetagenomeInput(MetaproInput):
     def build(self) -> Tuple[MetaproInputFile, MetaproFiles]:
         to_download_list: List[Tuple[str, Any]] = [] 
 
-        # set-up paths
-        output_path = Path(self.output_dir)
-        settings_path = output_path / "settings"
-        datafiles_path = output_path / "datafiles"
-        output_path.mkdir(parents=True, exist_ok=True)
-        settings_path.mkdir(parents=True, exist_ok=True)
-        datafiles_path.mkdir(parents=True, exist_ok=True)
+        output_path, settings_path, datafiles_path = self.set_up_paths()
 
         log.info(f"getting data generation records for {self.study_id}")
 
@@ -218,8 +305,8 @@ class MatchedMetagenomeInput(MetaproInput):
         filters = [
             filter_field_value_equals("associated_studies", self.study_id),
         ]
-
         records = get_records(set, filters)
+
         if records is None or len(records) == 0:
             log.warning(f"No records found in '{set}' for study id '{self.study_id}'")
             return
@@ -349,7 +436,7 @@ class MatchedMetagenomeInput(MetaproInput):
         metap_input.study = MetaproInput.colon_to_underscore(self.study_id)
         metap_input.execution_resource = self.execution_resource
         metap_input.data_url = self.data_url
-        metap_input.metagenome_free = False # for now
+        metap_input.metagenome_free = not self.is_matched_metagenome
 
         return (MetaproInputFile(metap_input=metap_input, root_dir=self.output_dir),
             MetaproFiles(download_list=to_download_list, settings_dir=settings_path, datafiles_dir=datafiles_path,
