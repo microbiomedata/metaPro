@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 
-def download_file_1(url: str, base_path: str) -> Optional[str]:
+def download_file(url: str, base_path: str) -> Optional[str]:
     to_return = None
     file_name = os.path.basename(url)
     filepath = Path(base_path) / file_name
